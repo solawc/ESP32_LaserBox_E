@@ -1,7 +1,5 @@
 #include "main.h"
 
-
-
 extern uint32_t g_ticks_per_us_pro;  // For CPU 0 - typically 240 MHz
 extern uint32_t g_ticks_per_us_app;  // For CPU 1 - typically 240 MHz
 
@@ -13,11 +11,10 @@ inline int32_t IRAM_ATTR usToCpuTicks(int32_t us) {
     return us * g_ticks_per_us_pro;
 }
 
-
 inline void IRAM_ATTR spinUntil(int32_t endTicks) {
     while ((getCpuTicks() - endTicks) < 0) {
 #ifdef ESP32
-        asm volatile("nop");
+    asm volatile("nop");
 #endif
     }
 }
@@ -45,12 +42,11 @@ void IRAM_ATTR i2s_digitalWrite(uint8_t pin, uint8_t val) {
 
 void setup() {
 
-    client_write("/*****************************************/");
     client_init();
 
-    // client_write("æµ‹è¯•ä¸?æ–‡\n");
-    printf("²âÊÔ.nc\n");
     i2s_out_init();
+
+    sd_fs_init();
 }
 
 void loop() {

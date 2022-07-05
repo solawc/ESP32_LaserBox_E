@@ -2,10 +2,10 @@
 
 void serial_print(const char *text) {
 
-    client_write(text);
+    client_write(CLIENT_SERIAL, text);
 }
 
-void serial_printf(const char *text, const char* format, ...) {
+void serial_printf(const char *format, ...) {
     char    loc_buf[128];
     char*   temp = loc_buf;
     va_list arg;
@@ -21,7 +21,7 @@ void serial_printf(const char *text, const char* format, ...) {
         }
     }
     len = vsnprintf(temp, len + 1, format, arg);
-    client_write(temp);
+    client_write(CLIENT_SERIAL, temp);
     va_end(arg);
     if (temp != loc_buf) {
         delete[] temp;

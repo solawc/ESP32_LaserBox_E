@@ -1,7 +1,16 @@
 #include "sdcard.h"
 
 
-typedef FRESULT FS_RES_t;
+
+
+
+#define USE_HSPI_FOR_SD 1
+#ifdef USE_HSPI_FOR_SD
+SPIClass SPI_H(HSPI);
+#define SD_SPI SPI_H
+#else
+#define SD_SPI SPI
+#endif
 
 
 /*
@@ -50,17 +59,48 @@ void unicode_2_utf8(char *des, uint16_t *source, uint8_t Len) {
 	}
 }
 
-uint32_t fs_read_fatfs_id() {
-    return FF_DEFINED;
+#define MOUNT_POINT "/sdcard"
+
+void sd_fs_init() {
+
+	pinMode(GRBL_SPI_SS, OUTPUT);
+	digitalWrite(GRBL_SPI_SS, HIGH);
+
+	delay(2000);
+	SPI.begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI);
+
+	if(SD.begin(GRBL_SPI_SS)) {
+		// serial_print("FS succeed\n");
+		if (SD.cardSize() > 0) {
+            // sd_state = SDState::Idle;
+			serial_print("FS succeed\n");
+			serial_printf("SD Size:%d\n", SD.cardSize());
+        }
+	}else {
+		serial_print("FS Error\n");
+	}
+
+	File root = SD.open("/");
+	File file = root.openNextFile();
+	while (file)
+	{
+		if (file.isDirectory())
+		{
+			serial_print("  DIR : ");
+			serial_printf("%s\n", file.name());
+			// Serial.println(file.name());
+			// if (levels)
+			// {
+			// 	listDir(file.name(), levels - 1);
+			// }
+		}
+		else
+		{
+			serial_print("  FILE: ");
+			serial_printf("%s\n", file.name());
+			serial_print("  SIZE: ");
+			serial_printf("%s\n", file.name());
+		}
+		file = root.openNextFile();
+	}
 }
-
-FS_RES_t fs_f_open(FIL* fp, TCHAR* path, BYTE mode) {
-   return f_open(fp, path, mode);
-}
-
-FS_RES_t fs_f_read(FIL* fp, void* buff, UINT btr, UINT* br) {
-   return f_read(fp, buff, btr, br);
-}
-
-
-
