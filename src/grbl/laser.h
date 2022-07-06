@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __laser_h
+#define __laser_h
 
 /*
 	Laser.h
@@ -42,3 +43,6 @@ namespace Spindles {
         virtual ~Laser() {}
     };
 }
+
+
+#endif

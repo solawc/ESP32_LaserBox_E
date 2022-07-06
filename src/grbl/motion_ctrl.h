@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __motion_ctrl_h
+#define __motion_ctrl_h
 
 /*
   MotionControl.h - high level interface for issuing motion commands
@@ -76,3 +77,5 @@ enum class SquaringMode : uint8_t {
 };
 
 extern SquaringMode ganged_mode;
+
+#endif

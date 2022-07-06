@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __client_h
+#define __client_h
 
 #include "../../main.h"
 
@@ -21,7 +22,8 @@
 
 void client_init();
 void client_write(uint8_t client, const char* text);
+int client_read(uint8_t client);
 uint8_t client_get_rx_buffer_available(uint8_t client);
 void client_reset_read_buffer(uint8_t client);
 
-
+#endif

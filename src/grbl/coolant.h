@@ -1,4 +1,7 @@
-#pragma once
+#ifndef __coolant_h
+#define __coolant_h
+
+#include "../main.h"
 
 /*
   CoolantControl.h - spindle control methods
@@ -22,9 +25,8 @@
   You should have received a copy of the GNU General Public License
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
-// #include "../main.h"
 
-#include "gcode.h"
+#include "../main.h"
 
 // Initializes coolant control pins.
 void coolant_init();
@@ -41,3 +43,5 @@ void coolant_set_state(CoolantState state);
 
 // G-code parser entry-point for setting coolant states. Checks for and executes additional conditions.
 void coolant_sync(CoolantState state);
+
+#endif

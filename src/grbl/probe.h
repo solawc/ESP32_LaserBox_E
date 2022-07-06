@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __probe_h
+#define __probe_h
 
 /*
   Probe.h - code pertaining to probing methods
@@ -76,3 +77,6 @@ void mks_probe_check_disable();
 void mks_probe_check_enable();
 void flame_alarm(bool status);
 void flame_alarm_loop();
+
+
+#endif

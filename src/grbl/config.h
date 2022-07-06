@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __config_h
+#define __config_h
 
 /*
   Config.h - compile time configuration
@@ -605,3 +606,6 @@ const int N_PIECES = 3;
 
 const double RPM_MAX = 23935.2;
 const double RPM_MIN = 2412.2;
+
+
+#endif

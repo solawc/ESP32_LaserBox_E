@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __dev_i2s_ex_h
+#define __dev_i2s_ex_h
 
 #if USE_ESP32
 
@@ -63,4 +64,7 @@ typedef struct {
 int i2s_out_init();
 void IRAM_ATTR i2s_out_write(uint8_t pin, uint8_t val);
 void IRAM_ATTR i2s_out_push_sample(uint32_t usec);
+#endif
+
+
 #endif

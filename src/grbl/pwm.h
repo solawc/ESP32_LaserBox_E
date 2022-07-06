@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __pwm_h
+#define __pwm_h
 
 /*
 	PWMSpindle.h
@@ -71,3 +72,5 @@ namespace Spindles {
         uint8_t      calc_pwm_precision(uint32_t freq);
     };
 }
+
+#endif

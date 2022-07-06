@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __uart_h
+#define __uart_h
 
 #include "../../main.h"
 
@@ -58,3 +59,4 @@ public:
 
 extern ESP_UART UART0;
 
+#endif

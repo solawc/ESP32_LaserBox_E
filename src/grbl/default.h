@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __default_h
+#define __default_h
 
 /*
   Defaults.h - defaults settings configuration file
@@ -36,6 +37,8 @@
     You only need to set ones that are important or unique to your
     machine. The rest will be pulled from here.
     */
+
+#include "pins.h"
 
 // Grbl generic default settings. Should work across different machines.
 #ifndef DEFAULT_STEP_PULSE_MICROSECONDS
@@ -678,4 +681,8 @@
 
 #ifndef DEFAULT_USER_MACRO3
 #    define DEFAULT_USER_MACRO3 ""
+#endif
+
+
+
 #endif

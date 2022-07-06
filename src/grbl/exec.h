@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __exec_h
+#define __exec_h
 
 #include <map>
 
@@ -55,3 +56,6 @@ enum class ExecAlarm : uint8_t {
 };
 
 extern std::map<ExecAlarm, const char*> AlarmNames;
+
+
+#endif

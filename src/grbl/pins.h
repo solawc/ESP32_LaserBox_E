@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __pins_h
+#define __pins_h
 
 #include <Arduino.h>
 
@@ -10,3 +11,6 @@ extern "C" void __pinMode(uint8_t pin, uint8_t mode);
 extern "C" void __digitalWrite(uint8_t pin, uint8_t val);
 
 String pinName(uint8_t pin);
+
+
+#endif

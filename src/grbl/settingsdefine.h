@@ -1,4 +1,8 @@
-#pragma once
+#ifndef __settingsdefine_h
+#define __settingsdefine_h
+
+// #include "../main.h"
+#include "settings.h"
 
 extern FlagSetting* verbose_errors;
 
@@ -77,3 +81,5 @@ extern StringSetting* user_macro2;
 extern StringSetting* user_macro3;
 
 extern EnumSetting* message_level;
+
+#endif

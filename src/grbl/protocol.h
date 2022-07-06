@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __protocol_h
+#define __protocol_h
 
 /*
   Protocol.h - controls Grbl execution protocol and procedures
@@ -50,3 +51,5 @@ void protocol_buffer_synchronize();
 
 // Executes the auto cycle feature, if enabled.
 void protocol_auto_cycle_start();
+
+#endif

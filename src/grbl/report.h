@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __report_h
+#define __report_h
 
 /*
   Report.h - Header for system level commands and real-time processes
@@ -137,3 +138,5 @@ void reportTaskStackSize(UBaseType_t& saved);
 char*  report_state_text();
 float* get_wco();
 void   mpos_to_wpos(float* position);
+
+#endif

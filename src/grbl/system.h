@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __system_h
+#define __system_h
 
 /*
   System.h - Header for system level commands and real-time processes
@@ -178,3 +179,6 @@ bool sys_set_analog(uint8_t io_num, float percent);
 void sys_analog_all_off();
 
 int8_t sys_get_next_PWM_chan_num();
+
+
+#endif

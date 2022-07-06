@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __motor_h
+#define __motor_h
 
 /*
     Motor.h
@@ -115,3 +116,6 @@ namespace Motors {
         uint8_t _dual_axis_index;  // 0 = primary 1=ganged
     };
 }
+
+
+#endif

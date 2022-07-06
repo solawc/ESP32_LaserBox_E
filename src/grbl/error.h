@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __error_h
+#define __error_h
 
 /*
   Error.h - Error numbers
@@ -88,3 +89,5 @@ enum class Error : uint8_t {
 };
 
 extern std::map<Error, const char*> ErrorNames;
+
+#endif

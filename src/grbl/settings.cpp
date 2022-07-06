@@ -1,5 +1,6 @@
-#include "WebUI/JSONEncoder.h"
-#include "../main.h"
+// #include "WebUI/JSONEncoder.h"
+// #include "../main.h"
+#include "settings.h"
 #include <map>
 #include <nvs.h>
 
@@ -204,12 +205,12 @@ const char* IntSetting::getStringValue() {
     return strval;
 }
 
-void IntSetting::addWebui(WebUI::JSONencoder* j) {
-    if (getDescription()) {
-        j->begin_webui(getName(), getDescription(), "I", getStringValue(), _minValue, _maxValue);
-        j->end_object();
-    }
-}
+// void IntSetting::addWebui(WebUI::JSONencoder* j) {
+//     if (getDescription()) {
+//         j->begin_webui(getName(), getDescription(), "I", getStringValue(), _minValue, _maxValue);
+//         j->end_object();
+//     }
+// }
 
 AxisMaskSetting::AxisMaskSetting(const char*   description,
                                  type_t        type,
@@ -305,12 +306,12 @@ const char* AxisMaskSetting::getStringValue() {
     return maskToString(get(), strval);
 }
 
-void AxisMaskSetting::addWebui(WebUI::JSONencoder* j) {
-    if (getDescription()) {
-        j->begin_webui(getName(), getDescription(), "I", getStringValue(), 0, (1 << MAX_N_AXIS) - 1);
-        j->end_object();
-    }
-}
+// void AxisMaskSetting::addWebui(WebUI::JSONencoder* j) {
+//     if (getDescription()) {
+//         j->begin_webui(getName(), getDescription(), "I", getStringValue(), 0, (1 << MAX_N_AXIS) - 1);
+//         j->end_object();
+//     }
+// }
 
 FloatSetting::FloatSetting(const char*   description,
                            type_t        type,
@@ -502,7 +503,7 @@ static bool isPassword(bool (*_checker)(char*)) {
         return true;
     }
 #endif
-    return _checker == (bool (*)(char*))WebUI::COMMANDS::isLocalPasswordValid;
+    // return _checker == (bool (*)(char*))WebUI::COMMANDS::isLocalPasswordValid;
 }
 
 const char* StringSetting::getDefaultString() {
@@ -513,13 +514,13 @@ const char* StringSetting::getStringValue() {
     return (_checker && isPassword(_checker)) ? "******" : get();
 }
 
-void StringSetting::addWebui(WebUI::JSONencoder* j) {
-    if (!getDescription()) {
-        return;
-    }
-    j->begin_webui(getName(), getDescription(), "S", getStringValue(), _minLength, _maxLength);
-    j->end_object();
-}
+// void StringSetting::addWebui(WebUI::JSONencoder* j) {
+//     if (!getDescription()) {
+//         return;
+//     }
+//     j->begin_webui(getName(), getDescription(), "S", getStringValue(), _minLength, _maxLength);
+//     j->end_object();
+// }
 
 typedef std::map<const char*, int8_t, cmp_str> enum_opt_t;
 
@@ -659,20 +660,20 @@ const char* EnumSetting::getStringValue() {
     return enumToString(get());
 }
 
-void EnumSetting::addWebui(WebUI::JSONencoder* j) {
-    if (!getDescription()) {
-        return;
-    }
-    j->begin_webui(getName(), getDescription(), "B", String(get()).c_str());
-    j->begin_array("O");
-    for (enum_opt_t::iterator it = _options->begin(); it != _options->end(); it++) {
-        j->begin_object();
-        j->member(it->first, it->second);
-        j->end_object();
-    }
-    j->end_array();
-    j->end_object();
-}
+// void EnumSetting::addWebui(WebUI::JSONencoder* j) {
+//     if (!getDescription()) {
+//         return;
+//     }
+//     j->begin_webui(getName(), getDescription(), "B", String(get()).c_str());
+//     j->begin_array("O");
+//     for (enum_opt_t::iterator it = _options->begin(); it != _options->end(); it++) {
+//         j->begin_object();
+//         j->member(it->first, it->second);
+//         j->end_object();
+//     }
+//     j->end_array();
+//     j->end_object();
+// }
 
 FlagSetting::FlagSetting(const char*   description,
                          type_t        type,
@@ -816,12 +817,12 @@ const char* IPaddrSetting::getStringValue() {
     return s.c_str();
 }
 
-void IPaddrSetting::addWebui(WebUI::JSONencoder* j) {
-    if (getDescription()) {
-        j->begin_webui(getName(), getDescription(), "A", getStringValue());
-        j->end_object();
-    }
-}
+// void IPaddrSetting::addWebui(WebUI::JSONencoder* j) {
+//     if (getDescription()) {
+//         j->begin_webui(getName(), getDescription(), "A", getStringValue());
+//         j->end_object();
+//     }
+// }
 
 AxisSettings::AxisSettings(const char* axisName) : name(axisName) {}
 

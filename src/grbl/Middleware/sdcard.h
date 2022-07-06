@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __sdcard_h
+#define __sdcard_h
 
 #include "../../main.h"
 
@@ -19,3 +20,5 @@
 
 
 void sd_fs_init();
+
+#endif

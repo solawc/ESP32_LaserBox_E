@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __dev_s3_i2s_ex_h
+#define __dev_s3_i2s_ex_h
 
 #ifdef USE_ESP32_S3
 
@@ -59,5 +60,7 @@ typedef struct {
     uint32_t pulse_period;  // aka step rate.
     uint32_t init_val;
 } i2s_out_init_t;
+
+#endif
 
 #endif

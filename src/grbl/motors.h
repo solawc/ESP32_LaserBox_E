@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __motors_h
+#define __motors_h
 
 /*
 	Motors.h
@@ -44,3 +45,6 @@ void    motors_step(uint8_t step_mask);
 void    motors_unstep();
 
 void servoUpdateTask(void* pvParameters);
+
+
+#endif

@@ -32,15 +32,10 @@
 
 #include "motors.h"
 #include "motor.h"
-#include "../main.h"
+// #include "../main.h"
 
 #include "null_motor.h"
-// #include "StandardStepper.h"
-// #include "UnipolarMotor.h"
-// #include "RcServo.h"
-// #include "Dynamixel2.h"
-// #include "TrinamicDriver.h"
-// #include "TrinamicUartDriver.h"
+
 
 Motors::Motor* myMotor[MAX_AXES][MAX_GANGED];  // number of axes (normal and ganged)
 

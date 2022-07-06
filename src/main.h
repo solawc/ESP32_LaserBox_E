@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef __main_h
+#define __main_h
 
 #include "Arduino.h"
 
@@ -32,27 +33,25 @@
 #include "grbl/probe.h"
 #include "grbl/system.h"
 #include "grbl/gcode.h"
+#include "grbl/settings.h"
+#include "grbl/settingsdefine.h"
 #include "grbl/coolant.h"
 #include "grbl/limit.h"
-
 #include "grbl/protocol.h"
 #include "grbl/report.h"
 #include "grbl/spindle.h"
 #include "grbl/motors.h"
 #include "grbl/stepper.h"
-
-
 #include "grbl/exec.h"
 #include "grbl/planner.h"
 #include "grbl/jog.h"
 #include "grbl/motion_ctrl.h"
-#include "grbl/settings.h"
-#include "grbl/settingsdefine.h"
+
 #include "grbl/pins.h"
 #include "grbl/pwm.h"
 #include "grbl/laser.h"
 
-
-
 void IRAM_ATTR delay_us(int32_t us);
 void delay_ms(uint16_t ms);
+
+#endif

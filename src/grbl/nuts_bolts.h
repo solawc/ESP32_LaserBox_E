@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __nuts_bolts_h
+#define __nuts_bolts_h
 
 /*
   NutsBolts.h - Header for system level commands and real-time processes
@@ -116,3 +117,5 @@ void swap(T& a, T& b) {
     a = b;
     b = c;
 }
+
+#endif

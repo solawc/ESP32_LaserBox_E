@@ -1,4 +1,7 @@
-#pragma once
+#ifndef __planner_h
+#define __planner_h
+
+#include "../main.h"
 
 /*
   Planner.h - buffers movement commands and manages the acceleration profile plan
@@ -24,7 +27,9 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// #include "../main.h"
+#include "../main.h"
+// #include "Arduino.h"
+// #include "gcode.h"
 
 // The number of linear motions that can be in the plan at any give time
 #ifndef BLOCK_BUFFER_SIZE
@@ -144,3 +149,5 @@ uint8_t plan_get_block_buffer_count();
 uint8_t plan_check_full_buffer();
 
 void plan_get_planner_mpos(float* target);
+
+#endif

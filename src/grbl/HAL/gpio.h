@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef __gpio_h
+#define __gpio_h
+
 
 #include "../../main.h"
 
@@ -12,3 +14,5 @@
 
 #define PROBE_PIN                   GPIO_NUM_22
 
+
+#endif

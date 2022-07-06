@@ -143,13 +143,6 @@ void protocol_main_loop() {
     // Primary loop! Upon a system abort, this exits back to main() to reset the system.
     // This is also where Grbl idles while waiting for something to do.
     // ---------------------------------------------------------------------------------
-    MKS_GRBL_CMD_SEND("$x\n");   // 主动解锁
-
-    if(first_restart == true) {
-      MKS_GRBL_CMD_SEND(re_cmd);  
-      first_restart = false; 
-    }
-    
     int c;
     bool is_need_next = false;
     bool is_print_finsh = false;
@@ -319,14 +312,14 @@ void protocol_exec_rt_system() {
 
             // if(ui_move_ctrl.limit_dis_delay_count == 2) {
             if(alarm == ExecAlarm::HardLimit) {
-                if(mks_ui_page.mks_ui_page != MKS_UI_TEST) {
-                    draw_global_popup("Hard limit!");
-                }
+                // if(mks_ui_page.mks_ui_page != MKS_UI_TEST) {
+                //     draw_global_popup("Hard limit!");
+                // }
                 
             }else if(alarm == ExecAlarm::SoftLimit) {
-                if(mks_ui_page.mks_ui_page != MKS_UI_TEST) {
-                    draw_global_popup("Soft limit!");
-                }
+                // if(mks_ui_page.mks_ui_page != MKS_UI_TEST) {
+                //     draw_global_popup("Soft limit!");
+                // }
             }
             
                 // ui_move_ctrl.limit_dis_delay_count = 0;

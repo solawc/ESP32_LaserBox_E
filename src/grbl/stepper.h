@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __stepper_h
+#define __stepper_h
 
 /*
   Stepper.h - stepper motor driver: executes motion plans of planner.c using the stepper motors
@@ -134,3 +135,7 @@ void Stepper_Timer_WritePeriod(uint16_t timerTicks);
 void Stepper_Timer_Init();
 void Stepper_Timer_Start();
 void Stepper_Timer_Stop();
+
+
+
+#endif

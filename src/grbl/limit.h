@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __limit_h
+#define __limit_h
 
 /*
   Limits.h - code pertaining to limit-switches and performing the homing cycle
@@ -59,3 +60,7 @@ bool limitsCheckTravel(float* target);
 
 // check if a switch has been defined
 bool limitsSwitchDefined(uint8_t axis, uint8_t gang_index);
+
+
+
+#endif

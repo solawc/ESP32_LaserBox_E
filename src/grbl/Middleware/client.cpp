@@ -53,7 +53,14 @@ if (client == CLIENT_INPUT) {
 }
 
 
-
+// Fetches the first byte in the client read buffer. Called by protocol loop.
+int client_read(uint8_t client) {
+    // vTaskEnterCritical(&myMutex);
+    // int data = client_buffer[client].read();
+    int data = 0;
+    // vTaskExitCritical(&myMutex);
+    return data;
+}
 
 void client_reset_read_buffer(uint8_t client) {
     for (uint8_t client_num = 0; client_num < CLIENT_COUNT; client_num++) {

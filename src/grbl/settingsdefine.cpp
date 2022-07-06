@@ -1,4 +1,4 @@
-#include "../main.h"
+#include "settingsdefine.h"
 
 FlagSetting* verbose_errors;
 

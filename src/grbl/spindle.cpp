@@ -42,7 +42,7 @@ namespace Spindles {
             //     spindle = &pwm;
             // break;
             case SpindleType::LASER:
-                spindle = &laser;
+                // spindle = &laser;
             break;
         }
         spindle->init();

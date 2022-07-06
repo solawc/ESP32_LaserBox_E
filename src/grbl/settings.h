@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __settings_h
+#define __settings_h
 
 #include "WebUI/JSONEncoder.h"
 #include <map>
@@ -89,7 +90,7 @@ public:
 
     // The default implementation of addWebui() does nothing.
     // Derived classes may override it to do something.
-    virtual void addWebui(WebUI::JSONencoder*) {};
+    // virtual void addWebui(WebUI::JSONencoder*) {};
 
     virtual Error action(char* value, WebUI::AuthenticationLevel auth_level, WebUI::ESPResponseStream* out) = 0;
 };
@@ -149,7 +150,7 @@ public:
 
     // The default implementation of addWebui() does nothing.
     // Derived classes may override it to do something.
-    virtual void addWebui(WebUI::JSONencoder*) {};
+    // virtual void addWebui(WebUI::JSONencoder*) {};
 
     virtual Error       setStringValue(char* value) = 0;
     Error               setStringValue(String s) { return setStringValue(s.c_str()); }
@@ -192,7 +193,7 @@ public:
 
     void        load();
     void        setDefault();
-    void        addWebui(WebUI::JSONencoder*);
+    // void        addWebui(WebUI::JSONencoder*);
     Error       setStringValue(char* value);
     Error       setStringValue_nocheck(char* s);
     const char* getStringValue();
@@ -222,7 +223,7 @@ public:
 
     void        load();
     void        setDefault();
-    void        addWebui(WebUI::JSONencoder*);
+    // void        addWebui(WebUI::JSONencoder*);
     Error       setStringValue(char* value);
     const char* getCompatibleValue();
     const char* getStringValue();
@@ -288,7 +289,7 @@ public:
     void load();
     void setDefault();
     // There are no Float settings in WebUI
-    void        addWebui(WebUI::JSONencoder*) {}
+    // void        addWebui(WebUI::JSONencoder*) {}
     Error       setStringValue(char* value);
     const char* getStringValue();
     const char* getDefaultString();
@@ -322,7 +323,7 @@ public:
 
     void        load();
     void        setDefault();
-    void        addWebui(WebUI::JSONencoder*);
+    // void        addWebui(WebUI::JSONencoder*);
     Error       setStringValue(char* value);
     Error       mks_setStringValue(char* s);
     const char* getStringValue();
@@ -364,7 +365,7 @@ public:
 
     void        load();
     void        setDefault();
-    void        addWebui(WebUI::JSONencoder*);
+    // void        addWebui(WebUI::JSONencoder*);
     Error       setStringValue(char* value);
     Error       setStringValue_nocheck(char* value);
     const char* getStringValue();
@@ -394,7 +395,7 @@ public:
     void setDefault();
     // There are no Flag settings in WebUI
     // The booleans are expressed as Enums
-    void        addWebui(WebUI::JSONencoder*) {}
+    // void        addWebui(WebUI::JSONencoder*) {}
     Error       setStringValue(char* value);
     const char* getCompatibleValue();
     const char* getStringValue();
@@ -427,7 +428,7 @@ public:
 
     void        load();
     void        setDefault();
-    void        addWebui(WebUI::JSONencoder*);
+    // void        addWebui(WebUI::JSONencoder*);
     Error       setStringValue(char* value);
     const char* getStringValue();
     const char* getDefaultString();
@@ -514,3 +515,5 @@ public:
 
     T get() { return _value; }
 };
+
+#endif

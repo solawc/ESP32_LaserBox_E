@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __spindle_h
+#define __spindle_h
 
 /*
     Spindle.h
@@ -83,3 +84,5 @@ namespace Spindles {
 }
 
 extern Spindles::Spindle* spindle;
+
+#endif

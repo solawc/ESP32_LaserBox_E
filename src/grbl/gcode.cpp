@@ -22,7 +22,8 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../main.h"
+#include "gcode.h"
+#include "main.h"
 
 // Allow iteration over CoordIndex values
 CoordIndex& operator++(CoordIndex& i) {

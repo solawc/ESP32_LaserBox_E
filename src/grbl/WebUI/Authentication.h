@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __Authentication_h
+#define __Authentication_h
 
 namespace WebUI {
     //Authentication level
@@ -9,3 +10,7 @@ namespace WebUI {
 
     void remove_password(char* str, AuthenticationLevel& auth_level);
 }
+
+
+
+#endif

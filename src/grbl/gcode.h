@@ -1,6 +1,8 @@
-#pragma once
+#ifndef __gcode_h
+#define __gcode_h
 
 #include "../main.h"
+
 /*
   GCode.h - rs274/ngc parser.
   Part of Grbl
@@ -333,3 +335,5 @@ Error gc_execute_line(char* line, uint8_t client);
 
 // Set g-code parser position. Input in steps.
 void gc_sync_position();
+
+#endif

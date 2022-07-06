@@ -1,6 +1,8 @@
-#pragma once
+#ifndef __machine_common_h
+#define __machine_common_h
 
-#include "../main.h"
+// #include "../main.h"
+#include "Arduino.h"
 
 // Grbl setting that are common to all machines
 // It should not be necessary to change anything herein
@@ -25,3 +27,6 @@ const uint32_t fTimers = 80000000;  // a reference to the speed of ESP32 timers
 const int STEP_MASK = B111111;
 
 const int PROBE_MASK = 1;
+
+
+#endif

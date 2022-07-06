@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __nuts_boolts_h
+#define __nuts_boolts_h
 
 #include "motor.h"
 
@@ -9,3 +10,6 @@ namespace Motors {
         bool set_homing_mode(bool isHoming) { return false; }
     };
 }
+
+
+#endif
