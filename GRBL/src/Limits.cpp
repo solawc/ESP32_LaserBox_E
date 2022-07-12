@@ -26,6 +26,7 @@
 */
 
 #include "main.h"
+#include "driver/gpio.h"
 
 uint8_t n_homing_locate_cycle = NHomingLocateCycle;
 
@@ -273,7 +274,7 @@ void limits_init() {
                 pinMode(pin, mode);
                 limit_mask |= bit(axis);
                 if (hard_limits->get()) {
-                    attachInterrupt(pin, isr_limit_switches, CHANGE);
+                    attachInterrupt(pin, isr_limit_switches, FALLING);
                 } else {
                     detachInterrupt(pin);
                 }

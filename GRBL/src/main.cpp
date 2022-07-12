@@ -138,7 +138,7 @@ static void reset_variables() {
 
     spindle->stop();
     coolant_init();
-    // limits_init();
+    limits_init();
     probe_init();
 
     plan_reset();  // Clear block buffer and planner variables
