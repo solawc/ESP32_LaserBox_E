@@ -38,8 +38,8 @@ void loop() {
 void grbl_init() {
 
     disableCore0WDT();
-    disableCore1WDT();
-    disableLoopWDT();
+    // disableCore1WDT();
+    // disableLoopWDT();
     
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
@@ -50,6 +50,7 @@ void grbl_init() {
     WiFi.enableSTA(false);
     WiFi.enableAP(false);
     WiFi.mode(WIFI_OFF);
+
     client_init();  // Setup serial baud rate and interrupts
 
 // show the map name at startup
@@ -154,7 +155,6 @@ static void reset_variables() {
     // used to keep track of a jog command sent to mc_line() so we can cancel it.
     // this is needed if a jogCancel comes along after we have already parsed a jog and it is in-flight.
     sys_pl_data_inflight = NULL;
-
 }
 
 void run_once() {

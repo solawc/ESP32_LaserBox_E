@@ -231,37 +231,6 @@ namespace WebUI {
         return 2 * (RSSI + 100);
     }
 
-
-#define WIFI_COUNT              40
-#define WIFI_DELAY_WAIT         500
-
-    bool WiFiConfig::mks_ConnectSTA2AP() {
-        uint8_t     count  = 0;
-        wl_status_t status = WiFi.status();
-        while (status != WL_CONNECTED && count < 40) {
-            switch (status) {
-                case WL_NO_SSID_AVAIL:
-                    return status == WL_CONNECTED;
-                break;
-                case WL_CONNECT_FAILED:
-
-                break;
-                case WL_CONNECTED:
-
-                break;
-                default:
-
-                break;
-            }
-            // COMMANDS::wait(500);
-            delay(500);
-            count++;
-            status = WiFi.status();
-        }
-        return status == WL_CONNECTED;
-    }
-
-
     /*
      * Connect client to AP
      */
@@ -271,7 +240,8 @@ namespace WebUI {
         uint8_t     count  = 0;
         uint8_t     dot    = 0;
         wl_status_t status = WiFi.status();
-        while (status != WL_CONNECTED && count < WIFI_COUNT) {
+        while (status != WL_CONNECTED && count < 10) {
+            // status = WiFi.status();
             switch (status) {
                 case WL_NO_SSID_AVAIL:
                     msg = "No SSID";
@@ -292,23 +262,11 @@ namespace WebUI {
                     break;
             }
             grbl_sendf(CLIENT_ALL, "[MSG:%s]\r\n", msg.c_str());
-
-            /**********************************************************
-             * 注：为什么这里不用COMMANDS::wait？，而使用delay.
-             * 因为COMMANDS::wait是一个阻塞的过程，并且带有看门狗喂狗操作，
-             * 因此在这个过程中会出现高优先级任务抢占，此时高优先级如果没有
-             * 执行完，并且喂狗时间到了的话，就会出现喂狗不及时，导致看门狗
-             * 重启，因此这个地方，由于不是需要很精准的500ms，所以可以使用
-             * delay()，delay()实际执行的是vTaskDelay(),它会释放当前CPU的
-             * 内核，让出当前线程，保存当前环境，提供其它优先级的任务做处理，
-             * 并且将自身排列在优先级列表内，等事件到了，切换回来继续执行，
-             * 这样就可以很好避免阻塞执行的问题。
-             * *******************************************************/
-            // COMMANDS::wait(WIFI_DELAY_WAIT);
-            delay(WIFI_DELAY_WAIT);
+            delay(2000);
             count++;
             status = WiFi.status();
         }
+        printf("[MSG:Wifi state:%d]\r\n", status);
         return status == WL_CONNECTED;
     }
 
@@ -358,46 +316,6 @@ namespace WebUI {
     }
 
 
-    bool WiFiConfig::mks_StartSTA() {
-        //stop active service
-        wifi_services.end();
-        //Sanity check
-        if ((WiFi.getMode() == WIFI_STA) || (WiFi.getMode() == WIFI_AP_STA)) {
-            WiFi.disconnect();
-        }
-        if ((WiFi.getMode() == WIFI_AP) || (WiFi.getMode() == WIFI_AP_STA)) {
-            WiFi.softAPdisconnect();
-        }
-        WiFi.enableAP(false);
-        WiFi.mode(WIFI_STA);
-        //Get parameters for STA
-        String h = wifi_hostname->get();
-        WiFi.setHostname(h.c_str());
-        //SSID
-        String SSID = wifi_sta_ssid->get();
-        if (SSID.length() == 0) {
-            SSID = DEFAULT_STA_SSID;
-        }
-        //password
-        String  password = wifi_sta_password->get();
-        int8_t  IP_mode  = wifi_sta_mode->get();
-        int32_t IP       = wifi_sta_ip->get();
-        int32_t GW       = wifi_sta_gateway->get();
-        int32_t MK       = wifi_sta_netmask->get();
-        //if not DHCP
-        if (IP_mode != DHCP_MODE) {
-            IPAddress ip(IP), mask(MK), gateway(GW);
-            WiFi.config(ip, gateway, mask);
-        }
-        if (WiFi.begin(SSID.c_str(), (password.length() > 0) ? password.c_str() : NULL)) {
-            return mks_ConnectSTA2AP();
-        } else {
-            grbl_send(CLIENT_ALL, "[MSG:Starting client failed]\r\n");
-            return false;
-        }
-    }
-
-
     /**
      * Setup and start Access point
      */
@@ -408,6 +326,7 @@ namespace WebUI {
 
         //stop active services
         wifi_services.end();
+        
         //Sanity check
         if ((WiFi.getMode() == WIFI_STA) || (WiFi.getMode() == WIFI_AP_STA)) {
             WiFi.disconnect();
