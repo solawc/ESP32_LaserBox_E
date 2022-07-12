@@ -38,8 +38,8 @@ void loop() {
 void grbl_init() {
 
     disableCore0WDT();
-    // disableCore1WDT();
-    // disableLoopWDT();
+    disableCore1WDT();
+    disableLoopWDT();
     
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
@@ -138,7 +138,7 @@ static void reset_variables() {
 
     spindle->stop();
     coolant_init();
-    limits_init();
+    // limits_init();
     probe_init();
 
     plan_reset();  // Clear block buffer and planner variables

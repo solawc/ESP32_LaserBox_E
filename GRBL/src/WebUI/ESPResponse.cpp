@@ -96,7 +96,7 @@ namespace WebUI {
             return;
         }
 #endif
-        // grbl_send(_client, data);
+        grbl_send(_client, data);
     }
 
     void ESPResponseStream::flush() {
