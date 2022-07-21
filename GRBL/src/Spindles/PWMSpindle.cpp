@@ -21,7 +21,8 @@
 */
 #include "PWMSpindle.h"
 #include "soc/ledc_struct.h"
-
+#include <driver/ledc.h>
+#include <esp32-hal-ledc.h>  // ledc_bind_channel_timer()
 // ======================= PWM ==============================
 /*
     This gets called at startup or whenever a spindle setting changes
@@ -48,6 +49,9 @@ namespace Spindles {
         use_delays        = true;
 
         ledcSetup(_pwm_chan_num, (double)_pwm_freq, _pwm_precision);  // setup the channel
+        
+        ledc_bind_channel_timer(LEDC_HIGH_SPEED_MODE, ledc_channel_t(_pwm_chan_num), ledc_timer_t(_pwm_chan_num / 2));
+
         ledcAttachPin(_output_pin, _pwm_chan_num);                    // attach the PWM to the pin
         pinMode(_enable_pin, OUTPUT);
         pinMode(_direction_pin, OUTPUT);

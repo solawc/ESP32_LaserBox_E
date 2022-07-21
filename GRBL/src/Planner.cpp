@@ -322,7 +322,9 @@ uint8_t plan_buffer_line(float* target, plan_line_data_t* pl_data) {
         // Calculate target position in absolute steps, number of steps for each axis, and determine max step events.
         // Also, compute individual axes distance for move and prep unit vector calculations.
         // NOTE: Computes true distance from converted step values.
-        target_steps[idx]       = lround(target[idx] * axis_settings[idx]->steps_per_mm->get());
+        // target_steps[idx]       = lround(target[idx] * axis_settings[idx]->steps_per_mm->get());
+        target_steps[idx]       = lroundf(target[idx] * axis_settings[idx]->steps_per_mm->get());
+        
         block->steps[idx]       = labs(target_steps[idx] - position_steps[idx]);
         block->step_event_count = MAX(block->step_event_count, block->steps[idx]);
         delta_mm                = (target_steps[idx] - position_steps[idx]) / axis_settings[idx]->steps_per_mm->get();
