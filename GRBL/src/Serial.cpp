@@ -123,7 +123,7 @@ void client_init() {
                             "clientCheckTask",  // name for task
                             8192,               // size of task stack
                             NULL,               // parameters
-                            1,                  // priority
+                            2,                  // priority
                             &clientCheckTaskHandle,
                             CONFIG_ARDUINO_RUNNING_CORE  // must run the task on same core
                                                // core
@@ -185,9 +185,9 @@ void clientCheckTask(void* pvParameters) {
 #if defined(ENABLE_SD_CARD)
                 if (get_sd_state(false) < SDState::Busy) {
 #endif  //ENABLE_SD_CARD
-                    // taskENTER_CRITICAL(&myMutex);
+                    taskENTER_CRITICAL(&myMutex);
                     client_buffer[client].write(data);
-                    // taskEXIT_CRITICAL(&myMutex);
+                    taskEXIT_CRITICAL(&myMutex);
 #if defined(ENABLE_SD_CARD)
                 } else {
                     if (data == '\r' || data == '\n') {
@@ -204,9 +204,7 @@ void clientCheckTask(void* pvParameters) {
         WebUI::COMMANDS::handle();
 
 #ifdef ENABLE_WIFI
-        // taskENTER_CRITICAL(&myMutex);
         WebUI::wifi_config.handle();
-        // taskEXIT_CRITICAL(&myMutex);
 #endif
 
 #ifdef ENABLE_BLUETOOTH
@@ -234,9 +232,9 @@ void client_reset_read_buffer(uint8_t client) {
 
 // Fetches the first byte in the client read buffer. Called by protocol loop.
 int client_read(uint8_t client) {
-    // taskENTER_CRITICAL(&myMutex);
+    taskENTER_CRITICAL(&myMutex);
     int data = client_buffer[client].read();
-    // taskEXIT_CRITICAL(&myMutex);
+    taskEXIT_CRITICAL(&myMutex);
     return data;
 }
 

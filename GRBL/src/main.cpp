@@ -22,10 +22,13 @@
 #include <WiFi.h>
 
 void setup() {
+
     grbl_init();
+    
 }
 
 void loop() {
+
     _mc_task_init();
     
     while(1) {
@@ -137,8 +140,11 @@ static void reset_variables() {
     gc_init();  // Set g-code parser to default state
 
     spindle->stop();
+    
     coolant_init();
+
     limits_init();
+
     probe_init();
 
     plan_reset();  // Clear block buffer and planner variables
