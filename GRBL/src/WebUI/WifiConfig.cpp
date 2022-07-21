@@ -240,7 +240,7 @@ namespace WebUI {
         uint8_t     count  = 0;
         uint8_t     dot    = 0;
         wl_status_t status = WiFi.status();
-        while (status != WL_CONNECTED && count < 10) {
+        while (status != WL_CONNECTED && count < 5) {
             // status = WiFi.status();
             switch (status) {
                 case WL_NO_SSID_AVAIL:

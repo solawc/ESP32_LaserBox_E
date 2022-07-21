@@ -45,7 +45,7 @@ namespace WebUI {
     static const char* DEFAULT_STA_SSID = CONNECT_TO_SSID;
     static const char* DEFAULT_STA_PWD  = SSID_PASSWORD;
 #else   //!CONNECT_TO_SSID
-    static const char* DEFAULT_STA_SSID = "MKS_DLC";
+    static const char* DEFAULT_STA_SSID = "MKS_DLC_CS";
     static const char* DEFAULT_STA_PWD  = "12345678";
 #endif  //CONNECT_TO_SSID
     static const char* DEFAULT_STA_IP            = "0.0.0.0";

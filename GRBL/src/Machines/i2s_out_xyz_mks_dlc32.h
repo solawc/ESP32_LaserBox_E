@@ -22,8 +22,8 @@
 #define MACHINE_NAME                    "MKS DLC32"
 #define BOARD_NAME                      "Board:MKS DLC32 V2.1"
 #define BOARD_VERSION                   "MKS DLC32 V2.1"
-#define FW_NAME                         "Firmware:V2.10(8M.H35.20200621)"
-#define FW_VERSION                      "V2.10(8M.H35.20200621)"
+#define FW_NAME                         "Firmware:V2.10(8M.H35.20200721)"
+#define FW_VERSION                      "V2.10(8M.H35.20200721)"
 
 // I2S pins set
 #define I2S_OUT_BCK                     GPIO_NUM_16
@@ -90,7 +90,7 @@
 #define GRBL_SPI_MOSI 			    GPIO_NUM_13
 #define GRBL_SPI_SS 			    GPIO_NUM_15
 #define SDCARD_DET_PIN 			    GPIO_NUM_39
-#define GRBL_SPI_FREQ 			    40000000
+#define GRBL_SPI_FREQ 			    40000000            // 40Mb/s = 40 / 8 = 5MB/s
 
 // === Default settings
 // #define DEFAULT_STEP_PULSE_MICROSECONDS I2S_OUT_USEC_PER_PULSE
