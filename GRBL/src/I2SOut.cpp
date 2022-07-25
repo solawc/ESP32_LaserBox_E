@@ -185,7 +185,7 @@ static inline void i2s_out_single_data() {
     port_data <<= 16;                   // Shift needed. This specification is not spelled out in the manual.
     I2S0.conf_single_data = port_data;  // Apply port data in real-time (static I2S)
 #else
-    I2S0.conf_single_data = atomic_load(&i2s_out_port_data);  // Apply port data in real-time (static I2S)
+    I2S0.conf_single_data = ATOMIC_LOAD(&i2s_out_port_data);  // Apply port data in real-time (static I2S)
 #endif
 }
 

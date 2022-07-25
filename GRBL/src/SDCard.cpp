@@ -177,6 +177,8 @@ boolean setFilePos(uint32_t pos) {
 
     sd_current_line_number = 0;
     myFile.seek(pos);
+
+    return true;
 }
 
 
@@ -283,10 +285,10 @@ SDState set_sd_state(SDState state) {
     return sd_state;
 }
 
-SDState write_file(const char* path, const char* message) {
+// SDState write_file(const char* path, const char* message) {
     
 
-}
+// }
 
 // void SdCard::writeFile(const char* path, const char* message)
 // {

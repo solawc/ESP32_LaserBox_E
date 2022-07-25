@@ -22,7 +22,7 @@ void Uart::begin(unsigned long baudrate, Data dataBits, Stop stopBits, Parity pa
     conf.stop_bits           = uart_stop_bits_t(stopBits);
     conf.flow_ctrl           = UART_HW_FLOWCTRL_DISABLE;
     conf.rx_flow_ctrl_thresh = 0;
-    conf.use_ref_tick        = false;
+    // conf.use_ref_tick        = false;
     if (uart_param_config(_uart_num, &conf) != ESP_OK) {
         return;
     };

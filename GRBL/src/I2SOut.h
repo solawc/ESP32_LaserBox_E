@@ -61,8 +61,7 @@
 const int I2S_OUT_USEC_PER_PULSE = 4;
 
 const int I2S_OUT_DMABUF_COUNT = 5;    /* number of DMA buffers to store data */
-// const int I2S_OUT_DMABUF_LEN = 2000; /* maximum size in bytes (4092 is DMA's limit) */
-const int I2S_OUT_DMABUF_LEN = 4092; /* maximum size in bytes (4092 is DMA's limit) */
+const int I2S_OUT_DMABUF_LEN = 1024; /* maximum size in bytes (4092 is DMA's limit) */
 
 const int I2S_OUT_DELAY_DMABUF_MS = (I2S_OUT_DMABUF_LEN / sizeof(uint32_t) * I2S_OUT_USEC_PER_PULSE / 1000);
 const int I2S_OUT_DELAY_MS        = (I2S_OUT_DELAY_DMABUF_MS * (I2S_OUT_DMABUF_COUNT + 1));
