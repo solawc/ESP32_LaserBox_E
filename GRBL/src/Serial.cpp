@@ -123,7 +123,7 @@ void client_init() {
                             "clientCheckTask",  // name for task
                             8192,               // size of task stack
                             NULL,               // parameters
-                            2,                  // priority
+                            1,                  // priority
                             &clientCheckTaskHandle,
                             CONFIG_ARDUINO_RUNNING_CORE  // must run the task on same core
                                                // core
@@ -131,15 +131,14 @@ void client_init() {
 }
 
 static uint8_t getClientChar(uint8_t* data) {
+
     int res;
-#ifdef REVERT_TO_ARDUINO_SERIAL
-    if (client_buffer[CLIENT_SERIAL].availableforwrite() && (res = Serial.read()) != -1) {
-#else
+
     if (client_buffer[CLIENT_SERIAL].availableforwrite() && (res = Uart0.read()) != -1) {
-#endif
         *data = res;
         return CLIENT_SERIAL;
     }
+
     if (WebUI::inputBuffer.available()) {
         *data = WebUI::inputBuffer.read();
         return CLIENT_INPUT;
@@ -175,12 +174,13 @@ void clientCheckTask(void* pvParameters) {
     uint8_t            client;  // who sent the data
     static UBaseType_t uxHighWaterMark = 0;
     while (true) {  // run continuously
+    
         while ((client = getClientChar(&data)) != CLIENT_ALL) {
             // Pick off realtime command characters directly from the serial stream. These characters are
             // not passed into the main buffer, but these set system state flag bits for realtime execution.
             if (is_realtime_command(data)) {
                 execute_realtime_command(static_cast<Cmd>(data), client);
-                vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+                // vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
             } else {
 #if defined(ENABLE_SD_CARD)
                 if (get_sd_state(false) < SDState::Busy) {
@@ -201,6 +201,7 @@ void clientCheckTask(void* pvParameters) {
 #endif  //ENABLE_SD_CARD
             }
         }  // if something available
+        
         WebUI::COMMANDS::handle();
 
 #ifdef ENABLE_WIFI

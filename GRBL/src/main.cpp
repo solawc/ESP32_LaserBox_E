@@ -22,9 +22,7 @@
 #include <WiFi.h>
 
 void setup() {
-
     grbl_init();
-    
 }
 
 void loop() {
@@ -32,9 +30,7 @@ void loop() {
     _mc_task_init();
     
     while(1) {
-
       run_once();
-
     }
 }
 

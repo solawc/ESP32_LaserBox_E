@@ -230,7 +230,7 @@ static void stepper_pulse_func() {
                     i2s_out_push_sample(wait_direction);
                     break;
                 case ST_I2S_STATIC:
-                    
+            
                 case ST_TIMED: {
                     // wait for step pulse time to complete...some time expired during code above
                     //

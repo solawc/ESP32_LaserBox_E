@@ -224,8 +224,11 @@ namespace Motors {
 
             read_settings();
 
-            int32_t pos_min_steps = lround(limitsMinPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
-            int32_t pos_max_steps = lround(limitsMaxPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+            // int32_t pos_min_steps = lround(limitsMinPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+            // int32_t pos_max_steps = lround(limitsMaxPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+            int32_t pos_min_steps = lroundf(limitsMinPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+            int32_t pos_max_steps = lroundf(limitsMaxPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+
 
             int32_t temp = map(dxl_position, DXL_COUNT_MIN, DXL_COUNT_MAX, pos_min_steps, pos_max_steps);
 

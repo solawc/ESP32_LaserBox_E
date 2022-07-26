@@ -471,7 +471,7 @@ namespace WebUI {
             Error              err         = system_execute_line(line, espresponse, auth_level);
             String             answer;
             if (err == Error::Ok) {
-                answer = "ok";
+                answer = "ok\n";
             } else {
                 const char* msg = errorString(err);
                 answer          = "Error: ";
@@ -492,32 +492,55 @@ namespace WebUI {
                 _webserver->send(401, "text/plain", "Authentication failed!\n");
                 return;
             }
-            //Instead of send several commands one by one by web  / send full set and split here
-            String      scmd;
-            bool hasError =false;
-            uint8_t     sindex = 0;
-            // TODO Settings - this is very inefficient.  get_Splited_Value() is O(n^2)
-            // when it could easily be O(n).  Also, it would be just as easy to push
-            // the entire string into Serial2Socket and pull off lines from there.
-            for (uint8_t sindex = 0; (scmd = get_Splited_Value(cmd, '\n', sindex)) != ""; sindex++) {
+
+
+            // //Instead of send several commands one by one by web  / send full set and split here
+            // String      scmd;
+            // bool hasError =false;
+            // uint8_t     sindex = 0;
+            // // TODO Settings - this is very inefficient.  get_Splited_Value() is O(n^2)
+            // // when it could easily be O(n).  Also, it would be just as easy to push
+            // // the entire string into Serial2Socket and pull off lines from there.
+            // for (uint8_t sindex = 0; (scmd = get_Splited_Value(cmd, '\n', sindex)) != ""; sindex++) {
+            //     // 0xC2 is an HTML encoding prefix that, in UTF-8 mode,
+            //     // precede 0x90 and 0xa0-0bf, which are GRBL realtime commands.
+            //     // There are other encodings for 0x91-0x9f, so I am not sure
+            //     // how - or whether - those commands work.
+            //     // Ref: https://www.w3schools.com/tags/ref_urlencode.ASP
+            //     if (!silent && (scmd.length() == 2) && (scmd[0] == 0xC2)) {
+            //         scmd[0] = scmd[1];
+            //         scmd.remove(1, 1);
+            //     }
+            //     if (scmd.length() > 1) {
+            //         scmd += "\n";
+            //     } else if (!is_realtime_command(scmd[0])) {
+            //         scmd += "\n";
+            //     }
+            //     if (!Serial2Socket.push(scmd.c_str())) {
+            //         hasError = true;
+            //     }
+            // }
+
+            if (!silent) {
                 // 0xC2 is an HTML encoding prefix that, in UTF-8 mode,
-                // precede 0x90 and 0xa0-0bf, which are GRBL realtime commands.
+                // precedes 0x90 and 0xa0-0bf, which are GRBL realtime commands.
                 // There are other encodings for 0x91-0x9f, so I am not sure
                 // how - or whether - those commands work.
                 // Ref: https://www.w3schools.com/tags/ref_urlencode.ASP
-                if (!silent && (scmd.length() == 2) && (scmd[0] == 0xC2)) {
-                    scmd[0] = scmd[1];
-                    scmd.remove(1, 1);
-                }
-                if (scmd.length() > 1) {
-                    scmd += "\n";
-                } else if (!is_realtime_command(scmd[0])) {
-                    scmd += "\n";
-                }
-                if (!Serial2Socket.push(scmd.c_str())) {
-                    hasError = true;
-                }
+                String prefix(0xc2);
+                cmd.replace(prefix, "");
             }
+
+            bool hasError = false;
+            if (cmd.length() == 1 && is_realtime_command(cmd[0])) {
+                Serial2Socket.push(&cmd[0]);
+            } else {
+                if (!cmd.endsWith("\n")) {
+                    cmd += '\n';
+                }
+                hasError = !Serial2Socket.push(cmd.c_str());
+            }
+
             _webserver->send(200, "text/plain", hasError?"Error":"");
         }
     }

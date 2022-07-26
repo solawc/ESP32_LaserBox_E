@@ -108,10 +108,13 @@ bool can_park() {
 void protocol_main_loop() {
 
     static bool first_restart = true;
+
     uint16_t re_cmd[] = {0x18}; // 复位命令
 
     client_reset_read_buffer(CLIENT_ALL);
+
     empty_lines();
+
     //uint8_t client = CLIENT_SERIAL; // default client
     // Perform some machine checks to make sure everything is good to go.
 
@@ -146,7 +149,6 @@ void protocol_main_loop() {
     // ---------------------------------------------------------------------------------
     
     int c;
-    bool is_need_next = false;
     bool is_print_finsh = false;
 
     for (;;) {
@@ -162,16 +164,15 @@ void protocol_main_loop() {
             report_status_message(execute_line(fileLine, SD_client, SD_auth_level), SD_client);
 
             } else {
+                char temp[50];
 
+                sd_get_current_filename(temp);
 
-                    char temp[50];
-                    sd_get_current_filename(temp);
-
-                    grbl_notifyf("SD print done", "%s print is successful", temp);
-                    sys_rt_f_override                    = FeedOverride::Default;
-                    sys_rt_r_override                    = RapidOverride::Default;
-                    sys_rt_s_override                    = SpindleSpeedOverride::Default;
-                    closeFile();  // close file and clear SD ready/running flags
+                grbl_notifyf("SD print done", "%s print is successful", temp);
+                sys_rt_f_override                    = FeedOverride::Default;
+                sys_rt_r_override                    = RapidOverride::Default;
+                sys_rt_s_override                    = SpindleSpeedOverride::Default;
+                closeFile();  // close file and clear SD ready/running flags
             }
         }
 #endif
