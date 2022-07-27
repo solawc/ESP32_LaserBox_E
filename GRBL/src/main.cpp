@@ -21,6 +21,9 @@
 #include "main.h"
 #include <WiFi.h>
 
+#include "UI/lv_port/lv_port_init.h"
+#include "UI/tft_driver/tft_lcd.h"
+
 void setup() {
     grbl_init();
 }
@@ -35,6 +38,9 @@ void loop() {
 }
 
 void grbl_init() {
+
+    tft_lcd.tftBglightInit();
+    tft_lcd.tftBglightSetOff();
 
     disableCore0WDT();
     disableCore1WDT();
@@ -125,6 +131,7 @@ void reset_mc_config(void) {
 
 void _mc_task_init(void) {
 
+    ui.lvglTaskInit();
 }
 
 static void reset_variables() {
