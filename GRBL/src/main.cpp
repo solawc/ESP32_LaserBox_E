@@ -131,7 +131,10 @@ void reset_mc_config(void) {
 
 void _mc_task_init(void) {
 
+#ifdef ENABLE_TFT
     ui.lvglTaskInit();
+#endif
+
 }
 
 static void reset_variables() {

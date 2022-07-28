@@ -4,6 +4,9 @@
 #include "../../main.h"
 #include "lvgl.h"
 
+#include "../mks_ui/draw_ui.h"
+
+
 #define LCD_SIZE_HOR_RES                480
 #define LCD_SIZE_VER_RES                320
 

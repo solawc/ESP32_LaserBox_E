@@ -129,8 +129,13 @@ void lvglTask(void *parg)  {
     ui.lv_port_disp_init();
     ui.lv_port_touch_init();
 
-    draw_demo();
-    // lv_demo_stress();
+#if LV_USE_DEMO_STRESS
+    lv_demo_stress();
+#else 
+    // lvDrawLogo();
+#endif
+
+    lvDrawLogo();
 
     tft_lcd.tftBglightSetOn();
 
