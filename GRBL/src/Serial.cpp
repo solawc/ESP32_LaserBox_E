@@ -123,7 +123,7 @@ void client_init() {
                             "clientCheckTask",  // name for task
                             8192,               // size of task stack
                             NULL,               // parameters
-                            1,                  // priority
+                            2,                  // priority
                             &clientCheckTaskHandle,
                             CONFIG_ARDUINO_RUNNING_CORE  // must run the task on same core
                                                // core
@@ -180,7 +180,7 @@ void clientCheckTask(void* pvParameters) {
             // not passed into the main buffer, but these set system state flag bits for realtime execution.
             if (is_realtime_command(data)) {
                 execute_realtime_command(static_cast<Cmd>(data), client);
-                // vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+                vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
             } else {
 #if defined(ENABLE_SD_CARD)
                 if (get_sd_state(false) < SDState::Busy) {

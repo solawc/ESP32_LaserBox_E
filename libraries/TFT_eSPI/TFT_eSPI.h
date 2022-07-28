@@ -639,7 +639,8 @@ class TFT_eSPI : public Print { friend class TFT_eSprite; // Sprite class has ac
            // function will wait for the DMA to complete, so this may defeat any DMA performance benefit.
            //
 
-  bool     initDMA(bool ctrl_cs = false);  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
+  bool        initDMA(bool ctrl_cs, transaction_cb_t trComplat);
+  // bool     initDMA(bool ctrl_cs = false);  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
                                            // Parameter "true" enables DMA engine control of TFT chip select (ESP32 only)
                                            // For ESP32 only, TFT reads will not work if parameter is true
   void     deInitDMA(void);   // De-initialise the DMA engine and detach from SPI bus - typically not used
