@@ -26,6 +26,7 @@
 #    include <FS.h>
 #    include <SPIFFS.h>
     // #include "LittleFS.h"
+     #include "fs_api.h"
 #    include "WifiServices.h"
 #    ifdef ENABLE_MDNS
 #        include <ESPmDNS.h>
@@ -59,7 +60,8 @@ namespace WebUI {
         String h = wifi_hostname->get();
 
         //Start SPIFFS
-        SPIFFS.begin(true);
+        // SPIFFS.begin(true);
+        my_fs.begin();          // star fs
 #    ifdef ENABLE_OTA
         ArduinoOTA
             .onStart([]() {
@@ -69,7 +71,8 @@ namespace WebUI {
                 } else {  // U_SPIFFS
                     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
                     type = "filesystem";
-                    SPIFFS.end();
+                    // SPIFFS.end();
+                    my_fs.end();
                 }
                 grbl_sendf(CLIENT_ALL, "[MSG:Start OTA updating %s]\r\n", type.c_str());
             })
@@ -139,7 +142,8 @@ namespace WebUI {
         ArduinoOTA.end();
 #    endif
         //Stop SPIFFS
-        SPIFFS.end();
+        // SPIFFS.end();
+        my_fs.end(); 
 #    ifdef ENABLE_MDNS
         //Stop mDNS
         MDNS.end();

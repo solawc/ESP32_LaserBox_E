@@ -42,9 +42,9 @@ void grbl_init() {
     tft_lcd.tftBglightInit();
     tft_lcd.tftBglightSetOff();
 
-    disableCore0WDT();
-    disableCore1WDT();
-    disableLoopWDT();
+    // disableCore0WDT();
+    // disableCore1WDT();
+    // disableLoopWDT();
     
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
