@@ -105,6 +105,23 @@ void LVGL_UI::lv_port_touch_init(void) {
     indev_touchpad = lv_indev_drv_register(&indev_drv);
 }
 
+
+static void * my_fs_open(struct _lv_fs_drv_t * drv, const char * path, lv_fs_mode_t mode) {
+
+    
+}
+
+
+void lv_port_fs_init() {
+
+    static lv_fs_drv_t drv;          
+    lv_fs_drv_init(&drv);
+
+    drv.letter = 'M';               // 意味着是my_fs      
+    drv.open_cb = my_fs_open;
+
+}
+
 void LVGL_UI::lvglMutexInit(void) {
     lvglMutex = xSemaphoreCreateMutex();
 }

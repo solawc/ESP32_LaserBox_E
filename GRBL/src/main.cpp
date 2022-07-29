@@ -89,6 +89,7 @@ void grbl_init() {
     }
 #endif
 
+    // init spindle
     Spindles::Spindle::select();
 
 #ifdef ENABLE_WIFI
@@ -99,6 +100,11 @@ void grbl_init() {
     WebUI::bt_config.begin();
 #endif
     WebUI::inputBuffer.begin();
+
+#ifdef ENABLE_TFT
+    ui.lvglTaskInit();
+#endif
+
 }
 
 void phy_init_reinit(void) {
@@ -131,9 +137,7 @@ void reset_mc_config(void) {
 
 void _mc_task_init(void) {
 
-#ifdef ENABLE_TFT
-    ui.lvglTaskInit();
-#endif
+
 
 }
 

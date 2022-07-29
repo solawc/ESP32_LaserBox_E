@@ -61,7 +61,7 @@ namespace WebUI {
 
         //Start SPIFFS
         // SPIFFS.begin(true);
-        my_fs.begin();          // star fs
+        // my_fs.begin();          // star fs
 #    ifdef ENABLE_OTA
         ArduinoOTA
             .onStart([]() {
@@ -72,7 +72,7 @@ namespace WebUI {
                     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
                     type = "filesystem";
                     // SPIFFS.end();
-                    my_fs.end();
+                    // my_fs.end();
                 }
                 grbl_sendf(CLIENT_ALL, "[MSG:Start OTA updating %s]\r\n", type.c_str());
             })
@@ -143,7 +143,7 @@ namespace WebUI {
 #    endif
         //Stop SPIFFS
         // SPIFFS.end();
-        my_fs.end(); 
+        // my_fs.end(); 
 #    ifdef ENABLE_MDNS
         //Stop mDNS
         MDNS.end();
