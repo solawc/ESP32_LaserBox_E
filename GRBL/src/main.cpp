@@ -20,11 +20,17 @@
 
 #include "main.h"
 #include <WiFi.h>
+#include <sdkconfig.h>
 
+#ifdef ENABLE_TFT
 #include "UI/lv_port/lv_port_init.h"
 #include "UI/tft_driver/tft_lcd.h"
+#endif
 
 void setup() {
+
+    esp_log_level_set("gpio", ESP_LOG_NONE);
+
     grbl_init();
 }
 
@@ -39,12 +45,10 @@ void loop() {
 
 void grbl_init() {
 
+#ifdef ENABLE_TFT
     tft_lcd.tftBglightInit();
     tft_lcd.tftBglightSetOff();
-
-    // disableCore0WDT();
-    // disableCore1WDT();
-    // disableLoopWDT();
+#endif
     
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
@@ -104,7 +108,7 @@ void grbl_init() {
 #ifdef ENABLE_TFT
     ui.lvglTaskInit();
 #endif
-
+    grbl_sendf(CLIENT_SERIAL, "[debug]LOG_LOCAL_LEVEL=%d\n", LOG_LOCAL_LEVEL);
 }
 
 void phy_init_reinit(void) {

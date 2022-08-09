@@ -101,7 +101,7 @@ const int MAX_N_AXIS = 6;
 
 #define ENABLE_WIFI     //enable wifi
 
-#define ENABLE_TFT      //enable tft lcd for mks UI
+// #define ENABLE_TFT      //enable tft lcd for mks UI
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH

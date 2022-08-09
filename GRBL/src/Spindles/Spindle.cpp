@@ -36,7 +36,13 @@ namespace Spindles {
     PWM      pwm;
     Laser    laser;
 
+
+    // 获取不同的主轴类型，以初始化不一样的主轴控制
+    // 目前的控制包含：
+    // - 激光
+    // - CNC（有刷直流电机）
     void Spindle::select() {
+        
         switch (static_cast<SpindleType>(spindle_type->get())) {
             case SpindleType::PWM:
                 spindle = &pwm;

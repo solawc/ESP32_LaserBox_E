@@ -149,8 +149,7 @@ void protocol_main_loop() {
     // ---------------------------------------------------------------------------------
     
     int c;
-    bool is_print_finsh = false;
-
+    
     for (;;) {
 
 #ifdef ENABLE_SD_CARD
