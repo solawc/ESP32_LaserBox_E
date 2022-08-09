@@ -526,30 +526,6 @@ Error gc_execute_line(char* line, uint8_t client) {
                         mg_word_bit             = ModalGroup::MM9;
                         break;
 #endif
-                    case 62:
-                        gc_block.modal.io_control = IoControl::DigitalOnSync;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
-                    case 63:
-                        gc_block.modal.io_control = IoControl::DigitalOffSync;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
-                    case 64:
-                        gc_block.modal.io_control = IoControl::DigitalOnImmediate;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
-                    case 65:
-                        gc_block.modal.io_control = IoControl::DigitalOffImmediate;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
-                    case 67:
-                        gc_block.modal.io_control = IoControl::SetAnalogSync;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
-                    case 68:
-                        gc_block.modal.io_control = IoControl::SetAnalogImmediate;
-                        mg_word_bit               = ModalGroup::MM10;
-                        break;
                     case 100:
                         // do some things
                     break;
@@ -824,20 +800,6 @@ Error gc_execute_line(char* line, uint8_t client) {
             FAIL(Error::GcodeValueWordMissing);  // [P word missing]
         }
         bit_false(value_words, bit(GCodeWord::P));
-    }
-    if ((gc_block.modal.io_control == IoControl::DigitalOnSync) || (gc_block.modal.io_control == IoControl::DigitalOffSync) ||
-        (gc_block.modal.io_control == IoControl::DigitalOnImmediate) || (gc_block.modal.io_control == IoControl::DigitalOffImmediate)) {
-        if (bit_isfalse(value_words, bit(GCodeWord::P))) {
-            FAIL(Error::GcodeValueWordMissing);  // [P word missing]
-        }
-        bit_false(value_words, bit(GCodeWord::P));
-    }
-    if ((gc_block.modal.io_control == IoControl::SetAnalogSync) || (gc_block.modal.io_control == IoControl::SetAnalogImmediate)) {
-        if (bit_isfalse(value_words, bit(GCodeWord::E)) || bit_isfalse(value_words, bit(GCodeWord::Q))) {
-            FAIL(Error::GcodeValueWordMissing);
-        }
-        bit_false(value_words, bit(GCodeWord::E));
-        bit_false(value_words, bit(GCodeWord::Q));
     }
     // [11. Set active plane ]: N/A
     switch (gc_block.modal.plane_select) {
@@ -1404,34 +1366,6 @@ Error gc_execute_line(char* line, uint8_t client) {
             break;
     }
     pl_data->coolant = gc_state.modal.coolant;  // Set state for planner use.
-    // turn on/off an i/o pin
-    if ((gc_block.modal.io_control == IoControl::DigitalOnSync) || (gc_block.modal.io_control == IoControl::DigitalOffSync) ||
-        (gc_block.modal.io_control == IoControl::DigitalOnImmediate) || (gc_block.modal.io_control == IoControl::DigitalOffImmediate)) {
-        if (gc_block.values.p < MaxUserDigitalPin) {
-            if ((gc_block.modal.io_control == IoControl::DigitalOnSync) || (gc_block.modal.io_control == IoControl::DigitalOffSync)) {
-                protocol_buffer_synchronize();
-            }
-            bool turnOn = gc_block.modal.io_control == IoControl::DigitalOnSync || gc_block.modal.io_control == IoControl::DigitalOnImmediate;
-            if (!sys_set_digital((int)gc_block.values.p, turnOn)) {
-                FAIL(Error::PParamMaxExceeded);
-            }
-        } else {
-            FAIL(Error::PParamMaxExceeded);
-        }
-    }
-    if ((gc_block.modal.io_control == IoControl::SetAnalogSync) || (gc_block.modal.io_control == IoControl::SetAnalogImmediate)) {
-        if (gc_block.values.e < MaxUserDigitalPin) {
-            gc_block.values.q = constrain(gc_block.values.q, 0.0, 100.0);  // force into valid range
-            if (gc_block.modal.io_control == IoControl::SetAnalogSync) {
-                protocol_buffer_synchronize();
-            }
-            if (!sys_set_analog((int)gc_block.values.e, gc_block.values.q)) {
-                FAIL(Error::PParamMaxExceeded);
-            }
-        } else {
-            FAIL(Error::PParamMaxExceeded);
-        }
-    }
 
     // [9. Override control ]: NOT SUPPORTED. Always enabled. Except for a Grbl-only parking control.
 #ifdef ENABLE_PARKING_OVERRIDE_CONTROL

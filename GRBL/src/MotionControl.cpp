@@ -519,8 +519,8 @@ void mc_reset() {
         coolant_stop();
 
         // turn off all User I/O immediately
-        sys_digital_all_off();
-        sys_analog_all_off();
+        // sys_digital_all_off();
+        // sys_analog_all_off();
 #ifdef ENABLE_SD_CARD
         // do we need to stop a running SD job?
         if (get_sd_state(false) == SDState::BusyPrinting) {

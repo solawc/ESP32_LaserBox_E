@@ -107,7 +107,6 @@ void grbl_init() {
 #ifdef ENABLE_TFT
     ui.lvglTaskInit();
 #endif
-    grbl_sendf(CLIENT_SERIAL, "[debug]LOG_LOCAL_LEVEL=%d\n", LOG_LOCAL_LEVEL);
 }
 
 void phy_init_reinit(void) {
