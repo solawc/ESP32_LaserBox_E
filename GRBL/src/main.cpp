@@ -20,7 +20,6 @@
 
 #include "main.h"
 #include <WiFi.h>
-#include <sdkconfig.h>
 
 #ifdef ENABLE_TFT
 #include "UI/lv_port/lv_port_init.h"
