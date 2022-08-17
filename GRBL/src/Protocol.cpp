@@ -493,7 +493,7 @@ void protocol_exec_rt_system() {
         sys.spindle_speed_ovr             = sys_rt_s_override;
         sys.report_ovr_counter            = 0;  // Set to report change immediately
         // If spinlde is on, tell it the rpm has been overridden
-        if (gc_state.modal.spindle != SpindleState::Disable) {
+        if (gc_state.modal.spindle != SpindleState::Disable && !inMotionState()) {
             spindle->set_rpm(gc_state.spindle_speed);
         }
     }

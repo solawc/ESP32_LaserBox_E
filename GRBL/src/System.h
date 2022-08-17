@@ -174,3 +174,5 @@ void controlCheckTask(void* pvParameters);
 void system_exec_control_pin(ControlPins pins);
 
 int8_t sys_get_next_PWM_chan_num();
+
+bool inMotionState(void);
