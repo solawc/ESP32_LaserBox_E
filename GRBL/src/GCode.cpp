@@ -1131,7 +1131,7 @@ Error gc_execute_line(char* line, uint8_t client) {
                             FAIL(Error::GcodeArcRadiusError);  // [Arc radius error]
                         }
                         // Finish computing h_x2_div_d.
-                        h_x2_div_d = -sqrt(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
+                        h_x2_div_d = -sqrtf(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
                         // Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
                         if (gc_block.modal.motion == Motion::CcwArc) {
                             h_x2_div_d = -h_x2_div_d;

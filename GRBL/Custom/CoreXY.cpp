@@ -272,7 +272,7 @@ bool cartesian_to_motors(float* target, plan_line_data_t* pl_data, float* positi
     dx         = target[X_AXIS] - position[X_AXIS];
     dy         = target[Y_AXIS] - position[Y_AXIS];
     dz         = target[Z_AXIS] - position[Z_AXIS];
-    float dist = sqrt((dx * dx) + (dy * dy) + (dz * dz));
+    float dist = sqrtf((dx * dx) + (dy * dy) + (dz * dz));
 
     auto n_axis = number_axis->get();
 
@@ -319,6 +319,6 @@ bool limitsCheckTravel(float* target) {
 
 // Determine the unit distance between (2) 3D points
 float three_axis_dist(float* point1, float* point2) {
-    return sqrt(((point1[0] - point2[0]) * (point1[0] - point2[0])) + ((point1[1] - point2[1]) * (point1[1] - point2[1])) +
+    return sqrtf(((point1[0] - point2[0]) * (point1[0] - point2[0])) + ((point1[1] - point2[1]) * (point1[1] - point2[1])) +
                 ((point1[2] - point2[2]) * (point1[2] - point2[2])));
 }

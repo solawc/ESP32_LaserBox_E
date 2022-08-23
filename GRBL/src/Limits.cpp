@@ -151,7 +151,7 @@ void limits_go_home(uint8_t cycle_mask) {
                 axislock |= step_pin[idx];
             }
         }
-        homing_rate *= sqrt(n_active_axis);  // [sqrt(number of active axis)] Adjust so individual axes all move at homing rate.
+        homing_rate *= sqrtf(n_active_axis);  // [sqrtf(number of active axis)] Adjust so individual axes all move at homing rate.
         sys.homing_axis_lock = axislock;
         // Perform homing cycle. Planner buffer should be empty, as required to initiate the homing cycle.
         pl_data->feed_rate = homing_rate;   // Set current homing rate.
