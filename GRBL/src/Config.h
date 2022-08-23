@@ -101,7 +101,7 @@ const int MAX_N_AXIS = 6;
 
 #define ENABLE_WIFI     //enable wifi
 
-// #define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
+#define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH
@@ -487,7 +487,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // A simple software debouncing feature for hard limit switches. When enabled, the limit
 // switch interrupt unblock a waiting task which will recheck the limit switch pins after
 // a short delay. Default disabled
-//#define ENABLE_SOFTWARE_DEBOUNCE // Default disabled. Uncomment to enable.
+#define ENABLE_SOFTWARE_DEBOUNCE // Default disabled. Uncomment to enable.
 const int DEBOUNCE_PERIOD = 32;  // in milliseconds default 32 microseconds
 
 // Configures the position after a probing cycle during Grbl's check mode. Disabled sets

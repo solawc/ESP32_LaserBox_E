@@ -30,15 +30,12 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
         uint32_t h = (area->y2 - area->y1 + 1);
 
         tft_lcd.tft.startWrite();
+
         tft_lcd.tft.setAddrWindow(area->x1, area->y1, w, h);
         
-
         tft_lcd.tft.pushColorsDMA(&color_p->full, w * h, true);
 
-        // tft_lcd.tft.pushColors(&color_p->full, w * h, true);
-
         tft_lcd.tft.endWrite();
-        // lv_disp_flush_ready(dispHandler);
     }
 }
 
@@ -69,35 +66,34 @@ static void touchpad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     }
 }
 
-void LVGL_UI::lv_port_disp_callback(void) {
+void LVGL_UI::lvPortDispCallback(void) {
 
     lv_disp_flush_ready(dispHandler);
 }
 
 #define LV_BUFF_SIZE        LCD_SIZE_HOR_RES * 10
 
-void LVGL_UI::lv_port_disp_init(void) {
+void LVGL_UI::lvPortDispInit(void) {
 
     // Use example 1
     static lv_disp_draw_buf_t draw_buf_dsc_1;
-    static lv_color_t buf_1[LV_BUFF_SIZE];                          /*A buffer for 10 rows*/
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, LV_BUFF_SIZE);   /*Initialize the display buffer*/
+    static lv_color_t buf_1[LV_BUFF_SIZE];                                  /* A buffer for 10 rows */
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, LV_BUFF_SIZE);      /* Initialize the display buffer */
 
-    static lv_disp_drv_t disp_drv;                         /*Descriptor of a display driver*/
-    lv_disp_drv_init(&disp_drv);                    /*Basic initialization*/
+    static lv_disp_drv_t disp_drv;                                          /* Descriptor of a display driver */
+    lv_disp_drv_init(&disp_drv);                                            /* Basic initialization */
 
     disp_drv.hor_res = LCD_SIZE_HOR_RES;
     disp_drv.ver_res = LCD_SIZE_VER_RES;
     disp_drv.flush_cb = disp_flush;
     disp_drv.draw_buf = &draw_buf_dsc_1;
-    // disp_drv.full_refresh = 1;               // 如果屏幕区域不是整屏，不能打开这个
-    lv_disp_drv_register(&disp_drv);            // 回调注册
+    // disp_drv.full_refresh = 1;                                           /* 如果屏幕区域不是整屏，不能打开这个 */ 
+    lv_disp_drv_register(&disp_drv);                                        /* 回调注册 */ 
 }
 
 
 
-void LVGL_UI::lv_port_touch_init(void) {
-
+void LVGL_UI::lvPortTouchInit(void) {
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -117,9 +113,8 @@ void lv_port_fs_init() {
     static lv_fs_drv_t drv;          
     lv_fs_drv_init(&drv);
 
-    drv.letter = 'M';               // 意味着是my_fs      
+    drv.letter = 'M';                                                           /* 意味着是my_fs */       
     drv.open_cb = my_fs_open;
-
 }
 
 void LVGL_UI::lvglMutexInit(void) {
@@ -143,8 +138,8 @@ void lvglTask(void *parg)  {
 
     tft_lcd.tft_init();             // 这个地方如果使用的TFT_eSPI， 用TS35/TS24 则已经包含触摸初始化
 
-    ui.lv_port_disp_init();
-    ui.lv_port_touch_init();
+    ui.lvPortDispInit();
+    ui.lvPortTouchInit();
 
 #if LV_USE_DEMO_STRESS
     lv_demo_stress();

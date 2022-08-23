@@ -7,90 +7,69 @@
  * 2、main ---- GRBL_VERSION_BUILD
 */
 
-#define USE_BOARD_V2_0
-
-#define USR_USER_KB  
-
-#define USR_Z_MOTOR
-
-#define USR_LOGO
-
-#define ENABLE_SOFTWARE_DEBOUNCE
-
-#define USE_WIFI
-
-#define MACHINE_NAME                    "MKS DLC32"
-#define BOARD_NAME                      "Board:MKS DLC32 V2.1"
-#define BOARD_VERSION                   "MKS DLC32 V2.1"
-#define FW_NAME                         "Firmware:V2.10(8M.H35.20200721)"
-#define FW_VERSION                      "V2.10(8M.H35.20200721)"
+#define MACHINE_NAME                        "Custom Machine"
+#define BOARD_NAME                          "Board:LG_ESP_V1.0"
+#define BOARD_VERSION                       "LV_ESP_V1.0"
+#define FW_NAME                             "Firmware:V1A0120220822"
+#define FW_VERSION                          "V1A0120220822"
 
 // I2S pins set
-#define I2S_OUT_BCK                     GPIO_NUM_16
-#define I2S_OUT_WS                      GPIO_NUM_17
-#define I2S_OUT_DATA                    GPIO_NUM_21
+#define I2S_OUT_BCK                         GPIO_NUM_16
+#define I2S_OUT_WS                          GPIO_NUM_17
+#define I2S_OUT_DATA                        GPIO_NUM_21
     
 // X I2S pin set    
-#define X_DISABLE_PIN                   I2SO(0)
-#define X_DIRECTION_PIN                 I2SO(2)
-#define X_STEP_PIN                      I2SO(1)
+#define X_DISABLE_PIN                       I2SO(0)
+#define X_DIRECTION_PIN                     I2SO(2)
+#define X_STEP_PIN                          I2SO(1)
 
 // Y I2S pin set
-#define Y_DISABLE_PIN                   I2SO(0)
-#define Y_DIRECTION_PIN                 I2SO(6)
-#define Y_STEP_PIN                      I2SO(5)
+#define Y_DISABLE_PIN                       I2SO(0)
+#define Y_DIRECTION_PIN                     I2SO(6)
+#define Y_STEP_PIN                          I2SO(5)
     
 // Z I2S pin set
-#if defined(USR_Z_MOTOR)
-#define Z_DISABLE_PIN                   I2SO(0)
-#define Z_DIRECTION_PIN                 I2SO(4)
-#define Z_STEP_PIN                      I2SO(3)
-#endif
+#define Z_DISABLE_PIN                       I2SO(0)
+#define Z_DIRECTION_PIN                     I2SO(4)
+#define Z_STEP_PIN                          I2SO(3)
 
 // Laser pin set
-#define SPINDLE_TYPE                SpindleType::LASER // only one spindle at a time
-#ifdef USE_BOARD_V2_0
-#define LASER_OUTPUT_PIN            GPIO_NUM_32
-#else 
-#define LASER_OUTPUT_PIN            GPIO_NUM_22
-#endif
+// #define SPINDLE_TYPE                        SpindleType::LASER // only one spindle at a time
+// #define LASER_OUTPUT_PIN                    GPIO_NUM_32
 
-#define X_LIMIT_PIN                 GPIO_NUM_36
-#define Y_LIMIT_PIN                 GPIO_NUM_35
+#define SPINDLE_TYPE                        SpindleType::PWM // only one spindle at a time
+#define SPINDLE_OUTPUT_PIN                  GPIO_NUM_32
 
-#if defined(USR_Z_MOTOR)
-#define Z_LIMIT_PIN                 GPIO_NUM_34
-#endif
+#define X_LIMIT_PIN                         GPIO_NUM_36
+#define Y_LIMIT_PIN                         GPIO_NUM_35
+#define Z_LIMIT_PIN                         GPIO_NUM_34
 
-#ifdef USE_BOARD_V2_0
-#define LED_PIN                     GPIO_NUM_2//  GPIO_NUM_32 
-#define PROBE_PIN                   GPIO_NUM_22// GPIO_NUM_32  
-#else
-#define PROBE_PIN                   GPIO_NUM_2   
-#endif
+#define LED_PIN                             GPIO_NUM_2//  GPIO_NUM_32 
+#define PROBE_PIN                           GPIO_NUM_22// GPIO_NUM_32  
 
-#define LCD_SCK				        GPIO_NUM_18
-#define LCD_MISO				    GPIO_NUM_19
-#define LCD_MOSI				    GPIO_NUM_23
-#define LCD_RS					    GPIO_NUM_33
-#define LCD_EN					    GPIO_NUM_5     
-#define LCD_RST					    GPIO_NUM_27     
-#define LCD_CS					    GPIO_NUM_25
-#define TOUCH_CS				    GPIO_NUM_26
-#define BEEPER					    I2SO(7)
 
-#define IIC_SCL                     GPIO_NUM_4
-#define IIC_SDA                     GPIO_NUM_0
+#define LCD_SCK				                GPIO_NUM_18
+#define LCD_MISO				            GPIO_NUM_19
+#define LCD_MOSI				            GPIO_NUM_23
+#define LCD_RS					            GPIO_NUM_33
+#define LCD_EN					            GPIO_NUM_5     
+#define LCD_RST					            GPIO_NUM_27     
+#define LCD_CS					            GPIO_NUM_25
+#define TOUCH_CS				            GPIO_NUM_26
+#define BEEPER					            I2SO(7)
 
-#define COOLANT_MIST_PIN            GPIO_NUM_4 // IIC_SCL
+#define IIC_SCL                             GPIO_NUM_4
+#define IIC_SDA                             GPIO_NUM_0
+
+#define COOLANT_MIST_PIN                    GPIO_NUM_4 // IIC_SCL
 
 //sd card spi
-#define GRBL_SPI_SCK 			    GPIO_NUM_14
-#define GRBL_SPI_MISO 			    GPIO_NUM_12
-#define GRBL_SPI_MOSI 			    GPIO_NUM_13
-#define GRBL_SPI_SS 			    GPIO_NUM_15
-#define SDCARD_DET_PIN 			    GPIO_NUM_39
-#define GRBL_SPI_FREQ 			    40000000            // 40Mb/s = 40 / 8 = 5MB/s
+#define GRBL_SPI_SCK 			            GPIO_NUM_14
+#define GRBL_SPI_MISO 			            GPIO_NUM_12
+#define GRBL_SPI_MOSI 			            GPIO_NUM_13
+#define GRBL_SPI_SS 			            GPIO_NUM_15
+#define SDCARD_DET_PIN 			            GPIO_NUM_39
+#define GRBL_SPI_FREQ 			            40000000            // 40Mb/s = 40 / 8 = 5MB/s
 
 // === Default settings
 // #define DEFAULT_STEP_PULSE_MICROSECONDS I2S_OUT_USEC_PER_PULSE

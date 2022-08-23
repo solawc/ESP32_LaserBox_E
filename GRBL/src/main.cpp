@@ -92,6 +92,12 @@ void grbl_init() {
     }
 #endif
 
+
+// Init LCD LVGL
+#ifdef ENABLE_TFT
+    ui.lvglTaskInit();
+#endif
+
     // init spindle
     Spindles::Spindle::select();
 
@@ -103,10 +109,6 @@ void grbl_init() {
     WebUI::bt_config.begin();
 #endif
     WebUI::inputBuffer.begin();
-
-#ifdef ENABLE_TFT
-    ui.lvglTaskInit();
-#endif
 }
 
 void phy_init_reinit(void) {

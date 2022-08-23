@@ -3,7 +3,7 @@
 
 void IRAM_ATTR disp_flush_callback(spi_transaction_t *spi_tx) {
     
-    ui.lv_port_disp_callback();
+    ui.lvPortDispCallback();
 }
 
 void HAL_TFT_LCD::tft_init(void) {

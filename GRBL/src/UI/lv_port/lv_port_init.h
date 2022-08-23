@@ -18,14 +18,14 @@
 class LVGL_UI {
 
 private:
-    TaskHandle_t        lv_disp_tcb         = NULL;         // LVGL任务句柄
-    lv_indev_t*         indev_touchpad;                     // 注册Touch句柄
-    SemaphoreHandle_t   lvglMutex           = NULL;         // LVGL互斥锁
+    TaskHandle_t        lv_disp_tcb         = NULL;         /* LVGL任务句柄 */
+    lv_indev_t*         indev_touchpad;                     /* 注册Touch句柄 */
+    SemaphoreHandle_t   lvglMutex           = NULL;         /* LVGL互斥锁 */
 public:
-    void lv_port_disp_init(void);
-    void lv_port_touch_init(void);
+    void lvPortDispInit(void);
+    void lvPortTouchInit(void);
     void lvglTaskInit(void);
-    void lv_port_disp_callback(void);
+    void lvPortDispCallback(void);
 
     void lvglMutexInit(void);
     void lvglMutexLock(void);
