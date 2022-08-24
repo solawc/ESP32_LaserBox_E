@@ -223,8 +223,6 @@ namespace Spindles {
             duty = (1 << _pwm_precision) - duty;
         }
 
-        //ledcWrite(_pwm_chan_num, duty);
-
         // This was ledcWrite, but this is called from an ISR
         // and ledcWrite uses RTOS features not compatible with ISRs
         LEDC.channel_group[0].channel[0].duty.duty        = duty << 4;

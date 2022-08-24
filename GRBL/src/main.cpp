@@ -61,6 +61,8 @@ void grbl_init() {
 
     client_init();  // Setup serial baud rate and interrupts
 
+    // while(1);       // test
+
 // show the map name at startup
 #ifdef MACHINE_NAME
     report_machine_type(CLIENT_SERIAL);
