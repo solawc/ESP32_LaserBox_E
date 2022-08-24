@@ -57,7 +57,13 @@ namespace Spindles {
     // ========================= Spindle ==================================
 
     bool Spindle::inLaserMode() {
-        return false;  // default for basic spindle is false
+        bool state = false;
+        if(laser_mode->get()) {
+            return true;
+        }else {
+            return false;
+        }
+        // return false;  // default for basic spindle is false
     }
 
     void Spindle::sync(SpindleState state, uint32_t rpm) {

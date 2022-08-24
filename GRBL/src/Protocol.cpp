@@ -107,16 +107,9 @@ bool can_park() {
 */
 void protocol_main_loop() {
 
-    static bool first_restart = true;
-
-    uint16_t re_cmd[] = {0x18}; // 复位命令
-
     client_reset_read_buffer(CLIENT_ALL);
 
     empty_lines();
-
-    //uint8_t client = CLIENT_SERIAL; // default client
-    // Perform some machine checks to make sure everything is good to go.
 
 #ifdef CHECK_LIMITS_AT_INIT
     if (hard_limits->get()) {

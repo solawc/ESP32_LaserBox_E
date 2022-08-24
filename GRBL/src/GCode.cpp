@@ -195,9 +195,6 @@ Error gc_execute_line(char* line, uint8_t client) {
         // a good enough compromise and catch most all non-integer errors. To make it compliant,
         // we would simply need to change the mantissa to int16, but this add compiled flash space.
         // Maybe update this later.
-
-        // int_value = trunc(value);
-        // mantissa  = round(100 * (value - int_value));  // Compute mantissa for Gxx.x commands.
         int_value = int8_t(truncf(value));
         mantissa  = lroundf(100 * (value - int_value)); 
         
@@ -486,7 +483,7 @@ Error gc_execute_line(char* line, uint8_t client) {
                                 if (spindle->is_reversable || spindle->inLaserMode()) {
                                     gc_block.modal.spindle = SpindleState::Ccw;
                                 } else {
-                                    grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "M4 requires laser mode or a reversable spindle");
+                                    grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Please Use Laser Mode");
                                     FAIL(Error::GcodeUnsupportedCommand);
                                 }
                                 break;
@@ -1131,7 +1128,7 @@ Error gc_execute_line(char* line, uint8_t client) {
                             FAIL(Error::GcodeArcRadiusError);  // [Arc radius error]
                         }
                         // Finish computing h_x2_div_d.
-                        h_x2_div_d = -sqrtf(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
+                        h_x2_div_d = -sqrt(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
                         // Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
                         if (gc_block.modal.motion == Motion::CcwArc) {
                             h_x2_div_d = -h_x2_div_d;
