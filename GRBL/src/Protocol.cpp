@@ -80,6 +80,9 @@ Error execute_line(char* line, uint8_t client, WebUI::AuthenticationLevel auth_l
     if (line[0] == 0) {
         return Error::Ok;
     }
+
+    if(line[0] == 'S') return Error::Ok;
+
     // Grbl '$' or WebUI '[ESPxxx]' system command
     if (line[0] == '$' || line[0] == '[') {
         return system_execute_line(line, client, auth_level);
