@@ -28,8 +28,10 @@
 
 void setup() {
 
+    // 删除所有消息反馈
     esp_log_level_set("gpio", ESP_LOG_NONE);
 
+    // 进入GRBL的初始化
     grbl_init();
 }
 
@@ -60,8 +62,6 @@ void grbl_init() {
     WiFi.mode(WIFI_OFF);
 
     client_init();  // Setup serial baud rate and interrupts
-
-    // while(1);       // test
 
 // show the map name at startup
 #ifdef MACHINE_NAME

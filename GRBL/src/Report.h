@@ -45,7 +45,6 @@ enum class Message : uint8_t {
 };
 
 #define CLIENT_SERIAL 0
-// #define CLIENT_BT 1
 #define CLIENT_WEBUI 1
 #define CLIENT_TELNET 2
 #define CLIENT_INPUT 3

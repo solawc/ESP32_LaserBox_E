@@ -34,11 +34,11 @@
 #define Z_STEP_PIN                          I2SO(3)
 
 // Laser pin set
-// #define SPINDLE_TYPE                        SpindleType::LASER // only one spindle at a time
-// #define LASER_OUTPUT_PIN                    GPIO_NUM_32
+#define SPINDLE_TYPE                        SpindleType::LASER // only one spindle at a time
+#define LASER_OUTPUT_PIN                    GPIO_NUM_32
 
-#define SPINDLE_TYPE                        SpindleType::PWM // only one spindle at a time
-#define SPINDLE_OUTPUT_PIN                  GPIO_NUM_32
+// #define SPINDLE_TYPE                        SpindleType::PWM // only one spindle at a time
+// #define SPINDLE_OUTPUT_PIN                  GPIO_NUM_32
 
 #define X_LIMIT_PIN                         GPIO_NUM_36
 #define Y_LIMIT_PIN                         GPIO_NUM_35
@@ -104,23 +104,23 @@
 #ifdef USE_SPINDLE_RELAY
     #define DEFAULT_SPINDLE_RPM_MAX         1.0 // must be 1 so PWM duty is alway 100% to prevent relay damage
 #else
-    #define DEFAULT_SPINDLE_RPM_MAX         10000.0     // can be change to your spindle max
+    #define DEFAULT_SPINDLE_RPM_MAX         1000.0     // can be change to your spindle max
 #endif
 #define DEFAULT_SPINDLE_RPM_MIN             0.0         // rpm
 
-#define DEFAULT_LASER_MODE                  0           // false
+#define DEFAULT_LASER_MODE                  1           // false
 
-#define DEFAULT_X_STEPS_PER_MM              200.0
-#define DEFAULT_Y_STEPS_PER_MM              200.0
-#define DEFAULT_Z_STEPS_PER_MM              200.0
+#define DEFAULT_X_STEPS_PER_MM              80.0
+#define DEFAULT_Y_STEPS_PER_MM              80.0
+#define DEFAULT_Z_STEPS_PER_MM              80.0
 
-#define DEFAULT_X_MAX_RATE                  1200.0      // mm/s
-#define DEFAULT_Y_MAX_RATE                  1200.0      // mm/s
-#define DEFAULT_Z_MAX_RATE                  1200.0      // mm/s
+#define DEFAULT_X_MAX_RATE                  6000.0      // mm/s
+#define DEFAULT_Y_MAX_RATE                  6000.0      // mm/s
+#define DEFAULT_Z_MAX_RATE                  6000.0      // mm/s
 
-#define DEFAULT_X_ACCELERATION              1200.0      // mm/sec^2
-#define DEFAULT_Y_ACCELERATION              1200.0      // mm/sec^2
-#define DEFAULT_Z_ACCELERATION              1200.0      // mm/sec^2
+#define DEFAULT_X_ACCELERATION              1000.0      // mm/sec^2
+#define DEFAULT_Y_ACCELERATION              1000.0      // mm/sec^2
+#define DEFAULT_Z_ACCELERATION              1000.0      // mm/sec^2
 
 #define DEFAULT_X_MAX_TRAVEL                521.0       // mm NOTE: Must be a positive value.
 #define DEFAULT_Y_MAX_TRAVEL                341.0       // mm NOTE: Must be a positive value.

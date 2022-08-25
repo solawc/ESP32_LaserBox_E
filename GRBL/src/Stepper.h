@@ -25,7 +25,7 @@
 */
 
 #ifndef SEGMENT_BUFFER_SIZE
-#    define SEGMENT_BUFFER_SIZE 6
+#    define SEGMENT_BUFFER_SIZE 32
 #endif
 
 #include "main.h"
