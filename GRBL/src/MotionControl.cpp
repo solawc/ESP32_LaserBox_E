@@ -159,7 +159,7 @@ void mc_arc(float*            target,
     // (2x) arc_tolerance. For 99% of users, this is just fine. If a different arc segment fit
     // is desired, i.e. least-squares, midpoint on arc, just change the mm_per_arc_segment calculation.
     // For the intended uses of Grbl, this value shouldn't exceed 2000 for the strictest of cases.
-    uint16_t segments = floor(fabs(0.5 * angular_travel * radius) / sqrt(arc_tolerance->get() * (2 * radius - arc_tolerance->get())));
+    uint16_t segments = floor(fabsf(0.5 * angular_travel * radius) / sqrtf(arc_tolerance->get() * (2 * radius - arc_tolerance->get())));
     if (segments) {
         // Multiply inverse feed_rate to compensate for the fact that this movement is approximated
         // by a number of discrete segments. The inverse feed_rate should be correct for the sum of
@@ -519,8 +519,8 @@ void mc_reset() {
         coolant_stop();
 
         // turn off all User I/O immediately
-        sys_digital_all_off();
-        sys_analog_all_off();
+        // sys_digital_all_off();
+        // sys_analog_all_off();
 #ifdef ENABLE_SD_CARD
         // do we need to stop a running SD job?
         if (get_sd_state(false) == SDState::BusyPrinting) {
@@ -533,8 +533,9 @@ void mc_reset() {
         // NOTE: If steppers are kept enabled via the step idle delay setting, this also keeps
         // the steppers enabled by avoiding the go_idle call altogether, unless the motion state is
         // violated, by which, all bets are off.
-        if ((sys.state == State::Cycle || sys.state == State::Homing || sys.state == State::Jog) ||
-            (sys.step_control.executeHold || sys.step_control.executeSysMotion)) {
+        // if ((sys.state == State::Cycle || sys.state == State::Homing || sys.state == State::Jog) ||
+        //     (sys.step_control.executeHold || sys.step_control.executeSysMotion)) {
+        if (inMotionState() || sys.step_control.executeHold || sys.step_control.executeSysMotion) {
             if (sys.state == State::Homing) {
                 if (sys_rt_exec_alarm == ExecAlarm::None) {
                     sys_rt_exec_alarm = ExecAlarm::HomingFailReset;

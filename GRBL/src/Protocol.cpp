@@ -80,6 +80,9 @@ Error execute_line(char* line, uint8_t client, WebUI::AuthenticationLevel auth_l
     if (line[0] == 0) {
         return Error::Ok;
     }
+
+    if(line[0] == 'S') return Error::Ok;
+
     // Grbl '$' or WebUI '[ESPxxx]' system command
     if (line[0] == '$' || line[0] == '[') {
         return system_execute_line(line, client, auth_level);
@@ -107,16 +110,9 @@ bool can_park() {
 */
 void protocol_main_loop() {
 
-    static bool first_restart = true;
-
-    uint16_t re_cmd[] = {0x18}; // 复位命令
-
     client_reset_read_buffer(CLIENT_ALL);
 
     empty_lines();
-
-    //uint8_t client = CLIENT_SERIAL; // default client
-    // Perform some machine checks to make sure everything is good to go.
 
 #ifdef CHECK_LIMITS_AT_INIT
     if (hard_limits->get()) {
@@ -149,8 +145,7 @@ void protocol_main_loop() {
     // ---------------------------------------------------------------------------------
     
     int c;
-    bool is_print_finsh = false;
-
+    
     for (;;) {
 
 #ifdef ENABLE_SD_CARD
@@ -494,7 +489,7 @@ void protocol_exec_rt_system() {
         sys.spindle_speed_ovr             = sys_rt_s_override;
         sys.report_ovr_counter            = 0;  // Set to report change immediately
         // If spinlde is on, tell it the rpm has been overridden
-        if (gc_state.modal.spindle != SpindleState::Disable) {
+        if (gc_state.modal.spindle != SpindleState::Disable && !inMotionState()) {
             spindle->set_rpm(gc_state.spindle_speed);
         }
     }

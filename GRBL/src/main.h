@@ -64,8 +64,6 @@ const char* const GRBL_VERSION_BUILD = "2020072101";
 #include "SettingsDefinitions.h"
 #include "WebUI/WebSettings.h"
 
-#include "UserOutput.h"
-
 #include <Wire.h>
 
 // Do not guard this because it is needed for local files too

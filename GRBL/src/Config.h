@@ -58,7 +58,7 @@ Some features should not be changed. See notes below.
 // #define ENABLE_CONTROL_SW_DEBOUNCE     // Default disabled. Uncomment to enable.
 #define CONTROL_SW_DEBOUNCE_PERIOD 32  // in milliseconds default 32 microseconds
 
-#define USE_RMT_STEPS
+// #define USE_RMT_STEPS
 
 // Include the file that loads the machine-specific config file.
 // machine.h must be edited to choose the desired file.
@@ -91,17 +91,19 @@ const int MAX_N_AXIS = 6;
 // serial monitor, sender, etc uses a different value than 115200
 #define BAUD_RATE 115200
 
+
+
 //Connect to your local AP with these credentials
 //#define CONNECT_TO_SSID  "your SSID"
 //#define SSID_PASSWORD  "your SSID password"
 //CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE)
-// #define ENABLE_BLUETOOTH  // enable bluetooth
+//#define ENABLE_BLUETOOTH  // enable bluetooth
 
 #define ENABLE_SD_CARD  // enable use of SD Card to run jobs
 
 #define ENABLE_WIFI     //enable wifi
 
-#define ENABLE_TFT      //enable tft lcd for mks UI
+// #define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH
@@ -110,10 +112,10 @@ const int MAX_N_AXIS = 6;
 #define ENABLE_HTTP                //enable HTTP and all related services
 // #define ENABLE_OTA                 //enable OTA
 #define ENABLE_TELNET              //enable telnet
-// #define ENABLE_TELNET_WELCOME_MSG  //display welcome string when connect to telnet
+#define ENABLE_TELNET_WELCOME_MSG  //display welcome string when connect to telnet
 #define ENABLE_MDNS                //enable mDNS discovery
-// #define ENABLE_SSDP                //enable UPNP discovery
-// #define ENABLE_NOTIFICATIONS       //enable notifications
+#define ENABLE_SSDP                //enable UPNP discovery
+#define ENABLE_NOTIFICATIONS       //enable notifications
 
 #define ENABLE_SERIAL2SOCKET_IN
 #define ENABLE_SERIAL2SOCKET_OUT
@@ -454,7 +456,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // available RAM, like when re-compiling for a Mega2560. Or decrease if the Arduino begins to
 // crash due to the lack of available RAM or if the CPU is having trouble keeping up with planning
 // new incoming motions as they are executed.
-// #define BLOCK_BUFFER_SIZE 16 // Uncomment to override default in planner.h.
+#define BLOCK_BUFFER_SIZE 128 // Uncomment to override default in planner.h.
 
 // Governs the size of the intermediary step segment buffer between the step execution algorithm
 // and the planner blocks. Each segment is set of steps executed at a constant velocity over a
@@ -469,7 +471,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // NOTE: 80 characters is not a problem except for extreme cases, but the line buffer size
 // can be too small and GCode blocks can get truncated. Officially, the GCode standards
 // support up to 256 characters.
-// #define LINE_BUFFER_SIZE 80  // Uncomment to override default in protocol.h
+#define LINE_BUFFER_SIZE 256  // Uncomment to override default in protocol.h
 
 // Serial send and receive buffer size. The receive buffer is often used as another streaming
 // buffer to store incoming blocks to be processed by Grbl when its ready. Most streaming
@@ -487,7 +489,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // A simple software debouncing feature for hard limit switches. When enabled, the limit
 // switch interrupt unblock a waiting task which will recheck the limit switch pins after
 // a short delay. Default disabled
-//#define ENABLE_SOFTWARE_DEBOUNCE // Default disabled. Uncomment to enable.
+#define ENABLE_SOFTWARE_DEBOUNCE // Default disabled. Uncomment to enable.
 const int DEBOUNCE_PERIOD = 32;  // in milliseconds default 32 microseconds
 
 // Configures the position after a probing cycle during Grbl's check mode. Disabled sets

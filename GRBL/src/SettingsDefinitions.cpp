@@ -19,18 +19,11 @@ AxisMaskSetting* dir_invert_mask;
 AxisMaskSetting* homing_dir_mask;
 AxisMaskSetting* homing_squared_axes;
 AxisMaskSetting* stallguard_debug_mask;
-
-IntSetting* language_select;
-
-FlagSetting* flame_status; 
-FlagSetting* gyro_status; 
-FlagSetting* beep_status; // mks-fix
 // FlagSetting* roller_status; 
 FlagSetting* step_enable_invert;
 FlagSetting* limit_invert;
 
 FlagSetting* probe_invert;
-// FlagSetting* probe_en;
 
 FlagSetting* report_inches;
 FlagSetting* soft_limits;
@@ -75,13 +68,7 @@ enum_opt_t spindleTypes = {
     // clang-format off
     { "NONE", int8_t(SpindleType::NONE) },
     { "PWM", int8_t(SpindleType::PWM) },
-    { "RELAY", int8_t(SpindleType::RELAY) },
     { "LASER", int8_t(SpindleType::LASER) },
-    { "DAC", int8_t(SpindleType::DAC) },
-    { "HUANYANG", int8_t(SpindleType::HUANYANG) },
-    { "BESC", int8_t(SpindleType::BESC) },
-    { "10V", int8_t(SpindleType::_10V) },
-    { "H2A", int8_t(SpindleType::H2A) },
     // clang-format on
 };
 
@@ -343,17 +330,6 @@ void make_settings() {
         setting->setAxis(axis);
         axis_settings[axis]->steps_per_mm = setting;
     }
-
-
-    // mks fiX
-    // roller_status                = new FlagSetting(GRBL, WG, "41", "rollerMode", DEFAULE_PORBE_ENABLE);
-    language_select              = new IntSetting(GRBL, WG, "40", "Language", DEFAULT_LANGUAGE_STATUS, 0, 5);
-    
-    // probe_en                     = new FlagSetting(GRBL, WG, "37", "Probe/Enable", DEFAULE_PORBE_ENABLE);
-    beep_status                  = new FlagSetting(GRBL, WG, "38", "beep_status", DEFAULT_BEEP_STATUS);
-    
-    // gyro_status                  = new FlagSetting(GRBL, WG, "39", "gyro_status", DEFAULT_GYRO_STATUS);         
-    // flame_status                 = new FlagSetting(GRBL, WG, "37", "flame_status", DEFAULE_FLAME_ENABLE);      
     
     // Spindle Settings
     spindle_type =

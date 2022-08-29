@@ -25,7 +25,7 @@
 */
 
 #ifndef SEGMENT_BUFFER_SIZE
-#    define SEGMENT_BUFFER_SIZE 6
+#    define SEGMENT_BUFFER_SIZE 32
 #endif
 
 #include "main.h"
@@ -47,8 +47,7 @@ struct PrepFlag {
 };
 
 // fStepperTimer should be an integer divisor of the bus speed, i.e. of fTimers
-// const uint32_t fStepperTimer = 20000000; // frequency of step pulse timer
-const uint32_t fStepperTimer = 40000000;
+const uint32_t fStepperTimer = 20000000; // frequency of step pulse timer
 const int ticksPerMicrosecond = fStepperTimer / 1000000;
 
 // Define Adaptive Multi-Axis Step-Smoothing(AMASS) levels and cutoff frequencies. The highest level

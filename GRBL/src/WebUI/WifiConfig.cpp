@@ -28,6 +28,7 @@
 #    include <FS.h>
 #    include <SPIFFS.h>
     // #include "LittleFS.h"
+    #include "fs_api.h"
 #    include <cstring>
 #    include "WifiServices.h"
 

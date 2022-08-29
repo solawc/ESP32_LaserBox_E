@@ -138,7 +138,7 @@ bool delay_msec(int32_t milliseconds, DwellMode mode) {
 
 // Simple hypotenuse computation function.
 float hypot_f(float x, float y) {
-    return sqrt(x * x + y * y);
+    return sqrtf(x * x + y * y);
 }
 
 float convert_delta_vector_to_unit_vector(float* vector) {
@@ -150,7 +150,7 @@ float convert_delta_vector_to_unit_vector(float* vector) {
             magnitude += vector[idx] * vector[idx];
         }
     }
-    magnitude           = sqrt(magnitude);
+    magnitude           = sqrtf(magnitude);
     float inv_magnitude = 1.0 / magnitude;
     for (idx = 0; idx < n_axis; idx++) {
         vector[idx] *= inv_magnitude;

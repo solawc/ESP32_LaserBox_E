@@ -70,7 +70,8 @@ size_t Uart::readBytes(char* buffer, size_t length) {
     return readBytes(buffer, length, (TickType_t)0);
 }
 size_t Uart::write(uint8_t c) {
-    return uart_write_bytes(_uart_num, (char*)&c, 1);
+    // return uart_write_bytes(_uart_num, (char*)&c, 1);
+    return write(&c, 1);
 }
 
 size_t Uart::write(const uint8_t* buffer, size_t length) {

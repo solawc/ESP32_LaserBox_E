@@ -31,14 +31,7 @@
 enum class SpindleType : int8_t {
     NONE = 0,
     PWM,
-    RELAY,
     LASER,
-    DAC,
-    HUANYANG,
-    BESC,
-    _10V,
-    H2A,
-    YL620,
 };
 
 #include "../main.h"
@@ -79,7 +72,6 @@ namespace Spindles {
 
         static void select();
     };
-
 }
 
 extern Spindles::Spindle* spindle;

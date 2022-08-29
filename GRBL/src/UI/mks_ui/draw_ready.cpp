@@ -37,67 +37,8 @@ void draw_ready(void) {
 	lv_obj_set_pos(lv_ui.src1, 10, 200);
 	lv_style_set_text_color(&lv_ui.src1_style, lv_color_white());
 	lv_obj_add_style(lv_ui.src1, &lv_ui.src1_style, 0);
-	lv_obj_clear_flag(lv_ui.src1, LV_OBJ_FLAG_SCROLLABLE);		// cancle scroll style;
+	lv_obj_clear_flag(lv_ui.src1, LV_OBJ_FLAG_SCROLLABLE);				// cancle scroll style;
 
-	// set imgbtn style
-	lv_style_init(&ready_page.imgbtn_style);
-	lv_style_set_text_color(&ready_page.imgbtn_style, lv_color_white());
-	lv_style_set_transform_width(&ready_page.imgbtn_style, 0);
-
-	ready_page.imgbtn_adj = lv_imgbtn_create(lv_ui.src1);
-	lv_obj_clear_flag(ready_page.imgbtn_adj, LV_OBJ_FLAG_SCROLLABLE);
-	lv_imgbtn_set_src(ready_page.imgbtn_adj, LV_IMGBTN_STATE_RELEASED, &Adjustment, NULL, NULL);
-	lv_imgbtn_set_src(ready_page.imgbtn_adj, LV_IMGBTN_STATE_PRESSED, &png_adj_pre, NULL, NULL);
-	lv_obj_add_event_cb(ready_page.imgbtn_adj, event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(ready_page.imgbtn_adj, 50, 10);
-	lv_obj_set_size(ready_page.imgbtn_adj, 60, 60);
-
-	ready_page.imgbtn_ctrl = lv_imgbtn_create(lv_ui.src1);
-	lv_imgbtn_set_src(ready_page.imgbtn_ctrl, LV_IMGBTN_STATE_RELEASED, &Control, NULL, NULL);
-	lv_imgbtn_set_src(ready_page.imgbtn_ctrl, LV_IMGBTN_STATE_PRESSED, &png_ctrl_pre, NULL, NULL);
-	lv_obj_add_event_cb(ready_page.imgbtn_ctrl, event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(ready_page.imgbtn_ctrl, 150, 10);
-	lv_obj_set_size(ready_page.imgbtn_ctrl, 60, 60);
-
-	ready_page.imgbtn_sculpture = lv_imgbtn_create(lv_ui.src1);
-	lv_imgbtn_set_src(ready_page.imgbtn_sculpture, LV_IMGBTN_STATE_RELEASED, &Sculpture, NULL, NULL);
-	lv_imgbtn_set_src(ready_page.imgbtn_sculpture, LV_IMGBTN_STATE_PRESSED, &png_file_pre, NULL, NULL);
-	lv_obj_add_event_cb(ready_page.imgbtn_sculpture, event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(ready_page.imgbtn_sculpture, 250, 10);
-	lv_obj_set_size(ready_page.imgbtn_sculpture, 60, 60);
-
-	ready_page.imgbtn_tool = lv_imgbtn_create(lv_ui.src1);
-	lv_imgbtn_set_src(ready_page.imgbtn_tool, LV_IMGBTN_STATE_RELEASED, &Tool, NULL, NULL);
-	lv_imgbtn_set_src(ready_page.imgbtn_tool, LV_IMGBTN_STATE_PRESSED, &png_tool_pre, NULL, NULL);
-	lv_obj_set_pos(ready_page.imgbtn_tool, 350, 10);
-	lv_obj_set_size(ready_page.imgbtn_tool, 60, 60);
-
-	lv_obj_add_style(ready_page.imgbtn_adj, &ready_page.imgbtn_style, LV_STATE_DEFAULT);
-	lv_obj_add_style(ready_page.imgbtn_adj, &ready_page.imgbtn_style, LV_STATE_PRESSED);
-
-	lv_obj_add_style(ready_page.imgbtn_ctrl, &ready_page.imgbtn_style, LV_STATE_DEFAULT);
-	lv_obj_add_style(ready_page.imgbtn_ctrl, &ready_page.imgbtn_style, LV_STATE_PRESSED);
-
-	lv_obj_add_style(ready_page.imgbtn_sculpture, &ready_page.imgbtn_style, LV_STATE_DEFAULT);
-	lv_obj_add_style(ready_page.imgbtn_sculpture, &ready_page.imgbtn_style, LV_STATE_PRESSED);
-
-	lv_obj_add_style(ready_page.imgbtn_tool, &ready_page.imgbtn_style, LV_STATE_DEFAULT);
-	lv_obj_add_style(ready_page.imgbtn_tool, &ready_page.imgbtn_style, LV_STATE_PRESSED);
-
-	ready_page.label_adj = lv_label_create(lv_ui.src1);
-	ready_page.label_ctrl = lv_label_create(lv_ui.src1);
-	ready_page.label_sculpture = lv_label_create(lv_ui.src1);
-	ready_page.label_tool = lv_label_create(lv_ui.src1);
-
-	lv_label_set_text(ready_page.label_adj, "Adjustment");
-	lv_label_set_text(ready_page.label_ctrl, "Control");
-	lv_label_set_text(ready_page.label_sculpture, "Sculpture");
-	lv_label_set_text(ready_page.label_tool, "Tool");
-
-	lv_obj_align_to(ready_page.label_adj, ready_page.imgbtn_adj, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
-	lv_obj_align_to(ready_page.label_ctrl, ready_page.imgbtn_ctrl, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
-	lv_obj_align_to(ready_page.label_sculpture, ready_page.imgbtn_sculpture, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
-	lv_obj_align_to(ready_page.label_tool, ready_page.imgbtn_tool, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
 
 	// disp x y z pos value
 	dispPosInfo();
@@ -105,6 +46,9 @@ void draw_ready(void) {
 	// disp power value
 	disp_power();
 }
+
+
+
 
 static void dispPosInfo(void) {
 
@@ -206,6 +150,6 @@ static void readyPageUpdateInfo(lv_timer_t*) {
 }
 
 void clear_ready_page(void) {
-	lv_timer_del(ready_page.ready_page_upadte);		// Çå³ý¼ÆÊýÆ÷
-	lv_obj_clean(lv_ui.main_src);					// Çå¿ÕÖ÷Ò³µÄ²¿¼þ
+	lv_timer_del(ready_page.ready_page_upadte);		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	lv_obj_clean(lv_ui.main_src);					// ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½Ä²ï¿½ï¿½ï¿½
 }
