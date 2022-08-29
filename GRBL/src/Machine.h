@@ -10,23 +10,17 @@
 */
 
 
-#ifdef MB_DQ_DLC32
-    #include "Machines/Custom_MC/dq_dlc32.h"
-#elif defined(MB_MKS_DLC32)
+#ifdef MB_MKS_DLC32
     #include "Machines/common_i2s_out.h"
     #include "Machines/i2s_out_xyz_mks_dlc32.h"
+    #include "BoardMap/pins_LaserBox_E_V1.0.h"
 #elif defined(MB_MKS_DLC32_COREXY)
     #include "Machines/common_i2s_out.h"
     #include "Machines/i2s_out_xyz_mks_dlc32.h"
+    #include "BoardMap/pins_LaserBox_E_V1.0.h"
 #endif
-
-
-
-
 
 
 /*****************************************************************************
  *                                  For custon
  * **************************************************************************/
-
-

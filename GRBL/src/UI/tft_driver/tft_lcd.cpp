@@ -31,13 +31,3 @@ void HAL_TFT_LCD::tftBglightSetOff(void) {
 }
 
 HAL_TFT_LCD tft_lcd;
-
-
-
-
-
-
-
-
-
-
