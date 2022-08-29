@@ -147,8 +147,6 @@ void lvglTask(void *parg)  {
     // lvDrawLogo();
 #endif
 
-    lvDrawLogo();
-
     tft_lcd.tftBglightSetOn();
 
     while(1) {

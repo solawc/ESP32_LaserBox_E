@@ -31,13 +31,14 @@ void lvDrawLogo(void) {
 	lv_obj_set_size(lv_ui.main_src, 480, 320);
 	lv_obj_remove_style_all(lv_ui.main_src);
 
-	// Creat logo
+	/* Creat logo */
 	lv_ui.mks_logo = lv_img_create(lv_ui.main_src);
 	lv_img_set_src(lv_ui.mks_logo, &mks_logo);
 
-	// Init all style
+	/* Init all style */
 	allStyleInit();
 
+	/* Tick 2000ms */
 	lv_ui.timer_logo = lv_timer_create(test_timer, 2000, NULL);
 }
 
