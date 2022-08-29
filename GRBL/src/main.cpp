@@ -21,15 +21,22 @@
 #include "main.h"
 #include <WiFi.h>
 
+#ifdef ENABLE_TFT
 #include "UI/lv_port/lv_port_init.h"
 #include "UI/tft_driver/tft_lcd.h"
+#endif
 
 void setup() {
+
+    // 删除所有消息反馈
+    esp_log_level_set("gpio", ESP_LOG_NONE);
+
+    // 进入GRBL的初始化
     grbl_init();
 }
 
 void loop() {
-
+    
     _mc_task_init();
     
     while(1) {
@@ -39,12 +46,10 @@ void loop() {
 
 void grbl_init() {
 
+#ifdef ENABLE_TFT
     tft_lcd.tftBglightInit();
     tft_lcd.tftBglightSetOff();
-
-    disableCore0WDT();
-    disableCore1WDT();
-    disableLoopWDT();
+#endif
     
 #ifdef USE_I2S_OUT
     i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
@@ -89,6 +94,13 @@ void grbl_init() {
     }
 #endif
 
+
+// Init LCD LVGL
+#ifdef ENABLE_TFT
+    ui.lvglTaskInit();
+#endif
+
+    // init spindle
     Spindles::Spindle::select();
 
 #ifdef ENABLE_WIFI
@@ -131,9 +143,7 @@ void reset_mc_config(void) {
 
 void _mc_task_init(void) {
 
-#ifdef ENABLE_TFT
-    ui.lvglTaskInit();
-#endif
+
 
 }
 

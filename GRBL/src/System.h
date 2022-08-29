@@ -170,11 +170,9 @@ float* system_get_mpos();
 
 // A task that runs after a control switch interrupt for debouncing.
 void controlCheckTask(void* pvParameters);
+
 void system_exec_control_pin(ControlPins pins);
 
-bool sys_set_digital(uint8_t io_num, bool turnOn);
-void sys_digital_all_off();
-bool sys_set_analog(uint8_t io_num, float percent);
-void sys_analog_all_off();
-
 int8_t sys_get_next_PWM_chan_num();
+
+bool inMotionState(void);

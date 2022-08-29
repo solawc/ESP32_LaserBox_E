@@ -26,7 +26,7 @@
 #include <FS.h>
 #include <SPIFFS.h>
 // #include "LittleFS.h"
-
+#include "fs_api.h"
 #include <esp_wifi.h>
 #include <esp_ota_ops.h>
 

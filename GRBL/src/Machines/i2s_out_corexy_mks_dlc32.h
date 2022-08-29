@@ -20,26 +20,14 @@
     along with Grbl_ESP32.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define USE_BOARD_V2_0
+#define MACHINE_NAME                "Custom Machine"
 
-#define MACHINE_NAME            "MKS DLC32"
+#define BOARD_NAME                  "Board:LG_ESP_V1.0"
+#define BOARD_VERSION               "LV_ESP_V1.0"
+#define FW_NAME                     "Firmware:V1A0120220822"
+#define FW_VERSION                  "V1A0120220822"
 
-#define USR_USER_KB  
-
-#define USR_Z_MOTOR
-
-#define USR_LOGO
-
-#define BOARD_NAME              "Board:MKS DLC32 CoreXY V2.0"
-#define BOARD_VERSION           "MKS DLC32 CoreXY V2.0"
-#define FW_NAME                 "Firmware:V2.10(8M.H35.20220510)"
-#define FW_VERSION              "V2.10(8M.H35.20220510)"
-
-#define CUSTOM_CODE_FILENAME    "../Custom/CoreXY.cpp"
-
-#define USE_WIFI
-
-#define ENABLE_SOFTWARE_DEBOUNCE
+#define CUSTOM_CODE_FILENAME        "../Custom/CoreXY.cpp"
 
 #ifdef N_AXIS
     #undef N_AXIS
@@ -69,28 +57,17 @@
 #define Z_STEP_PIN                  I2SO(3)
 
 #define SPINDLE_TYPE                SpindleType::LASER // only one spindle at a time
-#ifdef USE_BOARD_V2_0
 #define LASER_OUTPUT_PIN            GPIO_NUM_32
-#else 
-#define LASER_OUTPUT_PIN            GPIO_NUM_22
-#endif
 
 #define X_LIMIT_PIN                 GPIO_NUM_36
 #define Y_LIMIT_PIN                 GPIO_NUM_35
 #define Z_LIMIT_PIN                 GPIO_NUM_34
 
-#ifdef USE_BOARD_V2_0
 #define LED_PIN                     GPIO_NUM_2//  GPIO_NUM_32 
 #define PROBE_PIN                   GPIO_NUM_22// GPIO_NUM_32  
 
 #define FLAME_PIN                   GPIO_NUM_22
 #define GYRO_PIN                    GPIO_NUM_22
-
-#else
-#define PROBE_PIN                   GPIO_NUM_2   
-// #define FLAME_PIN                   GPIO_NUM_22
-// #define GYRO_PIN                    GPIO_NUM_22
-#endif
 
 
 #define LCD_SCK				        GPIO_NUM_18

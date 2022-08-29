@@ -30,8 +30,9 @@
 #    include <WebSocketsServer.h>
 #    include <WiFi.h>
 #    include <FS.h>
-#    include <SPIFFS.h>
+// #    include <SPIFFS.h>
     // #include "LittleFS.h"
+    #include "fs_api.h"
 #    ifdef ENABLE_SD_CARD
 #        include <SD.h>
 #        include "../SDCard.h"
@@ -249,13 +250,17 @@ namespace WebUI {
         String contentType = getContentType(path);
         String pathWithGz  = path + ".gz";
         //if have a index.html or gzip version this is default root page
-        if ((SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) && !_webserver->hasArg("index") &&  // forcefallback
+        // if ((SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) && !_webserver->hasArg("index") &&  // forcefallback
+        if ((my_fs.exists(pathWithGz) || my_fs.exists(path)) && !_webserver->hasArg("index") &&  // forcefallback
+        
             _webserver->arg("index") != "yes") {
-            if (SPIFFS.exists(pathWithGz)) {
+            if (my_fs.exists(pathWithGz)) {
                 path = pathWithGz;
             }
 
-            File file = SPIFFS.open(path, FILE_READ);
+            // File file = SPIFFS.open(path, FILE_READ);
+            File file = my_fs.open(path, FILE_READ);
+            
             _webserver->streamFile(file, contentType);
             file.close();
             return;
@@ -332,11 +337,14 @@ namespace WebUI {
             return;
         } else
 #    endif
-            if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
-            if (SPIFFS.exists(pathWithGz)) {
+            // if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
+            if (my_fs.exists(pathWithGz) || my_fs.exists(path)) {
+            // if (SPIFFS.exists(pathWithGz)) {
+            if (my_fs.exists(pathWithGz)) {
                 path = pathWithGz;
             }
-            File file = SPIFFS.open(path, FILE_READ);
+            // File file = SPIFFS.open(path, FILE_READ);
+            File file = my_fs.open(path, FILE_READ);
             _webserver->streamFile(file, contentType);
             file.close();
             return;
@@ -368,11 +376,14 @@ namespace WebUI {
             path        = "/404.htm";
             contentType = getContentType(path);
             pathWithGz  = path + ".gz";
-            if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
-                if (SPIFFS.exists(pathWithGz)) {
+            // if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
+            if (my_fs.exists(pathWithGz) || my_fs.exists(path)) {
+                // if (SPIFFS.exists(pathWithGz)) {
+                if (my_fs.exists(pathWithGz)) {
                     path = pathWithGz;
                 }
-                File file = SPIFFS.open(path, FILE_READ);
+                // File file = SPIFFS.open(path, FILE_READ);
+                File file = my_fs.open(path, FILE_READ);
                 _webserver->streamFile(file, contentType);
                 file.close();
 
@@ -762,10 +773,12 @@ namespace WebUI {
                 shortname.replace("/", "");
                 filename = path + _webserver->arg("filename");
                 filename.replace("//", "/");
-                if (!SPIFFS.exists(filename)) {
+                // if (!SPIFFS.exists(filename)) {
+                if (!my_fs.exists(filename)) {
                     status = shortname + " does not exists!";
                 } else {
-                    if (SPIFFS.remove(filename)) {
+                    // if (SPIFFS.remove(filename)) {
+                    if (my_fs.remove(filename)) {
                         status = shortname + " deleted";
                         //what happen if no "/." and no other subfiles ?
                         String ptmp = path;
@@ -773,11 +786,13 @@ namespace WebUI {
                             ptmp = path.substring(0, path.length() - 1);
                         }
 
-                        File dir        = SPIFFS.open(ptmp);
+                        // File dir        = SPIFFS.open(ptmp);
+                        File dir        = my_fs.open(ptmp);
                         File dircontent = dir.openNextFile();
                         if (!dircontent) {
                             //keep directory alive even empty
-                            File r = SPIFFS.open(path + "/.", FILE_WRITE);
+                            // File r = SPIFFS.open(path + "/.", FILE_WRITE);
+                            File r = my_fs.open(path + "/.", FILE_WRITE);
                             if (r) {
                                 r.close();
                             }
@@ -798,12 +813,14 @@ namespace WebUI {
                 filename.replace("//", "/");
                 if (filename != "/") {
                     bool delete_error = false;
-                    File dir          = SPIFFS.open(path + shortname);
+                    // File dir          = SPIFFS.open(path + shortname);
+                    File dir          = my_fs.open(path + shortname);
                     {
                         File file2deleted = dir.openNextFile();
                         while (file2deleted) {
                             String fullpath = file2deleted.name();
-                            if (!SPIFFS.remove(fullpath)) {
+                            // if (!SPIFFS.remove(fullpath)) {
+                            if (!my_fs.remove(fullpath)) {
                                 delete_error = true;
                                 status       = "Cannot deleted ";
                                 status += fullpath;
@@ -825,10 +842,12 @@ namespace WebUI {
                 String shortname = _webserver->arg("filename");
                 shortname.replace("/", "");
                 filename.replace("//", "/");
-                if (SPIFFS.exists(filename)) {
+                // if (SPIFFS.exists(filename)) {
+                if (my_fs.exists(filename)) {
                     status = shortname + " already exists!";
                 } else {
-                    File r = SPIFFS.open(filename, FILE_WRITE);
+                    // File r = SPIFFS.open(filename, FILE_WRITE);
+                    File r = my_fs.open(filename, FILE_WRITE);
                     if (!r) {
                         status = "Cannot create ";
                         status += shortname;
@@ -846,7 +865,9 @@ namespace WebUI {
             ptmp = path.substring(0, path.length() - 1);
         }
 
-        File dir = SPIFFS.open(ptmp);
+        // File dir = SPIFFS.open(ptmp);
+        File dir = my_fs.open(ptmp);
+        
         jsonfile += "\"files\":[";
         bool   firstentry = true;
         String subdirlist = "";
@@ -903,8 +924,10 @@ namespace WebUI {
         jsonfile += "\"status\":\"" + status + "\",";
         size_t totalBytes;
         size_t usedBytes;
-        totalBytes = SPIFFS.totalBytes();
-        usedBytes  = SPIFFS.usedBytes();
+        // totalBytes = SPIFFS.totalBytes();
+        // usedBytes  = SPIFFS.usedBytes();
+        totalBytes = my_fs.totalBytes();
+        usedBytes  = my_fs.usedBytes();
         jsonfile += "\"total\":\"" + ESPResponseStream::formatBytes(totalBytes) + "\",";
         jsonfile += "\"used\":\"" + ESPResponseStream::formatBytes(usedBytes) + "\",";
         jsonfile.concat(F("\"occupation\":\""));
@@ -977,8 +1000,11 @@ namespace WebUI {
                         filename        = "/user" + upload_filename;
                     }
 
-                    if (SPIFFS.exists(filename)) {
-                        SPIFFS.remove(filename);
+                    // if (SPIFFS.exists(filename)) {
+                    //     SPIFFS.remove(filename);
+                    // }
+                    if (my_fs.exists(filename)) {
+                        my_fs.remove(filename);
                     }
                     if (fsUploadFile) {
                         fsUploadFile.close();
@@ -986,7 +1012,8 @@ namespace WebUI {
                     String sizeargname = upload.filename + "S";
                     if (_webserver->hasArg(sizeargname)) {
                         uint32_t filesize  = _webserver->arg(sizeargname).toInt();
-                        uint32_t freespace = SPIFFS.totalBytes() - SPIFFS.usedBytes();
+                        // uint32_t freespace = SPIFFS.totalBytes() - SPIFFS.usedBytes();
+                        uint32_t freespace = my_fs.totalBytes() - my_fs.usedBytes();
                         if (filesize > freespace) {
                             _upload_status = UploadStatusType::FAILED;
                             grbl_send(CLIENT_ALL, "[MSG:Upload error]\r\n");
@@ -996,7 +1023,8 @@ namespace WebUI {
 
                     if (_upload_status != UploadStatusType::FAILED) {
                         //create file
-                        fsUploadFile = SPIFFS.open(filename, FILE_WRITE);
+                        // fsUploadFile = SPIFFS.open(filename, FILE_WRITE);
+                        fsUploadFile = my_fs.open(filename, FILE_WRITE);
                         //check If creation succeed
                         if (fsUploadFile) {
                             //if yes upload is started
@@ -1035,7 +1063,8 @@ namespace WebUI {
                         fsUploadFile.close();
                         //check size
                         String sizeargname = upload.filename + "S";
-                        fsUploadFile       = SPIFFS.open(filename, FILE_READ);
+                        // fsUploadFile       = SPIFFS.open(filename, FILE_READ);
+                        fsUploadFile       = my_fs.open(filename, FILE_READ);
                         uint32_t filesize  = fsUploadFile.size();
                         fsUploadFile.close();
 
@@ -1067,8 +1096,11 @@ namespace WebUI {
 
         if (_upload_status == UploadStatusType::FAILED) {
             cancelUpload();
-            if (SPIFFS.exists(filename)) {
-                SPIFFS.remove(filename);
+            // if (SPIFFS.exists(filename)) {
+            //     SPIFFS.remove(filename);
+            // }
+            if (my_fs.exists(filename)) {
+                my_fs.remove(filename);
             }
         }
         COMMANDS::wait(0);

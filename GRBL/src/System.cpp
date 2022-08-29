@@ -38,50 +38,53 @@ volatile Percent sys_rt_f_override;  // Global realtime executor feedrate overri
 volatile Percent sys_rt_r_override;  // Global realtime executor rapid override percentage
 volatile Percent sys_rt_s_override;  // Global realtime executor spindle override percentage
 
-UserOutput::AnalogOutput*  myAnalogOutputs[MaxUserDigitalPin];
-UserOutput::DigitalOutput* myDigitalOutputs[MaxUserDigitalPin];
-
 xQueueHandle control_sw_queue;    // used by control switch debouncing
 bool         debouncing = false;  // debouncing in process
 
 void system_ini() {  // Renamed from system_init() due to conflict with esp32 files
     // setup control inputs
-
 #ifdef CONTROL_SAFETY_DOOR_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Door switch on pin %s", pinName(CONTROL_SAFETY_DOOR_PIN).c_str());
     pinMode(CONTROL_SAFETY_DOOR_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(CONTROL_SAFETY_DOOR_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef CONTROL_RESET_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Reset switch on pin %s", pinName(CONTROL_RESET_PIN).c_str());
     pinMode(CONTROL_RESET_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(CONTROL_RESET_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef CONTROL_FEED_HOLD_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Hold switch on pin %s", pinName(CONTROL_FEED_HOLD_PIN).c_str());
     pinMode(CONTROL_FEED_HOLD_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(CONTROL_FEED_HOLD_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef CONTROL_CYCLE_START_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Start switch on pin %s", pinName(CONTROL_CYCLE_START_PIN).c_str());
     pinMode(CONTROL_CYCLE_START_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(CONTROL_CYCLE_START_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef MACRO_BUTTON_0_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Macro Pin 0 %s", pinName(MACRO_BUTTON_0_PIN).c_str());
     pinMode(MACRO_BUTTON_0_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(MACRO_BUTTON_0_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef MACRO_BUTTON_1_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Macro Pin 1 %s", pinName(MACRO_BUTTON_1_PIN).c_str());
     pinMode(MACRO_BUTTON_1_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(MACRO_BUTTON_1_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef MACRO_BUTTON_2_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Macro Pin 2 %s", pinName(MACRO_BUTTON_2_PIN).c_str());
     pinMode(MACRO_BUTTON_2_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(MACRO_BUTTON_2_PIN), isr_control_inputs, CHANGE);
 #endif
+
 #ifdef MACRO_BUTTON_3_PIN
     grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Macro Pin 3 %s", pinName(MACRO_BUTTON_3_PIN).c_str());
     pinMode(MACRO_BUTTON_3_PIN, INPUT_PULLUP);
@@ -103,17 +106,7 @@ void system_ini() {  // Renamed from system_init() due to conflict with esp32 fi
     SPI.begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
 #endif
 
-    // Setup M62,M63,M64,M65 pins
-    myDigitalOutputs[0] = new UserOutput::DigitalOutput(0, USER_DIGITAL_PIN_0);
-    myDigitalOutputs[1] = new UserOutput::DigitalOutput(1, USER_DIGITAL_PIN_1);
-    myDigitalOutputs[2] = new UserOutput::DigitalOutput(2, USER_DIGITAL_PIN_2);
-    myDigitalOutputs[3] = new UserOutput::DigitalOutput(3, USER_DIGITAL_PIN_3);
 
-    // Setup M67 Pins
-    myAnalogOutputs[0] = new UserOutput::AnalogOutput(0, USER_ANALOG_PIN_0, USER_ANALOG_PIN_0_FREQ);
-    myAnalogOutputs[1] = new UserOutput::AnalogOutput(1, USER_ANALOG_PIN_1, USER_ANALOG_PIN_1_FREQ);
-    myAnalogOutputs[2] = new UserOutput::AnalogOutput(2, USER_ANALOG_PIN_2, USER_ANALOG_PIN_2_FREQ);
-    myAnalogOutputs[3] = new UserOutput::AnalogOutput(3, USER_ANALOG_PIN_3, USER_ANALOG_PIN_3_FREQ);
 }
 
 #ifdef ENABLE_CONTROL_SW_DEBOUNCE
@@ -256,6 +249,10 @@ ControlPins system_control_get_state() {
     return pin_states;
 }
 
+bool inMotionState(void) {
+    return sys.state == State::Cycle || sys.state == State::Homing || sys.state == State::Jog;
+}
+
 // execute the function of the control pin
 void system_exec_control_pin(ControlPins pins) {
     if (pins.bit.reset) {
@@ -276,31 +273,6 @@ void system_exec_control_pin(ControlPins pins) {
     } else if (pins.bit.macro3) {
         user_defined_macro(3);  // function must be implemented by user
     }
-}
-
-void sys_digital_all_off() {
-    for (uint8_t io_num = 0; io_num < MaxUserDigitalPin; io_num++) {
-        myDigitalOutputs[io_num]->set_level(LOW);
-    }
-}
-
-// io_num is the virtual digital pin#
-bool sys_set_digital(uint8_t io_num, bool turnOn) {
-    return myDigitalOutputs[io_num]->set_level(turnOn);
-}
-
-// Turn off all analog outputs
-void sys_analog_all_off() {
-    for (uint8_t io_num = 0; io_num < MaxUserDigitalPin; io_num++) {
-        myAnalogOutputs[io_num]->set_level(0);
-    }
-}
-
-// io_num is the virtual analog pin#
-bool sys_set_analog(uint8_t io_num, float percent) {
-    auto     analog    = myAnalogOutputs[io_num];
-    uint32_t numerator = percent / 100.0 * analog->denominator();
-    return analog->set_level(numerator);
 }
 
 /*

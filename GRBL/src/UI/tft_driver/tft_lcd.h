@@ -17,6 +17,7 @@ public:
     void tftBglightInit(void);
     void tftBglightSetOn(void);
     void tftBglightSetOff(void);
+    void tftBglightBeginOn(void);           // 待实现背光渐变启动的功能
 };
 
 extern HAL_TFT_LCD tft_lcd;
