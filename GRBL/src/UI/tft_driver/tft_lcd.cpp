@@ -30,4 +30,9 @@ void HAL_TFT_LCD::tftBglightSetOff(void) {
 #endif
 }
 
+void HAL_TFT_LCD::tftBglightBeginOn(void) {
+
+    
+}
+
 HAL_TFT_LCD tft_lcd;
