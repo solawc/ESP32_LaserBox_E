@@ -89,9 +89,7 @@ const int MAX_N_AXIS = 6;
 // Serial baud rate
 // OK to change, but the ESP32 boot text is 115200, so you will not see that is your
 // serial monitor, sender, etc uses a different value than 115200
-#define BAUD_RATE 115200
-
-
+// #define BAUD_RATE        115200
 
 //Connect to your local AP with these credentials
 //#define CONNECT_TO_SSID  "your SSID"
@@ -103,7 +101,7 @@ const int MAX_N_AXIS = 6;
 
 #define ENABLE_WIFI     //enable wifi
 
-// #define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
+#define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH

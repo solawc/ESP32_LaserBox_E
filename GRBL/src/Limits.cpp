@@ -208,6 +208,7 @@ void limits_go_home(uint8_t cycle_mask) {
                 }
             }
         } while (STEP_MASK & axislock);
+        
 #ifdef USE_I2S_STEPS
         if (current_stepper == ST_I2S_STREAM) {
             if (!approach) {
@@ -253,6 +254,7 @@ void limits_go_home(uint8_t cycle_mask) {
     }
     sys.step_control = {};                      // Return step control to normal operation.
     motors_set_homing_mode(cycle_mask, false);  // tell motors homing is done
+    mc_reset();
 }
 
 uint8_t limit_pins[MAX_N_AXIS][2] = { { X_LIMIT_PIN, X2_LIMIT_PIN }, { Y_LIMIT_PIN, Y2_LIMIT_PIN }, { Z_LIMIT_PIN, Z2_LIMIT_PIN },

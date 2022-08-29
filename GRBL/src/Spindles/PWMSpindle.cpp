@@ -6,6 +6,7 @@
 
     Part of Grbl_ESP32
     2020 -	Bart Dring
+    2022 -  WangChong
 
     Grbl is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@
 
 namespace Spindles {
     void PWM::init() {
+        
         get_pins_and_settings();
 
         if (_output_pin == UNDEFINED_PIN) {

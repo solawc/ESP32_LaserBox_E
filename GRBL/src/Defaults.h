@@ -131,11 +131,11 @@
 #endif
 
 #ifndef DEFAULT_HOMING_CYCLE_0
-#    define DEFAULT_HOMING_CYCLE_0 bit(Z_AXIS)
+#    define DEFAULT_HOMING_CYCLE_0 (bit(X_AXIS) | bit(Y_AXIS))// bit(Z_AXIS)
 #endif
 
 #ifndef DEFAULT_HOMING_CYCLE_1
-#    define DEFAULT_HOMING_CYCLE_1 (bit(X_AXIS) | bit(Y_AXIS))
+#    define DEFAULT_HOMING_CYCLE_1  bit(Z_AXIS) //(bit(X_AXIS) | bit(Y_AXIS))
 #endif
 
 #ifndef DEFAULT_HOMING_CYCLE_2
