@@ -25,7 +25,6 @@ typedef struct {
 extern ready_ui_t ready_page;
 
 
-
 void draw_ready(void);
 void clear_ready_page(void);
 
