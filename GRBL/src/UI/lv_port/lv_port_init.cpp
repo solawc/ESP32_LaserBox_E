@@ -144,16 +144,19 @@ void lvglTask(void *parg)  {
 #if LV_USE_DEMO_STRESS
     lv_demo_stress();
 #else 
-    // lvDrawLogo();
+    lvDrawLogo();
 #endif
 
     tft_lcd.tftBglightSetOn();
 
     while(1) {
+        
         ui.lvglMutexLock();
         lv_task_handler();
         ui.lvglMutexUnlock();
-        vTaskDelay(5);
+
+        /* 这里必须大于等于5ms */
+        vTaskDelay(5);              
     }
 }
 

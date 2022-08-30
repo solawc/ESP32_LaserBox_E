@@ -47,9 +47,3 @@ void runMksUiDemo(void) {
 	lvDrawLogo();
 }
 #endif
-
-
-
-
-
-
