@@ -69,7 +69,7 @@ static void dispPosInfo(void) {
 static void disp_power(void) {
 	ready_page.labelPower = lv_label_create(lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelPower, 30, 90);
-	lv_label_set_text(ready_page.labelPower, "S:1000");
+	lv_label_set_text(ready_page.labelPower, "Power:0");
 }
 
 static void disp_wifi(void) {
@@ -116,10 +116,10 @@ static void readyPageUpdateInfo(lv_timer_t*) {
 
 	mks_print_position = system_get_mpos();
 
-	sprintf(pos, "Mpos: X:%.2f Y:%.2f Z:%.2f", mks_print_position[0], mks_print_position[1], mks_print_position[2]);
+	sprintf(pos, "Wpos: X:%.2f Y:%.2f Z:%.2f", mks_print_position[0], mks_print_position[1], mks_print_position[2]);
 	lv_label_set_text(ready_page.label_wpos, pos);
 
-	sprintf(pos, "Wpos: X:%.2f Y:%.2f Z:%.2f", mks_print_position[0], mks_print_position[1], mks_print_position[2]);
+	sprintf(pos, "Mpos: X:%.2f Y:%.2f Z:%.2f", mks_print_position[0], mks_print_position[1], mks_print_position[2]);
 	lv_label_set_text(ready_page.label_mpos, pos);
 
 	sprintf(s_value, "Power:%d", sys.spindle_speed);

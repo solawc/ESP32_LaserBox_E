@@ -15,14 +15,30 @@ static void event_handler(lv_event_t* e) {
             clear_ctrl_page();
             draw_ready();
         }
+        else if( e->current_target == ctrl_page.btnLeft) {
+            
+        }
     }
 }
 
 
 void draw_ctrl(void) {
 
+    /* Init parg */
+    ctrl_page.stepLen = 10;
+    ctrl_page.stepSpeed = 3000;
+
     /* disp all btn */
     disp_move_btn();
+}
+
+/**
+ * 使用指令控制轴移动
+ * axis - 移动的轴
+ * stepLen - 移动距离
+ * stepSpeed - 移动速度
+ */
+void setStepMove(char axis, float stepLen, uint32_t stepSpeed) {
 
 
 }

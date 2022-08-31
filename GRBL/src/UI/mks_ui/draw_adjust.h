@@ -20,7 +20,12 @@ typedef struct {
     lv_obj_t* labelZdown;           /* Z 正方向移动 */
 
     lv_obj_t* btnReturn;            /* 返回主页 */    
+
+    uint32_t  float;                /* 移动距离 */
+    uint32_t  stepSpeed;            /* 移动速度 */
+
 }ctrl_ui_t;
+
 
 
 void draw_ctrl(void);
