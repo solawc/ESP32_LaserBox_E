@@ -355,7 +355,7 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len){
 ** Function name:           pushPixels - for ESP32
 ** Description:             Write a sequence of pixels
 ***************************************************************************************/
-void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
+void TFT_eSPI::pushPixels(const void* data_in, uint32_t len) {
 
   if(_swapBytes) {
     pushSwapBytePixels(data_in, len);
