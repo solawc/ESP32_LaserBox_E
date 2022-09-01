@@ -90,9 +90,6 @@ const char* const GRBL_VERSION_BUILD = "2020072101";
 
 void grbl_init();
 void run_once();
-void _mc_task_init(void);
-
-
 
 bool user_defined_homing(uint8_t cycle_mask);  // weak definition in Limits.cpp
 
@@ -107,5 +104,3 @@ void motors_to_cartesian(float* cartestian, float* motors, int n_axis);  // weak
 
 // Called if MACRO_BUTTON_0_PIN or MACRO_BUTTON_1_PIN or MACRO_BUTTON_2_PIN is defined
 void user_defined_macro(uint8_t index);
-
-void phy_init_reinit(void);

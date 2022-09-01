@@ -33,12 +33,7 @@ void setup() {
 }
 
 void loop() {
-    
-    _mc_task_init();
-    
-    while(1) {
-      run_once();
-    }
+    while(1) { run_once(); }                    /* enter grbl task */
 }
 
 void grbl_init() {
@@ -98,23 +93,18 @@ void grbl_init() {
 #ifdef ENABLE_BLUETOOTH
     WebUI::bt_config.begin();
 #endif
-    WebUI::inputBuffer.begin();
-}
-
-void phy_init_reinit(void) {
-    coolant_init();
-    limits_init();
+    WebUI::inputBuffer.begin();                 /* init ringbuffer */ 
 }
 
 void reset_mc_config(void) {
 
     State prior_state = sys.state;
-    memset(&sys, 0, sizeof(system_t));  // Clear system struct variable.
-    sys.state             = prior_state;
-    sys.f_override        = FeedOverride::Default;              // Set to 100%
-    sys.r_override        = RapidOverride::Default;             // Set to 100%
-    sys.spindle_speed_ovr = SpindleSpeedOverride::Default;      // Set to 100%
-    memset(sys_probe_position, 0, sizeof(sys_probe_position));  // Clear probe position.
+    memset(&sys, 0, sizeof(system_t));                                  /* Clear system struct variable. */ 
+    sys.state             = prior_state;                                /* defaule sys state */
+    sys.f_override        = FeedOverride::Default;                      /* Set to 100% */ 
+    sys.r_override        = RapidOverride::Default;                     /* Set to 100% */ 
+    sys.spindle_speed_ovr = SpindleSpeedOverride::Default;              /* Set to 100% */ 
+    memset(sys_probe_position, 0, sizeof(sys_probe_position));          /* Clear probe position. */ 
 
     sys_probe_state                      = Probe::Off;
     sys_rt_exec_state.value              = 0;
@@ -126,13 +116,6 @@ void reset_mc_config(void) {
     sys_rt_s_override                    = SpindleSpeedOverride::Default;
 
     client_reset_read_buffer(CLIENT_ALL);
-}
-
-
-void _mc_task_init(void) {
-
-
-
 }
 
 static void reset_variables() {
