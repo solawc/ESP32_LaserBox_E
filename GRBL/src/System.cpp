@@ -130,6 +130,17 @@ void controlCheckTask(void* pvParameters) {
 }
 #endif
 
+void disableDWT(void) {
+    disableCore0WDT();
+    disableCore1WDT();
+    disableLoopWDT();
+}
+
+void disableAllMessage(void) {
+    esp_log_level_set("gpio", ESP_LOG_NONE);
+    esp_log_level_set("uart", ESP_LOG_NONE);
+}
+
 void IRAM_ATTR isr_control_inputs() {
 #ifdef ENABLE_CONTROL_SW_DEBOUNCE
     // we will start a task that will recheck the switches after a small delay
