@@ -136,7 +136,7 @@ void lvglTask(void *parg)  {
 
     lv_init();
 
-    tft_lcd.tft_init();             // 这个地方如果使用的TFT_eSPI， 用TS35/TS24 则已经包含触摸初始化
+    tft_lcd.tft_init();                 /* 这个地方如果使用的TFT_eSPI， 用TS35/TS24 则已经包含触摸初始化 */ 
 
     ui.lvPortDispInit();
     ui.lvPortTouchInit();
@@ -150,13 +150,10 @@ void lvglTask(void *parg)  {
     tft_lcd.tftBglightSetOn();
 
     while(1) {
-        
         ui.lvglMutexLock();
         lv_task_handler();
         ui.lvglMutexUnlock();
-
-        /* 这里必须大于等于5ms */
-        vTaskDelay(5);              
+        vTaskDelay(5);                  /* 这里必须大于等于5ms */
     }
 }
 
@@ -167,7 +164,6 @@ void LVGL_UI::lvglTaskInit(void) {
                             DISP_TASK_STACK,    // size of task stack
                             NULL,               // parameters
                             DISP_TASK_PRO,      // priority
-                            // nullptr,
                             &lv_disp_tcb,
                             DISP_TASK_CORE      // must run the task on same core // core
     );

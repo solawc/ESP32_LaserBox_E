@@ -264,6 +264,12 @@ bool inMotionState(void) {
     return sys.state == State::Cycle || sys.state == State::Homing || sys.state == State::Jog;
 }
 
+
+uint32_t sysGetSpindleSpeed(void) {
+    return sys.spindle_speed;
+}
+
+
 // execute the function of the control pin
 void system_exec_control_pin(ControlPins pins) {
     if (pins.bit.reset) {

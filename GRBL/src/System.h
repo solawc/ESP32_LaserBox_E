@@ -180,3 +180,5 @@ bool inMotionState(void);
 void disableDWT(void);
 
 void disableAllMessage(void);
+
+uint32_t sysGetSpindleSpeed(void);

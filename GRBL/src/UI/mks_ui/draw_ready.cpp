@@ -9,7 +9,6 @@ static void disp_wifi(void);
 static void disp_btn(void);
 static void readyPageUpdateInfo(lv_timer_t*);
 
-
 static void event_handler(lv_event_t* e) {
 
 	lv_event_code_t code = lv_event_get_code(e);  /* get obj event */ 
@@ -152,7 +151,7 @@ static void readyPageUpdateInfo(lv_timer_t*) {
 	sprintf(pos, "Mpos: X:%.2f Y:%.2f Z:%.2f", mks_print_position[0], mks_print_position[1], mks_print_position[2]);
 	lv_label_set_text(ready_page.label_mpos, pos);
 
-	sprintf(s_value, "Power:%d", sys.spindle_speed);
+	sprintf(s_value, "Power:%d", sysGetSpindleSpeed());
 	lv_label_set_text(ready_page.labelPower, s_value);
 
 	/* disp machine state */

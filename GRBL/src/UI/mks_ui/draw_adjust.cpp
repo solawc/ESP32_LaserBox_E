@@ -34,6 +34,17 @@ static void event_handler(lv_event_t* e) {
             GRBL_CMD_SEND(str);
         }
     }
+
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        if(e->current_target == ctrl_page.btnSpindle) {
+            if(sysGetSpindleSpeed() != 0) {
+                GRBL_CMD_SEND("M5\n");
+            }else {
+                GRBL_CMD_SEND("M3 S50\n");
+                GRBL_CMD_SEND("G1 F1000\n");
+            }
+        }
+    }
 }
 
 
@@ -96,6 +107,20 @@ static void dispMoveBtn(void) {
 	lv_obj_set_size(ctrl_page.btnZdown, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnZdown, 110, 260);
     lv_obj_add_event_cb(ctrl_page.btnZdown, event_handler, LV_EVENT_ALL, nullptr);
+
+    /* toggle btn */
+    ctrl_page.btnSpindle = lv_btn_create(lv_ui.main_src);
+    lv_obj_add_event_cb(ctrl_page.btnSpindle, event_handler, LV_EVENT_ALL, nullptr);
+    lv_obj_add_flag(ctrl_page.btnSpindle, LV_OBJ_FLAG_CHECKABLE);
+	lv_obj_set_size(ctrl_page.btnSpindle, 100, 50);
+	lv_obj_set_pos(ctrl_page.btnSpindle, 200, 100);
+
+    if(sysGetSpindleSpeed() != 0) {
+        lv_obj_add_state(ctrl_page.btnSpindle, 0x3);
+    }else {
+        lv_obj_add_state(ctrl_page.btnSpindle, 0x2);
+    }
+
 }
 
 static void dispLabel(void) {
@@ -107,6 +132,7 @@ static void dispLabel(void) {
     ctrl_page.labelZup = lv_label_create(ctrl_page.btnZup);
     ctrl_page.labelZdown = lv_label_create(ctrl_page.btnZdown);
     ctrl_page.labelReturn = lv_label_create(ctrl_page.btnReturn);
+    ctrl_page.labelSpindle = lv_label_create(ctrl_page.btnSpindle);
 
     lv_obj_set_align(ctrl_page.labelUp, LV_ALIGN_CENTER);
 	lv_obj_set_align(ctrl_page.labelDown, LV_ALIGN_CENTER);
@@ -115,6 +141,7 @@ static void dispLabel(void) {
     lv_obj_set_align(ctrl_page.labelReturn, LV_ALIGN_CENTER);
     lv_obj_set_align(ctrl_page.labelZup, LV_ALIGN_CENTER);
     lv_obj_set_align(ctrl_page.labelZdown, LV_ALIGN_CENTER);
+    lv_obj_set_align(ctrl_page.labelSpindle, LV_ALIGN_CENTER);
 
     lv_label_set_text(ctrl_page.labelUp, "U");
     lv_label_set_text(ctrl_page.labelDown, "D");
@@ -123,6 +150,7 @@ static void dispLabel(void) {
     lv_label_set_text(ctrl_page.labelZup, "Z-U");
     lv_label_set_text(ctrl_page.labelZdown, "Z-D");   
     lv_label_set_text(ctrl_page.labelReturn, "Return");
+    lv_label_set_text(ctrl_page.labelSpindle, "Spindle");
 }
 
 

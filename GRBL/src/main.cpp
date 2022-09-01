@@ -58,7 +58,6 @@ void grbl_init() {
     init_motors();
     memset(sys_position, 0, sizeof(sys_position));  /* Clear machine position. */
 
-    
 #ifdef FORCE_INITIALIZATION_ALARM               /* Initialize system state. */
     sys.state = State::Alarm;                   /* Force Grbl into an ALARM state upon a power-cycle or hard reset. */
 #else
@@ -80,7 +79,7 @@ void grbl_init() {
 #endif
 
 #ifdef ENABLE_TFT
-    ui.lvglTaskInit();                          /* Init LCD LVGL */
+    ui.lvglTaskInit();                                                  /* Init LCD LVGL */
 #endif
 
     // init spindle
@@ -93,7 +92,7 @@ void grbl_init() {
 #ifdef ENABLE_BLUETOOTH
     WebUI::bt_config.begin();
 #endif
-    WebUI::inputBuffer.begin();                 /* init ringbuffer */ 
+    WebUI::inputBuffer.begin();                                         /* init ringbuffer */ 
 }
 
 void reset_mc_config(void) {
@@ -119,30 +118,16 @@ void reset_mc_config(void) {
 }
 
 static void reset_variables() {
-    // Reset system variables.
-
-    // Reset Grbl primary systems.
-    reset_mc_config();
-    
-    gc_init();  // Set g-code parser to default state
-
-    spindle->stop();
-    
-    coolant_init();
-
-    limits_init();
-
-    probe_init();
-
-    plan_reset();  // Clear block buffer and planner variables
-
-    st_reset();    // Clear stepper subsystem variables
-
-    // Sync cleared gcode and planner positions to current system position.
-    plan_sync_position();
-
+    reset_mc_config();                                                  /* Reset Grbl primary systems. */
+    gc_init();                                                          /* Set g-code parser to default state */
+    spindle->stop();                                                    /* Stop spindle */
+    coolant_init();                                                     /* Init coolant */
+    limits_init();                                                      /* Init limit */
+    probe_init();                                                       /* Init probe */
+    plan_reset();                                                       /* Clear block buffer and planner variables */ 
+    st_reset();                                                         /* Clear stepper subsystem variables */ 
+    plan_sync_position();                                               /* Sync cleared gcode and planner positions to current system position. */
     gc_sync_position();
-
     report_init_message(CLIENT_ALL);
 
     // used to keep track of a jog command sent to mc_line() so we can cancel it.

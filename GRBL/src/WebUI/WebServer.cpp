@@ -998,9 +998,6 @@ namespace WebUI {
                         filename        = "/user" + upload_filename;
                     }
 
-                    // if (SPIFFS.exists(filename)) {
-                    //     SPIFFS.remove(filename);
-                    // }
                     if (my_fs.exists(filename)) {
                         my_fs.remove(filename);
                     }
@@ -1010,7 +1007,6 @@ namespace WebUI {
                     String sizeargname = upload.filename + "S";
                     if (_webserver->hasArg(sizeargname)) {
                         uint32_t filesize  = _webserver->arg(sizeargname).toInt();
-                        // uint32_t freespace = SPIFFS.totalBytes() - SPIFFS.usedBytes();
                         uint32_t freespace = my_fs.totalBytes() - my_fs.usedBytes();
                         if (filesize > freespace) {
                             _upload_status = UploadStatusType::FAILED;
@@ -1021,7 +1017,6 @@ namespace WebUI {
 
                     if (_upload_status != UploadStatusType::FAILED) {
                         //create file
-                        // fsUploadFile = SPIFFS.open(filename, FILE_WRITE);
                         fsUploadFile = my_fs.open(filename, FILE_WRITE);
                         //check If creation succeed
                         if (fsUploadFile) {
@@ -1061,7 +1056,6 @@ namespace WebUI {
                         fsUploadFile.close();
                         //check size
                         String sizeargname = upload.filename + "S";
-                        // fsUploadFile       = SPIFFS.open(filename, FILE_READ);
                         fsUploadFile       = my_fs.open(filename, FILE_READ);
                         uint32_t filesize  = fsUploadFile.size();
                         fsUploadFile.close();
@@ -1094,9 +1088,6 @@ namespace WebUI {
 
         if (_upload_status == UploadStatusType::FAILED) {
             cancelUpload();
-            // if (SPIFFS.exists(filename)) {
-            //     SPIFFS.remove(filename);
-            // }
             if (my_fs.exists(filename)) {
                 my_fs.remove(filename);
             }
