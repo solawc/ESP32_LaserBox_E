@@ -24,6 +24,7 @@ private:
 public:
     void lvPortDispInit(void);
     void lvPortTouchInit(void);
+    void lvPortFsInit(void);
     void lvglTaskInit(void);
     void lvPortDispCallback(void);
 

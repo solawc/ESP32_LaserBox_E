@@ -138,11 +138,24 @@ static lv_fs_res_t my_fs_read(lv_fs_drv_t* drv, void* file_p, void* buf, uint32_
     // else return LV_FS_RES_UNKNOWN;
 }
 
+static lv_fs_res_t my_fs_seek(lv_fs_drv_t* drv, void* file_p, uint32_t pos, lv_fs_whence_t whence)
+{
+    // f_lseek((file_t*) file_p, pos);
+    lv_file.seek(pos);
+    return LV_FS_RES_OK;
+}
+
+static lv_fs_res_t my_fs_tell(lv_fs_drv_t* drv, void* file_p, uint32_t* pos_p)
+{
+    *pos_p = lv_file.position();
+    return LV_FS_RES_OK;
+}
 
 
-void lv_port_fs_init() {
+void LVGL_UI::lvPortFsInit(void) {
 
-    static lv_fs_drv_t drv;          
+    static lv_fs_drv_t drv;       
+       
     lv_fs_drv_init(&drv);
 
     drv.letter = 'M';                                       /* 意味着是my_fs */       
@@ -150,6 +163,8 @@ void lv_port_fs_init() {
     drv.open_cb = my_fs_open;
     drv.close_cb = my_fs_close;
     drv.read_cb = my_fs_read;
+    drv.seek_cb = my_fs_seek;
+    drv.tell_cb = my_fs_tell;
 }
 
 void LVGL_UI::lvglMutexInit(void) {
@@ -175,6 +190,7 @@ void lvglTask(void *parg)  {
 
     ui.lvPortDispInit();
     ui.lvPortTouchInit();
+    ui.lvPortFsInit();
 
 #if LV_USE_DEMO_STRESS
     lv_demo_stress();
