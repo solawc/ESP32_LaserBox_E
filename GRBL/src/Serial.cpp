@@ -370,17 +370,8 @@ void client_write(uint8_t client, const char* text) {
     }
 }
 
-void serila_write_into_buffer(uint8_t *data) {
+void SerialWriteIntoBuffer(uint8_t *data) {
     WebUI::inputBuffer.push((const char *)data);
-}
-
-void serial_web_input_into_buffer(uint8_t *data) { 
-
-    uint16_t k=0;
-    do{
-        client_buffer[CLIENT_SERIAL].write(data[k]);
-        k++;
-    }while((data[k] != '\0') && k != 255);
 }
 
 void serial_web_input_into_hex(uint8_t c) { 

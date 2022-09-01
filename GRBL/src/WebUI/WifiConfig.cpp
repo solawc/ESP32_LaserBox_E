@@ -26,9 +26,7 @@
 #    include <esp_wifi.h>
 #    include <ESPmDNS.h>
 #    include <FS.h>
-#    include <SPIFFS.h>
-    // #include "LittleFS.h"
-    #include "fs_api.h"
+#    include "fs_api.h"
 #    include <cstring>
 #    include "WifiServices.h"
 
@@ -39,6 +37,14 @@ namespace WebUI {
     bool   WiFiConfig::_events_registered = false;
 
     WiFiConfig::WiFiConfig() {}
+
+    void WiFiConfig::init() {
+        WiFi.persistent(false);
+        WiFi.disconnect(true);
+        WiFi.enableSTA(false);
+        WiFi.enableAP(false);
+        WiFi.mode(WIFI_OFF);
+    }
 
     //just simple helper to convert mac address to string
     char* WiFiConfig::mac2str(uint8_t mac[8]) {

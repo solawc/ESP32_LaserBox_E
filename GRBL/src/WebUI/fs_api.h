@@ -6,11 +6,14 @@
 
 #ifdef USE_FS_SPIFFS
     #include <SPIFFS.h>
+    #define COM_USE_FS      SPIFFS
 #endif
 
 #ifdef USE_FS_LITTLEFS
     #include <LittleFS.h>
+    #define COM_USE_FS      LittleFS
 #endif
+
 
 
 class COM_FS {
@@ -30,6 +33,8 @@ public:
 
     size_t totalBytes();
     size_t usedBytes();
+
+    bool format();
 
 };
 extern COM_FS my_fs;

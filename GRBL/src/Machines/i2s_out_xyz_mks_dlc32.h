@@ -1,7 +1,7 @@
 #pragma once
 // clang-format off
 
-#define MACHINE_NAME                        "Custom Machine"
+// #define MACHINE_NAME                        "Custom Machine"
 #define BOARD_NAME                          "Board:LG_ESP_V1.0"
 #define BOARD_VERSION                       "LV_ESP_V1.0"
 #define FW_NAME                             "Firmware:V1A0120220822"

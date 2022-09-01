@@ -75,10 +75,12 @@ char filename_check_str[255];
 void listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client) {
     //char temp_filename[128]; // to help filter by extension	TODO: 128 needs a definition based on something
     File root = fs.open(dirname);
+
     if (!root) {
-        report_status_message(Error::FsFailedOpenDir, client);
+        // report_status_message(Error::FsFailedOpenDir, client);
         return;
     }
+
     if (!root.isDirectory()) {
         report_status_message(Error::FsDirNotFound, client);
         return;

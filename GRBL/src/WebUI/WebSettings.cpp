@@ -24,8 +24,6 @@
 
 #include <WiFi.h>
 #include <FS.h>
-#include <SPIFFS.h>
-// #include "LittleFS.h"
 #include "fs_api.h"
 #include <esp_wifi.h>
 #include <esp_ota_ops.h>
@@ -279,8 +277,8 @@ namespace WebUI {
 
     static Error SPIFFSSize(char* parameter, AuthenticationLevel auth_level) {  // ESP720
         webPrint(parameter);
-        webPrint("SPIFFS  Total:", ESPResponseStream::formatBytes(SPIFFS.totalBytes()));
-        webPrintln(" Used:", ESPResponseStream::formatBytes(SPIFFS.usedBytes()));
+        webPrint("LocalFS  Total:", ESPResponseStream::formatBytes(my_fs.totalBytes()));
+        webPrintln(" Used:", ESPResponseStream::formatBytes(my_fs.usedBytes()));
         return Error::Ok;
     }
 
@@ -290,7 +288,7 @@ namespace WebUI {
             return Error::InvalidValue;
         }
         webPrint("Formatting");
-        SPIFFS.format();
+        my_fs.format();
         webPrintln("...Done");
         return Error::Ok;
     }
@@ -304,11 +302,11 @@ namespace WebUI {
         if ((path.length() > 0) && (path[0] != '/')) {
             path = "/" + path;
         }
-        if (!SPIFFS.exists(path)) {
+        if (!my_fs.exists(path)) {
             webPrintln("Error: No such file!");
             return Error::FsFileNotFound;
         }
-        File currentfile = SPIFFS.open(path, FILE_READ);
+        File currentfile = my_fs.open(path, FILE_READ);
         if (!currentfile) {  //if file open success
             return Error::FsFailedOpenFile;
         }
@@ -340,11 +338,11 @@ namespace WebUI {
         if ((path.length() > 0) && (path[0] != '/')) {
             path = "/" + path;
         }
-        if (!SPIFFS.exists(path)) {
+        if (!my_fs.exists(path)) {
             webPrintln("Error: No such file!");
             return Error::FsFileNotFound;
         }
-        File currentfile = SPIFFS.open(path, FILE_READ);
+        File currentfile = my_fs.open(path, FILE_READ);
         if (!currentfile) {
             return Error::FsFailedOpenFile;
         }
@@ -450,7 +448,7 @@ namespace WebUI {
                 }
             }
             webPrintln("Available Size for update: ", ESPResponseStream::formatBytes(flashsize));
-            webPrintln("Available Size for SPIFFS: ", ESPResponseStream::formatBytes(SPIFFS.totalBytes()));
+            webPrintln("Available Size for SPIFFS: ", ESPResponseStream::formatBytes(my_fs.totalBytes()));
 
 #    if defined(ENABLE_HTTP)
             webPrintln("Web port: ", String(web_server.port()));
@@ -833,6 +831,8 @@ namespace WebUI {
                 return Error::FsFailedBusy;
             }
         }
+
+         grbl_send(CLIENT_SERIAL, "T1\n");
         
         webPrintln("");
         listDir(SD, "/", 10, espresponse->client());
@@ -874,10 +874,10 @@ namespace WebUI {
 
     static Error listLocalFiles(char* parameter, AuthenticationLevel auth_level) {  // No ESP command
         webPrintln("");
-        listDirLocalFS(SPIFFS, "/", 10, espresponse->client());
-        String ssd = "[Local FS Free:" + ESPResponseStream::formatBytes(SPIFFS.totalBytes() - SPIFFS.usedBytes());
-        ssd += " Used:" + ESPResponseStream::formatBytes(SPIFFS.usedBytes());
-        ssd += " Total:" + ESPResponseStream::formatBytes(SPIFFS.totalBytes());
+        listDirLocalFS(COM_USE_FS, "/", 10, espresponse->client());
+        String ssd = "[Local FS Free:" + ESPResponseStream::formatBytes(my_fs.totalBytes() - my_fs.usedBytes());
+        ssd += " Used:" + ESPResponseStream::formatBytes(my_fs.usedBytes());
+        ssd += " Total:" + ESPResponseStream::formatBytes(my_fs.totalBytes());
         ssd += "]";
         webPrintln(ssd);
         return Error::Ok;
@@ -907,11 +907,11 @@ namespace WebUI {
         JSONencoder j(espresponse->client() != CLIENT_WEBUI);
         j.begin();
         j.begin_array("files");
-        listDirJSON(SPIFFS, "/", 4, &j);
+        listDirJSON(COM_USE_FS, "/", 4, &j);
         j.end_array();
-        j.member("total", SPIFFS.totalBytes());
-        j.member("used", SPIFFS.usedBytes());
-        j.member("occupation", String(100 * SPIFFS.usedBytes() / SPIFFS.totalBytes()));
+        j.member("total", my_fs.totalBytes());
+        j.member("used", my_fs.usedBytes());
+        j.member("occupation", String(100 * my_fs.usedBytes() / my_fs.totalBytes()));
         webPrint(j.end());
         if (espresponse->client() != CLIENT_WEBUI) {
             webPrintln("");

@@ -24,9 +24,7 @@
 
 #    include <WiFi.h>
 #    include <FS.h>
-#    include <SPIFFS.h>
-    // #include "LittleFS.h"
-     #include "fs_api.h"
+#    include "fs_api.h"
 #    include "WifiServices.h"
 #    ifdef ENABLE_MDNS
 #        include <ESPmDNS.h>
@@ -61,7 +59,7 @@ namespace WebUI {
 
         //Start SPIFFS
         // SPIFFS.begin(true);
-        // my_fs.begin();          // star fs
+        my_fs.begin();          // star fs
 #    ifdef ENABLE_OTA
         ArduinoOTA
             .onStart([]() {
@@ -143,7 +141,7 @@ namespace WebUI {
 #    endif
         //Stop SPIFFS
         // SPIFFS.end();
-        // my_fs.end(); 
+        my_fs.end(); 
 #    ifdef ENABLE_MDNS
         //Stop mDNS
         MDNS.end();

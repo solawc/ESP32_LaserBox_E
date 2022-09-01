@@ -31,6 +31,10 @@ void setup() {
     // 删除所有消息反馈
     esp_log_level_set("gpio", ESP_LOG_NONE);
 
+    disableCore0WDT();
+    disableCore1WDT();
+    disableLoopWDT();
+
     // 进入GRBL的初始化
     grbl_init();
 }
@@ -46,33 +50,28 @@ void loop() {
 
 void grbl_init() {
 
+#ifdef USE_I2S_OUT
+    i2s_out_init();                             /* The I2S out must be initialized before it can access the expanded GPIO port */
+#endif
+
 #ifdef ENABLE_TFT
     tft_lcd.tftBglightInit();
     tft_lcd.tftBglightSetOff();
 #endif
+
+#ifdef ENABLE_WIFI
+    WebUI::wifi_config.init();                  /* init wifi state */
+#endif
     
-#ifdef USE_I2S_OUT
-    i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
-#endif
+    client_init();                              /* Setup serial baud rate and interrupts */
 
-    WiFi.persistent(false);
-    WiFi.disconnect(true);
-    WiFi.enableSTA(false);
-    WiFi.enableAP(false);
-    WiFi.mode(WIFI_OFF);
+    report_machine_type(CLIENT_SERIAL);         /* show the map name at startup */
 
-    client_init();  // Setup serial baud rate and interrupts
-
-// show the map name at startup
-#ifdef MACHINE_NAME
-    report_machine_type(CLIENT_SERIAL);
-#endif
-
-    settings_init();  // Load Grbl settings from non-volatile storage
-    stepper_init();   // Configure stepper pins and interrupt timers
-    system_ini();     // Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files)
+    settings_init();                            /* Load Grbl settings from non-volatile storage */
+    stepper_init();                             /* Configure stepper pins and interrupt timers */
+    system_ini();                               /* Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files) */
     init_motors();
-    memset(sys_position, 0, sizeof(sys_position));  // Clear machine position.
+    memset(sys_position, 0, sizeof(sys_position));  /* Clear machine position. */
 
     // Initialize system state.
 #ifdef FORCE_INITIALIZATION_ALARM

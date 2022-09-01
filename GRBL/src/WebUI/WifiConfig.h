@@ -87,7 +87,8 @@ namespace WebUI {
     class WiFiConfig {
     public:
         WiFiConfig();
-
+        
+        static void        init();
         static const char* info();
         static bool        isValidIP(const char* string);
         static bool        isPasswordValid(const char* password);
