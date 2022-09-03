@@ -20,7 +20,8 @@ static void event_handler(lv_event_t* e) {
 			draw_ctrl();
 		}
 		else if (e->current_target == ready_page.btnPrinter) {
-
+			clear_ready_page();
+			draw_sdcard();
 		}
 		else if (e->current_target == ready_page.btnSettings) {
 			
@@ -100,6 +101,8 @@ static void disp_wifi(void) {
 }
 
 static void disp_btn(void) {
+
+	
 	ready_page.btnCtrl = lv_btn_create(lv_ui.main_src);
 	lv_obj_set_size(ready_page.btnCtrl, 80, 80);
 	lv_obj_set_pos(ready_page.btnCtrl, 20, 210);

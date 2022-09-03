@@ -23,6 +23,7 @@
 */
 
 #include "main.h"
+#include "SDCard.h"
 
 // M_PI is not defined in standard C/C++ but some compilers
 // support it anyway.  The following suppresses Intellisense
@@ -476,8 +477,8 @@ void mc_parking_motion(float* parking_target, plan_line_data_t* pl_data) {
     uint8_t plan_status = plan_buffer_line(parking_target, pl_data);
     if (plan_status) {
         sys.step_control.executeSysMotion = true;
-        sys.step_control.endMotion        = false;  // Allow parking motion to execute, if feed hold is active.
-        st_parking_setup_buffer();                  // Setup step segment buffer for special parking motion case
+        sys.step_control.endMotion        = false;              // Allow parking motion to execute, if feed hold is active.
+        st_parking_setup_buffer();                              // Setup step segment buffer for special parking motion case
         st_prep_buffer();
         st_wake_up();
         do {
@@ -486,7 +487,7 @@ void mc_parking_motion(float* parking_target, plan_line_data_t* pl_data) {
                 return;
             }
         } while (sys.step_control.executeSysMotion);
-        st_parking_restore_buffer();  // Restore step segment buffer to normal run state.
+        st_parking_restore_buffer();                            // Restore step segment buffer to normal run state.
     } else {
         sys.step_control.executeSysMotion = false;
         protocol_exec_rt_system();
@@ -523,10 +524,10 @@ void mc_reset() {
         // sys_analog_all_off();
 #ifdef ENABLE_SD_CARD
         // do we need to stop a running SD job?
-        if (get_sd_state(false) == SDState::BusyPrinting) {
+        if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
             //Report print stopped
             report_feedback_message(Message::SdFileQuit);
-            closeFile();
+            mysdcard.closeFile();
         }
 #endif
         // Kill steppers only if in any motion state, i.e. cycle, actively holding, or homing.

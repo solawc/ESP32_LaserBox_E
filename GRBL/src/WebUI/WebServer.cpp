@@ -286,14 +286,14 @@ namespace WebUI {
         if ((path.substring(0, 4) == "/SD/")) {
             //remove /SD
             path = path.substring(3);
-            if (SDState::Idle != get_sd_state(true)) {
+            if (SDState::Idle != mysdcard.get_sd_state(true)) {
                 String content = "cannot open: ";
                 content += path + ", SD is not available.";
 
                 _webserver->send(500, "text/plain", content);
             }
             if (SD.exists(pathWithGz) || SD.exists(path)) {
-                set_sd_state(SDState::BusyUploading);
+                mysdcard.set_sd_state(SDState::BusyUploading);
                 if (SD.exists(pathWithGz)) {
                     path = pathWithGz;
                 }
@@ -324,10 +324,10 @@ namespace WebUI {
                     if (i != totalFileSize) {
                         //error: TBD
                     }
-                    set_sd_state(SDState::Idle);
+                    mysdcard.set_sd_state(SDState::Idle);
                     return;
                 }
-                set_sd_state(SDState::Idle);
+                mysdcard.set_sd_state(SDState::Idle);
             }
             String content = "cannot find ";
             content += path;
@@ -1277,7 +1277,7 @@ namespace WebUI {
         bool     list_files = true;
         uint64_t totalspace = 0;
         uint64_t usedspace  = 0;
-        SDState  state      = get_sd_state(true);
+        SDState  state      = mysdcard.get_sd_state(true);
         if (state != SDState::Idle) {
             String status = "{\"status\":\"";
             status += state == SDState::NotPresent ? "No SD Card\"}" : "Busy\"}";
@@ -1285,7 +1285,7 @@ namespace WebUI {
             _webserver->send(200, "application/json", status);
             return;
         }
-        set_sd_state(SDState::BusyParsing);
+        mysdcard.set_sd_state(SDState::BusyParsing);
 
         //get current path
         if (_webserver->hasArg("path")) {
@@ -1379,7 +1379,7 @@ namespace WebUI {
             s += " does not exist on SD Card\"}";
             _webserver->send(200, "application/json", s);
             SD.end();
-            set_sd_state(SDState::Idle);
+            mysdcard.set_sd_state(SDState::Idle);
             return;
         }
         if (list_files) {
@@ -1456,7 +1456,7 @@ namespace WebUI {
         jsonfile += "}";
         _webserver->sendHeader("Cache-Control", "no-cache");
         _webserver->send(200, "application/json", jsonfile);
-        set_sd_state(SDState::Idle);
+        mysdcard.set_sd_state(SDState::Idle);
         SD.end();
     }
 
@@ -1483,13 +1483,13 @@ namespace WebUI {
                         filename = "/" + upload.filename;
                     }
                     //check if SD Card is available
-                    if (get_sd_state(true) != SDState::Idle) {
+                    if (mysdcard.get_sd_state(true) != SDState::Idle) {
                         _upload_status = UploadStatusType::FAILED;
                         grbl_send(CLIENT_ALL, "[MSG:Upload cancelled]\r\n");
                         pushError(ESP_ERROR_UPLOAD_CANCELLED, "Upload cancelled");
 
                     } else {
-                        set_sd_state(SDState::BusyUploading);
+                        mysdcard.set_sd_state(SDState::BusyUploading);
                         //delete file on SD Card if already present
                         if (SD.exists(filename)) {
                             SD.remove(filename);
@@ -1524,7 +1524,7 @@ namespace WebUI {
                     //**************
                 } else if (upload.status == UPLOAD_FILE_WRITE) {
                     vTaskDelay(1 / portTICK_RATE_MS);
-                    if (sdUploadFile && (_upload_status == UploadStatusType::ONGOING) && (get_sd_state(false) == SDState::BusyUploading)) {
+                    if (sdUploadFile && (_upload_status == UploadStatusType::ONGOING) && (mysdcard.get_sd_state(false) == SDState::BusyUploading)) {
                         //no error write post data
                         if (upload.currentSize != sdUploadFile.write(upload.buf, upload.currentSize)) {
                             _upload_status = UploadStatusType::FAILED;
@@ -1562,7 +1562,7 @@ namespace WebUI {
                     }
                     if (_upload_status == UploadStatusType::ONGOING) {
                         _upload_status = UploadStatusType::SUCCESSFUL;
-                        set_sd_state(SDState::Idle);
+                        mysdcard.set_sd_state(SDState::Idle);
                     } else {
                         _upload_status = UploadStatusType::FAILED;
                         pushError(ESP_ERROR_UPLOAD, "Upload error");
@@ -1570,7 +1570,7 @@ namespace WebUI {
 
                 } else {  //Upload cancelled
                     _upload_status = UploadStatusType::FAILED;
-                    set_sd_state(SDState::Idle);
+                    mysdcard.set_sd_state(SDState::Idle);
                     grbl_send(CLIENT_ALL, "[MSG:Upload failed:6]\r\n");
                     if (sdUploadFile) {
                         sdUploadFile.close();
@@ -1588,7 +1588,7 @@ namespace WebUI {
             if (SD.exists(filename)) {
                 SD.remove(filename);
             }
-            set_sd_state(SDState::Idle);
+            mysdcard.set_sd_state(SDState::Idle);
         }
         COMMANDS::wait(0);
     }

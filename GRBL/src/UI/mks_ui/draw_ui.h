@@ -20,6 +20,7 @@
 
 #include "draw_ready.h"
 #include "draw_adjust.h"
+#include "draw_sdcard.h"
 
 extern "C" {
 	LV_IMG_DECLARE(mks_logo);

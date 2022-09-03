@@ -22,12 +22,16 @@
 #ifdef ENABLE_SD_CARD
 #    include "SDCard.h"
 
+SDCard mysdcard;
+
+
 File                       myFile;
 bool                       SD_ready_next = false;  // Grbl has processed a line and is waiting for another
 uint8_t                    SD_client     = CLIENT_SERIAL;
 WebUI::AuthenticationLevel SD_auth_level = WebUI::AuthenticationLevel::LEVEL_GUEST;
 uint32_t                   sd_current_line_number;     // stores the most recent line number read from the SD
 static char                comment[LINE_BUFFER_SIZE];  // Line to be executed. Zero-terminated.
+SDState sd_state =          SDState::Idle;
 
 #define USE_HSPI_FOR_SD 1
 #ifdef USE_HSPI_FOR_SD
@@ -37,16 +41,6 @@ SPIClass SPI_H(HSPI);
 #define SD_SPI SPI
 #endif
 
-
-// attempt to mount the SD card
-/*bool sd_mount()
-{
-  if(!SD.begin()) {
-    report_status_message(Error::FsFailedMount, CLIENT_SERIAL);
-    return false;
-  }
-  return true;
-}*/
 
 bool filename_check(char *str, uint16_t num) {
 
@@ -72,7 +66,8 @@ bool filename_check(char *str, uint16_t num) {
 }
 
 char filename_check_str[255];
-void listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client) {
+
+void SDCard::listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client) {
     //char temp_filename[128]; // to help filter by extension	TODO: 128 needs a definition based on something
     File root = fs.open(dirname);
 
@@ -96,101 +91,53 @@ void listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client) {
             strcpy(filename_check_str, file.name());
             if(filename_check(filename_check_str, strlen(filename_check_str)) == true) {
                 grbl_sendf(CLIENT_ALL, "[FILE:%s|SIZE:%d]\r\n", file.name(), file.size());
-                // grbl_send(CLIENT_ALL, "check\n");
             }
         }
         file = root.openNextFile();
     }
 }
 
-// char mks_filename_check_str[255];
-// void mks_listDir(fs::FS& fs, const char* dirname, uint8_t levels) { 
+/* SD卡挂载 */
+boolean SDCard::mount(void) {
 
-//     File root = fs.open(dirname);    //建立文件根目录并打开文件系统
+    if (SD.begin((GRBL_SPI_SS == -1) ? SS : GRBL_SPI_SS, SD_SPI, GRBL_SPI_FREQ, SD_ROOT_PATH, SD_MAX_OPEN_FILE)) {
+        if (SD.cardSize() > 0) {
+            sd_state = SDState::Idle;
+            return true;
+        }else {
+            sd_state = SDState::NotPresent;
+            return false;
+        }
+    }else {
+        sd_state = SDState::NotPresent;
+        return false;
+    }
+}
 
-//     // root 为空时判断为文件系统打开失败
-//     if(!root) {
-//         //...提示文件系统打开失败
-//         return;
-//     }
-
-//     if (!root.isDirectory()) {
-//         // ...找不到文件夹（根文件夹）
-//         return;
-//     }
-//     File file = root.openNextFile(); 
-    
-//     while(file) {
-
-//         if (file.isDirectory()) {
-//             if (levels) {
-//                 mks_listDir(fs, file.name(), levels - 1);
-//             }
-//         } else {
-
-//             memcpy(mks_filename_check_str, file.name(), 255);
-//             strcpy(mks_filename_check_str, file.name());
-
-//             if(filename_check(mks_filename_check_str, strlen(mks_filename_check_str)) == true) {
-//                 if((mks_file_list.file_count >= ((mks_file_list.file_page * MKS_FILE_NUM)-(MKS_FILE_NUM))) 
-//                     && (mks_file_list.file_count < (mks_file_list.file_page * MKS_FILE_NUM))) {
-//                     memset(mks_file_list.filename_str[mks_file_list.file_begin_num], 0, sizeof(mks_file_list.filename_str[mks_file_list.file_begin_num]));
-//                     strcpy(mks_file_list.filename_str[mks_file_list.file_begin_num], mks_filename_check_str);
-//                     mks_file_list.file_size[mks_file_list.file_begin_num] = file.size();
-//                     draw_filexx(mks_file_list.file_begin_num, mks_file_list.filename_str[mks_file_list.file_begin_num]);
-//                     mks_file_list.file_begin_num++;
-//                 }
-//                 mks_file_list.file_count++;
-//                 if(mks_file_list.file_count >= (mks_file_list.file_page * MKS_FILE_NUM)) return;
-//             }
-//         }
-//         file =  root.openNextFile();
-//     }
-// }
-
-boolean openFile(fs::FS& fs, const char* path) {
+boolean SDCard::openFile(fs::FS& fs, const char* path) {
     myFile = fs.open(path);
 
     if (!myFile) {
         return false;
     }
-    set_sd_state(SDState::BusyPrinting);
+    mysdcard.set_sd_state(SDState::BusyPrinting);
     SD_ready_next          = false;  // this will get set to true when Grbl issues "ok" message
     sd_current_line_number = 0;
     return true;
 }
 
-boolean closeFile() {
+boolean SDCard::closeFile() {
     if (!myFile) {
         return false;
     }
-    set_sd_state(SDState::Idle);
+    mysdcard.set_sd_state(SDState::Idle);
     SD_ready_next          = false;
     sd_current_line_number = 0;
     myFile.close();
-    SD.end();
+    // SD.end();
     return true;
 }
 
-boolean setFilePos(uint32_t pos) {
-    if (!myFile) {
-        return false;
-    }
-
-    sd_current_line_number = 0;
-    myFile.seek(pos);
-
-    return true;
-}
-
-
-boolean mks_openFile(fs::FS& fs, const char* path) {
-    myFile = fs.open(path);
-    if (!myFile) {
-        return false;
-    }
-    return true;
-}
 
 /*
   read a line from the SD card
@@ -199,7 +146,7 @@ boolean mks_openFile(fs::FS& fs, const char* path) {
   make uppercase
   return true if a line is
 */
-boolean readFileLine(char* line, int maxlen) {
+boolean SDCard::readFileLine(char* line, int maxlen) {
     if (!myFile) {
         report_status_message(Error::FsFailedRead, SD_client);
         return false;
@@ -220,20 +167,8 @@ boolean readFileLine(char* line, int maxlen) {
     return len || myFile.available();
 }
 
-boolean readFileBuff(uint8_t *buf, uint32_t size) {
-
-    if(!myFile) {
-        report_status_message(Error::FsFailedRead, SD_client);
-        return false;
-    }
-    myFile.read((uint8_t *)buf, size-1);
-    return true;
-}
-
-
-
 // return a percentage complete 50.5 = 50.5%
-float sd_report_perc_complete() {
+float SDCard::sd_report_perc_complete() {
     if (!myFile) {
         return 0.0;
     }
@@ -241,23 +176,19 @@ float sd_report_perc_complete() {
 }
 
 // mks fix
-uint32_t sd_get_current_line_number() {
+uint32_t SDCard::sd_get_current_line_number() {
     return sd_current_line_number;
 }
 
-void sd_set_current_line_number(uint32_t num) { 
-    sd_current_line_number = num;
-}
 
-SDState sd_state = SDState::Idle;
 
-SDState get_sd_state(bool refresh) {
+SDState SDCard::get_sd_state(bool refresh) {
 
+    /*确定是否由DET引脚，并且DET引脚是否为低电平*/
     if (SDCARD_DET_PIN != UNDEFINED_PIN) {
         if (digitalRead(SDCARD_DET_PIN) != SDCARD_DET_VAL) {
             sd_state = SDState::NotPresent;
             return sd_state;
-            //no need to go further if SD detect is not correct
         }
     }
 
@@ -274,7 +205,7 @@ SDState get_sd_state(bool refresh) {
     sd_state = SDState::NotPresent;
     //using default value for speed ? should be parameter
     //refresh content if card was removed
-    if (SD.begin((GRBL_SPI_SS == -1) ? SS : GRBL_SPI_SS, SD_SPI, GRBL_SPI_FREQ, "/sd", 2)) {
+    if (SD.begin((GRBL_SPI_SS == -1) ? SS : GRBL_SPI_SS, SD_SPI, GRBL_SPI_FREQ, SD_ROOT_PATH, SD_MAX_OPEN_FILE)) {
         if (SD.cardSize() > 0) {
             sd_state = SDState::Idle;
         }
@@ -282,39 +213,13 @@ SDState get_sd_state(bool refresh) {
     return sd_state;
 }
 
-SDState set_sd_state(SDState state) {
+SDState SDCard::set_sd_state(SDState state) {
     sd_state = state;
     return sd_state;
 }
 
-// SDState write_file(const char* path, const char* message) {
-    
 
-// }
-
-// void SdCard::writeFile(const char* path, const char* message)
-// {
-// 	// Serial.printf("Writing file: %s\n", path);
-
-// 	File file = SD.open(path, FILE_WRITE);
-
-// 	if (!file)
-// 	{
-// 		Serial.println("Failed to open file for writing");
-// 		return;
-// 	}
-// 	if (file.print(message))
-// 	{
-// 		// Serial.println("File written");
-// 	}
-// 	else
-// 	{
-// 		Serial.println("Write failed");
-// 	}
-// 	file.close();
-// }
-
-void sd_get_current_filename(char* name) {
+void SDCard::sd_get_current_filename(char* name) {
     if (myFile) {
         strcpy(name, myFile.name());
     } else {
@@ -322,12 +227,9 @@ void sd_get_current_filename(char* name) {
     }
 }
 
-bool sd_file_check(const char* path) {
+uint64_t SDCard::get_sd_size(void) {
 
-    if(!myFile)  return false;
-
-    if(!(SD.open(path))) return false;
-    else return true;
+    return SD.cardSize() / (1024*1024);
 }
 
 #endif  //ENABLE_SD_CARD

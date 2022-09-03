@@ -169,10 +169,10 @@ void clientCheckTask(void* pvParameters) {
             // not passed into the main buffer, but these set system state flag bits for realtime execution.
             if (is_realtime_command(data)) {
                 execute_realtime_command(static_cast<Cmd>(data), client);
-                vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+                // vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
             } else {
 #if defined(ENABLE_SD_CARD)
-                if (get_sd_state(false) < SDState::Busy) {
+                if (mysdcard.get_sd_state(false) < SDState::Busy) {
 #endif  //ENABLE_SD_CARD
                     taskENTER_CRITICAL(&myMutex);
                     client_buffer[client].write(data);
@@ -182,9 +182,6 @@ void clientCheckTask(void* pvParameters) {
                     if (data == '\r' || data == '\n') {
                         grbl_sendf(client, "error %d\r\n", Error::AnotherInterfaceBusy);
                         grbl_msg_sendf(client, MsgLevel::Info, "SD card job running");
-                        if(sys.state == State::Idle) {
-                            set_sd_state(SDState::Idle);
-                        }
                     }
                 }
 #endif  //ENABLE_SD_CARD
@@ -357,6 +354,7 @@ void client_write(uint8_t client, const char* text) {
 #if defined(ENABLE_WIFI) && defined(ENABLE_HTTP) && defined(ENABLE_SERIAL2SOCKET_OUT)
     if (client == CLIENT_WEBUI || client == CLIENT_ALL) {
         WebUI::Serial2Socket.write((const uint8_t*)text, strlen(text));
+        Uart0.write(text);
     }
 #endif
 #if defined(ENABLE_WIFI) && defined(ENABLE_TELNET)

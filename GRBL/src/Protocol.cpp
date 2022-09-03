@@ -150,9 +150,10 @@ void protocol_main_loop() {
 
 #ifdef ENABLE_SD_CARD
         if (SD_ready_next) {
+
             char fileLine[255];
 
-            if (readFileLine(fileLine, 255)) {
+            if (mysdcard.readFileLine(fileLine, 255)) {
 
             SD_ready_next = false;
 
@@ -160,12 +161,12 @@ void protocol_main_loop() {
 
             } else {
                 char temp[50];
-                sd_get_current_filename(temp);
+                mysdcard.sd_get_current_filename(temp);
                 grbl_notifyf("SD print done", "%s print is successful", temp);
                 sys_rt_f_override                    = FeedOverride::Default;
                 sys_rt_r_override                    = RapidOverride::Default;
                 sys_rt_s_override                    = SpindleSpeedOverride::Default;
-                closeFile();  // close file and clear SD ready/running flags
+                mysdcard.closeFile();  // close file and clear SD ready/running flags
             }
         }
 #endif

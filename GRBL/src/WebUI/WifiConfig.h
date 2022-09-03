@@ -58,7 +58,7 @@ namespace WebUI {
     static const int   DEFAULT_AP_CHANNEL        = 1;
     static const int   DEFAULT_WEBSERVER_PORT    = 80;
     static const int   DEFAULT_HTTP_STATE        = 1;
-    static const int   DEFAULT_TELNETSERVER_PORT = 80;
+    static const int   DEFAULT_TELNETSERVER_PORT = 23;
     static const int   DEFAULT_TELNET_STATE      = 1;
     static const int   DEFAULT_STA_IP_MODE       = DHCP_MODE;
     static const char* HIDDEN_PASSWORD           = "********";

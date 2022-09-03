@@ -274,7 +274,6 @@ namespace WebUI {
             count++;
             status = WiFi.status();
         }
-        printf("[MSG:Wifi state:%d]\r\n", status);
         return status == WL_CONNECTED;
     }
 

@@ -687,7 +687,7 @@ namespace WebUI {
         if (path[0] != '/') {
             path = "/" + path;
         }
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
         if (state != SDState::Idle) {
             if (state == SDState::NotPresent) {
                 webPrintln("No SD Card");
@@ -697,7 +697,7 @@ namespace WebUI {
                 return Error::FsFailedBusy;
             }
         }
-        if (!openFile(SD, path.c_str())) {
+        if (!mysdcard.openFile(SD, path.c_str())) {
             report_status_message(Error::FsFailedRead, (espresponse) ? espresponse->client() : CLIENT_ALL);
             webPrintln("");
             return Error::FsFailedOpenFile;
@@ -714,11 +714,11 @@ namespace WebUI {
         }
         SD_client = (espresponse) ? espresponse->client() : CLIENT_ALL;
         char fileLine[255];
-        while (readFileLine(fileLine, 255)) {
+        while (mysdcard.readFileLine(fileLine, 255)) {
             webPrintln(fileLine);
         }
         webPrintln("");
-        closeFile();
+        mysdcard.closeFile();
         return Error::Ok;
     }
 
@@ -736,9 +736,9 @@ namespace WebUI {
             return err;
         }
         char fileLine[255];
-        if (!readFileLine(fileLine, 255)) {
+        if (!mysdcard.readFileLine(fileLine, 255)) {
             //No need notification here it is just a macro
-            closeFile();
+            mysdcard.closeFile();
             webPrintln("");
             return Error::Ok;
         }
@@ -787,7 +787,7 @@ namespace WebUI {
             webPrintln("Missing file name!");
             return Error::InvalidValue;
         }
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
         if (state != SDState::Idle) {
             webPrintln((state == SDState::NotPresent) ? "No SD card" : "Busy");
             return Error::Ok;
@@ -820,7 +820,7 @@ namespace WebUI {
 
     static Error listSDFiles(char* parameter, AuthenticationLevel auth_level) {  // ESP210
 
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
 
         if (state != SDState::Idle) {
             if (state == SDState::NotPresent) {
@@ -835,13 +835,13 @@ namespace WebUI {
          grbl_send(CLIENT_SERIAL, "T1\n");
         
         webPrintln("");
-        listDir(SD, "/", 10, espresponse->client());
+        mysdcard.listDir(SD, "/", 10, espresponse->client());
         String ssd = "[SD Free:" + ESPResponseStream::formatBytes(SD.totalBytes() - SD.usedBytes());
         ssd += " Used:" + ESPResponseStream::formatBytes(SD.usedBytes());
         ssd += " Total:" + ESPResponseStream::formatBytes(SD.totalBytes());
         ssd += "]";
         webPrintln(ssd);
-        SD.end();
+        // SD.end();
         return Error::Ok;
     }
 #endif
@@ -922,7 +922,7 @@ namespace WebUI {
     static Error showSDStatus(char* parameter, AuthenticationLevel auth_level) {  // ESP200
         const char* resp = "No SD card";
 #ifdef ENABLE_SD_CARD
-        switch (get_sd_state(true)) {
+        switch (mysdcard.get_sd_state(true)) {
             case SDState::Idle:
                 resp = "SD card detected";
                 break;
