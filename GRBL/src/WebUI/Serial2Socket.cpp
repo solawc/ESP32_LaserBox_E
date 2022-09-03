@@ -78,15 +78,16 @@ namespace WebUI {
     }
 
     size_t Serial_2_Socket::write(const uint8_t* buffer, size_t size) {
-        // if ((buffer == NULL) || (!_web_socket)) {
+        if ((buffer == NULL) || (!_web_socket)) {
             if (buffer == NULL) {
                 log_i("[SOCKET]No buffer");
             }
+
             if (!_web_socket) {
                 log_i("[SOCKET]No socket");
             }
             return 0;
-        // }
+        }
 
 #    if defined(ENABLE_SERIAL2SOCKET_OUT)
         if (_TXbufferSize == 0) {
