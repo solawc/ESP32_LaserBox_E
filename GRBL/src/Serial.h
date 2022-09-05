@@ -23,7 +23,7 @@
 #include "stdint.h"
 
 #ifndef RX_BUFFER_SIZE
-#    define RX_BUFFER_SIZE 256
+#    define RX_BUFFER_SIZE 128
 #endif
 #ifndef TX_BUFFER_SIZE
 #    ifdef USE_LINE_NUMBERS

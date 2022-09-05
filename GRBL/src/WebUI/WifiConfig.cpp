@@ -58,8 +58,7 @@ namespace WebUI {
     const char* WiFiConfig::info() {
         static String result;
         String        tmp;
-        result = "[MSG:";
-
+        result = "[WIFI:";
         if ((WiFi.getMode() == WIFI_MODE_STA) || (WiFi.getMode() == WIFI_MODE_APSTA)) {
             result += "Mode=STA:SSID=";
             result += WiFi.SSID();
@@ -75,7 +74,7 @@ namespace WebUI {
 
         if ((WiFi.getMode() == WIFI_MODE_AP) || (WiFi.getMode() == WIFI_MODE_APSTA)) {
             if (WiFi.getMode() == WIFI_MODE_APSTA) {
-                result += "]\r\n[MSG:";
+                result += "]\r\n[WIFI:";
             }
             result += "Mode=AP:SSDI=";
             wifi_config_t conf;

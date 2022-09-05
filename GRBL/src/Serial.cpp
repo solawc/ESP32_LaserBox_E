@@ -354,7 +354,6 @@ void client_write(uint8_t client, const char* text) {
 #if defined(ENABLE_WIFI) && defined(ENABLE_HTTP) && defined(ENABLE_SERIAL2SOCKET_OUT)
     if (client == CLIENT_WEBUI || client == CLIENT_ALL) {
         WebUI::Serial2Socket.write((const uint8_t*)text, strlen(text));
-        Uart0.write(text);
     }
 #endif
 #if defined(ENABLE_WIFI) && defined(ENABLE_TELNET)

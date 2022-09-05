@@ -509,9 +509,20 @@ void report_execute_startup_message(const char* line, Error status_code, uint8_t
 
 // Prints build info line
 void report_build_info(const char* line, uint8_t client) {
+    grbl_send(client, "[ORIGIN:China]\r\n");
+    grbl_send(client, "[PRODUCER:LaserBox_E]\r\n");
+    grbl_send(client, "[DATE:20220905]\r\n");
     grbl_sendf(client, "[VER:%s.%s:%s]\r\n[OPT:", GRBL_VERSION, GRBL_VERSION_BUILD, line);
-#ifdef COOLANT_MIST_PIN
-    grbl_send(client, "M");  // TODO Need to deal with M8...it could be disabled
+
+    grbl_send(client, "V");
+#ifdef USE_LINE_NUMBERS
+    grbl_send(client, "N");
+#endif
+#ifdef COOLANT_MIST_PIN         /* Enable M7 */
+    grbl_send(client, "M");
+#endif
+#ifdef COREXY
+    grbl_send(client, "C");
 #endif
 #ifdef PARKING_ENABLE
     grbl_send(client, "P");
@@ -534,9 +545,7 @@ void report_build_info(const char* line, uint8_t client) {
 #ifdef ENABLE_PARKING_OVERRIDE_CONTROL
     grbl_send(client, "R");
 #endif
-#if defined(ENABLE_WIFI)
-    grbl_send(client, "W");
-#endif
+
 #ifndef ENABLE_RESTORE_WIPE_ALL  // NOTE: Shown when disabled.
     grbl_send(client, "*");
 #endif
@@ -552,15 +561,22 @@ void report_build_info(const char* line, uint8_t client) {
 #ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE  // NOTE: Shown when disabled.
     grbl_send(client, "W");
 #endif
+    grbl_send(client, ",");
+    grbl_sendf(client, "%d", BLOCK_BUFFER_SIZE - 1);
+    grbl_send(client, ",");
+    grbl_sendf(client, "%d", RX_BUFFER_SIZE);
+
     // NOTE: Compiled values, like override increments/max/min values, may be added at some point later.
     // These will likely have a comma delimiter to separate them.
     grbl_send(client, "]\r\n");
     report_machine_type(client);
+#if 1
 #if defined(ENABLE_WIFI)
     grbl_send(client, (char*)WebUI::wifi_config.info());
 #endif
-#if defined(ENABLE_BLUETOOTH)
-    grbl_send(client, (char*)WebUI::bt_config.info());
+// #if defined(ENABLE_BLUETOOTH)
+//     grbl_send(client, (char*)WebUI::bt_config.info());
+// #endif
 #endif
 }
 

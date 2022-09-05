@@ -24,7 +24,7 @@ void Uart::begin(unsigned long baudrate, Data dataBits, Stop stopBits, Parity pa
     if (uart_param_config(_uart_num, &conf) != ESP_OK) {
         return;
     };
-    uart_driver_install(_uart_num, 256, 0, 0, NULL, 0);
+    uart_driver_install(_uart_num, RX_BUFFER_SIZE, 0, 0, NULL, 0);
 }
 
 void Uart::changeBuad(unsigned long baudrate) {

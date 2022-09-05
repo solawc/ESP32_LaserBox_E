@@ -214,7 +214,7 @@ static const uint8_t NHomingLocateCycle = 1;  // Integer (1-128)
 // cycle is still invoked by the $H command. This is disabled by default. It's here only to address
 // users that need to switch between a two-axis and three-axis machine. This is actually very rare.
 // If you have a two-axis machine, DON'T USE THIS. Instead, just alter the homing cycle for two-axes.
-#define HOMING_SINGLE_AXIS_COMMANDS  // Default disabled. Uncomment to enable.
+// #define HOMING_SINGLE_AXIS_COMMANDS  // Default disabled. Uncomment to enable.
 
 // Number of blocks Grbl executes upon startup. These blocks are stored in non-volatile storage.
 // and addresses are defined in settings.h. With the current settings, up to 2 startup blocks may
@@ -454,7 +454,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // available RAM, like when re-compiling for a Mega2560. Or decrease if the Arduino begins to
 // crash due to the lack of available RAM or if the CPU is having trouble keeping up with planning
 // new incoming motions as they are executed.
-#define BLOCK_BUFFER_SIZE 128 // Uncomment to override default in planner.h.
+#define BLOCK_BUFFER_SIZE 256 // Uncomment to override default in planner.h.
 
 // Governs the size of the intermediary step segment buffer between the step execution algorithm
 // and the planner blocks. Each segment is set of steps executed at a constant velocity over a
@@ -481,7 +481,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // 115200 baud will take 5 msec to transmit a typical 55 character report. Worst case reports are
 // around 90-100 characters. As long as the serial TX buffer doesn't get continually maxed, Grbl
 // will continue operating efficiently. Size the TX buffer around the size of a worst-case report.
-// #define RX_BUFFER_SIZE 128 // (1-254) Uncomment to override defaults in serial.h
+#define RX_BUFFER_SIZE 256 // (1-254) Uncomment to override defaults in serial.h
 // #define TX_BUFFER_SIZE 100 // (1-254)
 
 // A simple software debouncing feature for hard limit switches. When enabled, the limit
