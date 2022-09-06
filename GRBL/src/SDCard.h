@@ -44,7 +44,7 @@ extern uint32_t                   sd_current_line_number;
 class SDCard{
 
 private:
-
+    File    myFile;
 public:
 
     boolean  mount(void);
@@ -64,6 +64,9 @@ public:
     void     sd_get_current_filename(char* name);
 
     uint64_t get_sd_size(void);
+
+    void     setSdNext(bool state);
+    bool     getSdNext(void)
 };
 extern SDCard mysdcard;
 

@@ -149,13 +149,13 @@ void protocol_main_loop() {
     for (;;) {
 
 #ifdef ENABLE_SD_CARD
-        if (SD_ready_next) {
+        if (mysdcard.getSdNext()) {
 
             char fileLine[255];
 
             if (mysdcard.readFileLine(fileLine, 255)) {
 
-            SD_ready_next = false;
+            mysdcard.setSdNext(false);
 
             report_status_message(execute_line(fileLine, SD_client, SD_auth_level), SD_client);
 

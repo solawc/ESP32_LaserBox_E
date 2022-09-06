@@ -24,8 +24,7 @@
 
 SDCard mysdcard;
 
-
-File                       myFile;
+// File                       myFile;
 bool                       SD_ready_next = false;  // Grbl has processed a line and is waiting for another
 uint8_t                    SD_client     = CLIENT_SERIAL;
 WebUI::AuthenticationLevel SD_auth_level = WebUI::AuthenticationLevel::LEVEL_GUEST;
@@ -97,6 +96,14 @@ void SDCard::listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t cl
     }
 }
 
+void SDCard::setSdNext(bool state) {
+    SD_ready_next = state;
+}
+
+bool SDCard::getSdNext(void) {
+    return SD_ready_next;
+}
+
 /* SD卡挂载 */
 boolean SDCard::mount(void) {
 
@@ -120,8 +127,8 @@ boolean SDCard::openFile(fs::FS& fs, const char* path) {
     if (!myFile) {
         return false;
     }
-    mysdcard.set_sd_state(SDState::BusyPrinting);
-    SD_ready_next          = false;  // this will get set to true when Grbl issues "ok" message
+    set_sd_state(SDState::BusyPrinting); 
+    setSdNext(false);   /* this will get set to true when Grbl issues "ok" message */
     sd_current_line_number = 0;
     return true;
 }
@@ -130,8 +137,8 @@ boolean SDCard::closeFile() {
     if (!myFile) {
         return false;
     }
-    mysdcard.set_sd_state(SDState::Idle);
-    SD_ready_next          = false;
+    set_sd_state(SDState::Idle);
+    setSdNext(false);
     sd_current_line_number = 0;
     myFile.close();
     // SD.end();

@@ -205,7 +205,7 @@ void report_status_message(Error status_code, uint8_t client) {
         case Error::Ok:  // Error::Ok
 #ifdef ENABLE_SD_CARD
             if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
-                SD_ready_next = true;  // flag so system_execute_line() will send the next line
+                mysdcard.setSdNext(true); /* flag so system_execute_line() will send the next line */
             } else {
                 grbl_send(client, "ok\r\n");
             }
@@ -215,13 +215,13 @@ void report_status_message(Error status_code, uint8_t client) {
             break;
         default:
 #ifdef ENABLE_SD_CARD
-            // do we need to stop a running SD job?
+            /* do we need to stop a running SD job? */
             if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
                 if (status_code == Error::GcodeUnsupportedCommand) {
                     grbl_sendf(client, "error:%d\r\n", status_code);  // most senders seem to tolerate this error and keep on going
                     grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, mysdcard.sd_get_current_line_number());
-                    // don't close file
-                    SD_ready_next = true;  // flag so system_execute_line() will send the next line
+                    /* don't close file */
+                    mysdcard.setSdNext(true); /* flag so system_execute_line() will send the next line */
                 } else {
                     grbl_notifyf("SD print error", "Error:%d during SD file at line: %d", status_code, mysdcard.sd_get_current_line_number());
                     grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, mysdcard.sd_get_current_line_number());
@@ -546,19 +546,19 @@ void report_build_info(const char* line, uint8_t client) {
     grbl_send(client, "R");
 #endif
 
-#ifndef ENABLE_RESTORE_WIPE_ALL  // NOTE: Shown when disabled.
+#ifndef ENABLE_RESTORE_WIPE_ALL                     // NOTE: Shown when disabled.
     grbl_send(client, "*");
 #endif
-#ifndef ENABLE_RESTORE_DEFAULT_SETTINGS  // NOTE: Shown when disabled.
+#ifndef ENABLE_RESTORE_DEFAULT_SETTINGS             // NOTE: Shown when disabled.
     grbl_send(client, "$");
 #endif
-#ifndef ENABLE_RESTORE_CLEAR_PARAMETERS  // NOTE: Shown when disabled.
+#ifndef ENABLE_RESTORE_CLEAR_PARAMETERS             // NOTE: Shown when disabled.
     grbl_send(client, "#");
 #endif
-#ifndef FORCE_BUFFER_SYNC_DURING_NVS_WRITE  // NOTE: Shown when disabled.
+#ifndef FORCE_BUFFER_SYNC_DURING_NVS_WRITE          // NOTE: Shown when disabled.
     grbl_send(client, "E");
 #endif
-#ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE  // NOTE: Shown when disabled.
+#ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE         // NOTE: Shown when disabled.
     grbl_send(client, "W");
 #endif
     grbl_send(client, ",");
@@ -570,13 +570,12 @@ void report_build_info(const char* line, uint8_t client) {
     // These will likely have a comma delimiter to separate them.
     grbl_send(client, "]\r\n");
     report_machine_type(client);
-#if 1
+
 #if defined(ENABLE_WIFI)
     grbl_send(client, (char*)WebUI::wifi_config.info());
 #endif
-// #if defined(ENABLE_BLUETOOTH)
-//     grbl_send(client, (char*)WebUI::bt_config.info());
-// #endif
+#if defined(ENABLE_BLUETOOTH)
+    grbl_send(client, (char*)WebUI::bt_config.info());
 #endif
 }
 
