@@ -10,11 +10,11 @@
 */
 
 
-#ifdef MB_MKS_DLC32
+#ifdef MB_LaserBox_E
     #include "Machines/common_i2s_out.h"
     #include "Machines/i2s_out_xyz_mks_dlc32.h"
     #include "BoardMap/pins_LaserBox_E_V1.0.h"
-#elif defined(MB_MKS_DLC32_COREXY)
+#elif defined(MB_LaserBox_E_COREXY)
     #include "Machines/common_i2s_out.h"
     #include "Machines/i2s_out_xyz_mks_dlc32.h"
     #include "BoardMap/pins_LaserBox_E_V1.0.h"

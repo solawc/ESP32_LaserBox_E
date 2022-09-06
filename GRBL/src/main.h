@@ -88,6 +88,9 @@ const char* const GRBL_VERSION_BUILD = "2020903101";
 
 #include "I2SOut.h"
 
+#define DEBUG_REMOVE      0
+
+
 void grbl_init();
 void run_once();
 

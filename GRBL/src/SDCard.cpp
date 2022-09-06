@@ -25,7 +25,7 @@
 SDCard mysdcard;
 
 // File                       myFile;
-bool                       SD_ready_next = false;  // Grbl has processed a line and is waiting for another
+// bool                       SD_ready_next = false;  // Grbl has processed a line and is waiting for another
 uint8_t                    SD_client     = CLIENT_SERIAL;
 WebUI::AuthenticationLevel SD_auth_level = WebUI::AuthenticationLevel::LEVEL_GUEST;
 uint32_t                   sd_current_line_number;     // stores the most recent line number read from the SD
@@ -70,16 +70,21 @@ void SDCard::listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t cl
     //char temp_filename[128]; // to help filter by extension	TODO: 128 needs a definition based on something
     File root = fs.open(dirname);
 
+#if DEBUG_REMOVE
     if (!root) {
-        // report_status_message(Error::FsFailedOpenDir, client);
+        report_status_message(Error::FsFailedOpenDir, client);
         return;
     }
+#endif
 
+    /* 检测文件夹 */
     if (!root.isDirectory()) {
         report_status_message(Error::FsDirNotFound, client);
         return;
     }
+
     File file = root.openNextFile();
+
     while (file) {
         if (file.isDirectory()) {
             if (levels) {
@@ -89,7 +94,7 @@ void SDCard::listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t cl
             memset(filename_check_str, 0, sizeof(filename_check_str));
             strcpy(filename_check_str, file.name());
             if(filename_check(filename_check_str, strlen(filename_check_str)) == true) {
-                grbl_sendf(CLIENT_ALL, "[FILE:%s|SIZE:%d]\r\n", file.name(), file.size());
+                grbl_sendf(client, "[FILE:/%s|SIZE:%d]\r\n", file.name(), file.size());
             }
         }
         file = root.openNextFile();
@@ -121,6 +126,10 @@ boolean SDCard::mount(void) {
     }
 }
 
+void SDCard::unmount(void) {
+    SD.end();
+}
+
 boolean SDCard::openFile(fs::FS& fs, const char* path) {
     myFile = fs.open(path);
 
@@ -133,6 +142,9 @@ boolean SDCard::openFile(fs::FS& fs, const char* path) {
     return true;
 }
 
+/* 
+  close file
+*/
 boolean SDCard::closeFile() {
     if (!myFile) {
         return false;
@@ -141,7 +153,6 @@ boolean SDCard::closeFile() {
     setSdNext(false);
     sd_current_line_number = 0;
     myFile.close();
-    // SD.end();
     return true;
 }
 
@@ -174,20 +185,17 @@ boolean SDCard::readFileLine(char* line, int maxlen) {
     return len || myFile.available();
 }
 
-// return a percentage complete 50.5 = 50.5%
+/* return a percentage complete 50.5 = 50.5% */
 float SDCard::sd_report_perc_complete() {
-    if (!myFile) {
-        return 0.0;
-    }
+
+    if (!myFile) { return 0.0; }
+
     return (float)myFile.position() / (float)myFile.size() * 100.0f;
 }
 
-// mks fix
 uint32_t SDCard::sd_get_current_line_number() {
     return sd_current_line_number;
 }
-
-
 
 SDState SDCard::get_sd_state(bool refresh) {
 
@@ -208,7 +216,7 @@ SDState SDCard::get_sd_state(bool refresh) {
     }
 
     //SD is idle or not detected, let see if still the case
-    SD.end();
+    unmount();
     sd_state = SDState::NotPresent;
     //using default value for speed ? should be parameter
     //refresh content if card was removed

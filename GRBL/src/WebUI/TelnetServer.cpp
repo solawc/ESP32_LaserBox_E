@@ -77,25 +77,32 @@ namespace WebUI {
     }
 
     void Telnet_Server::clearClients() {
-        //check if there are any new clients
+        /* check if there are any new clients(检查是否有新的客户端进来) */ 
         if (_telnetserver->hasClient()) {
-            uint8_t i;
+            grbl_send(CLIENT_SERIAL, "HAS CLIENT\n");
+            uint8_t i = 0;
             for (i = 0; i < MAX_TLNT_CLIENTS; i++) {
-                //find free/disconnected spot
+                // find free/disconnected spot
                 if (!_telnetClients[i] || !_telnetClients[i].connected()) {
-#    ifdef ENABLE_TELNET_WELCOME_MSG
+                    grbl_send(CLIENT_SERIAL, "Find free/disconnected spot\n");
+
+#    ifdef ENABLE_TELNET_WELCOME_MSG        /* 显示欢迎页面 */
                     _telnetClientsIP[i] = IPAddress(0, 0, 0, 0);
 #    endif
                     if (_telnetClients[i]) {
+                        grbl_send(CLIENT_SERIAL, "Stop Client2\n");
                         _telnetClients[i].stop();
                     }
                     _telnetClients[i] = _telnetserver->available();
                     break;
                 }
             }
+
             if (i >= MAX_TLNT_CLIENTS) {
                 //no free/disconnected spot so reject
+                grbl_send(CLIENT_SERIAL, "no free/disconnected spot so reject\n");
                 _telnetserver->available().stop();
+                _telnetClients->stop();
             }
         }
     }
@@ -123,7 +130,7 @@ namespace WebUI {
 
     void Telnet_Server::handle() {
         COMMANDS::wait(0);
-        //check if can read
+        // check if can read
         if (!_setupdone || _telnetserver == NULL) {
             return;
         }

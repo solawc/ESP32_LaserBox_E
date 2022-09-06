@@ -57,7 +57,7 @@ namespace WebUI {
         }
         String h = wifi_hostname->get();
 
-        my_fs.begin();          // star fs
+        my_fs.begin();      // 开启内部文件系统        
 #    ifdef ENABLE_OTA
         ArduinoOTA
             .onStart([]() {
@@ -65,7 +65,7 @@ namespace WebUI {
                 if (ArduinoOTA.getCommand() == U_FLASH) {
                     type = "sketch";
                 } else {  // U_SPIFFS
-                    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+                    // NOTE: if updating SPIFFS this would be the place to unmount FS using my_fs.end()
                     type = "filesystem";
                     my_fs.end();
                 }

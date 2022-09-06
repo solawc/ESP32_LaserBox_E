@@ -167,6 +167,7 @@ namespace WebUI {
             flush();
         }
     }
+    
     void Serial_2_Socket::flush(void) {
         if (_TXbufferSize > 0) {
             log_i("[SOCKET]flush data, buffer size %d", _TXbufferSize);

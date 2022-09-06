@@ -37,17 +37,19 @@ extern uint8_t                    SD_client;
 extern WebUI::AuthenticationLevel SD_auth_level;
 extern uint32_t                   sd_current_line_number;
 
-#define SD_ROOT_PATH                "/sd"
-#define SD_MAX_OPEN_FILE            2
+#define SD_ROOT_PATH              "/sd"
+#define SD_MAX_OPEN_FILE          2
 
 
 class SDCard{
 
 private:
     File    myFile;
+    bool    SD_ready_next = false;
 public:
 
     boolean  mount(void);
+    void     unmount(void);
     SDState  get_sd_state(bool refresh);
     SDState  set_sd_state(SDState state);
 
@@ -66,7 +68,7 @@ public:
     uint64_t get_sd_size(void);
 
     void     setSdNext(bool state);
-    bool     getSdNext(void)
+    bool     getSdNext(void);
 };
 extern SDCard mysdcard;
 

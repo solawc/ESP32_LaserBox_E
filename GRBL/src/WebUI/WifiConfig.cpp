@@ -215,13 +215,11 @@ namespace WebUI {
     void WiFiConfig::WiFiEvent(WiFiEvent_t event) {
         switch (event) {
             case SYSTEM_EVENT_STA_GOT_IP:
-
-                break;
+            break;
             case SYSTEM_EVENT_STA_DISCONNECTED:
-
-                break;
+            break;
             default:
-                break;
+            break;
         }
     }
 

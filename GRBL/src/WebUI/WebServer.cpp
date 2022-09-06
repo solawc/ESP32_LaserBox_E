@@ -1378,7 +1378,7 @@ namespace WebUI {
             s += path;
             s += " does not exist on SD Card\"}";
             _webserver->send(200, "application/json", s);
-            SD.end();
+            mysdcard.unmount();     // 检测到不存在SD卡，可以直接退出挂载
             mysdcard.set_sd_state(SDState::Idle);
             return;
         }
@@ -1456,8 +1456,8 @@ namespace WebUI {
         jsonfile += "}";
         _webserver->sendHeader("Cache-Control", "no-cache");
         _webserver->send(200, "application/json", jsonfile);
+        // mysdcard.unmount();  // 操作完成，不需要退出SD卡挂载
         mysdcard.set_sd_state(SDState::Idle);
-        SD.end();
     }
 
     //SD File upload with direct access to SD///////////////////////////////
@@ -1568,14 +1568,14 @@ namespace WebUI {
                         pushError(ESP_ERROR_UPLOAD, "Upload error");
                     }
 
-                } else {  //Upload cancelled
+                } else {  //Upload cancelled(取消传输)
                     _upload_status = UploadStatusType::FAILED;
                     mysdcard.set_sd_state(SDState::Idle);
                     grbl_send(CLIENT_ALL, "[MSG:Upload failed:6]\r\n");
                     if (sdUploadFile) {
                         sdUploadFile.close();
                     }
-                    SD.end();
+                    // SD.end();    // 不需要退出挂载
                     return;
                 }
             }
@@ -1633,6 +1633,9 @@ namespace WebUI {
                 break;
             case WStype_BIN:
                 break;
+            case WStype_ERROR:
+            break;
+
             default:
                 break;
         }

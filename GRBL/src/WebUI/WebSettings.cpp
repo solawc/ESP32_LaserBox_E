@@ -751,36 +751,6 @@ namespace WebUI {
         return Error::Ok;
     }
 
-    // static Error mks_frame_run(char* parameter, AuthenticationLevel auth_level) {    // ESP801
-
-    //     Error err;
-
-    //     if (sys.state == State::Alarm) {
-    //         webPrintln("Alarm");
-    //         return Error::IdleError;
-    //     }
-    //     if (sys.state != State::Idle) {
-    //         webPrintln("Busy");
-    //         return Error::IdleError;
-    //     }
-
-    //     memset(frame_ctrl.file_name, 0, sizeof(frame_ctrl.file_name));
-
-    //     strcpy(frame_ctrl.file_name, parameter);
-
-    //     mks_file_list.file_choose = 0;
-
-    //     memset( mks_file_list.filename_str[mks_file_list.file_choose], 0, sizeof( mks_file_list.filename_str[mks_file_list.file_choose]));
-        
-    //     memcpy( mks_file_list.filename_str[mks_file_list.file_choose], parameter, sizeof(mks_file_list.filename_str[mks_file_list.file_choose]));
-        
-    //     mks_clean_current_page(mks_global.mks_src);
-
-    //     mks_grbl.is_web_enter_frame = true;
-
-    //     return Error::Ok;
-    // }
-
     static Error deleteSDObject(char* parameter, AuthenticationLevel auth_level) {  // ESP215
         parameter = trim(parameter);
         if (*parameter == '\0') {
@@ -832,14 +802,12 @@ namespace WebUI {
             }
         }
 
-         grbl_send(CLIENT_SERIAL, "T1\n");
-        
         webPrintln("");
         mysdcard.listDir(SD, "/", 10, espresponse->client());
         String ssd = "[SD Free:" + ESPResponseStream::formatBytes(SD.totalBytes() - SD.usedBytes());
         ssd += " Used:" + ESPResponseStream::formatBytes(SD.usedBytes());
         ssd += " Total:" + ESPResponseStream::formatBytes(SD.totalBytes());
-        ssd += "]";
+        ssd += "]\r\n";
         webPrintln(ssd);
         // SD.end();
         return Error::Ok;

@@ -361,7 +361,6 @@ void client_write(uint8_t client, const char* text) {
         WebUI::telnet_server.write((const uint8_t*)text, strlen(text));
     }
 #endif
-    // if (client == CLIENT_SERIAL || client == CLIENT_ALL || client == CLIENT_LCD) {
     if (client == CLIENT_SERIAL || client == CLIENT_ALL) {
         Uart0.write(text);
     }
