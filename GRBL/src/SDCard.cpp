@@ -187,9 +187,7 @@ boolean SDCard::readFileLine(char* line, int maxlen) {
 
 /* return a percentage complete 50.5 = 50.5% */
 float SDCard::sd_report_perc_complete() {
-
     if (!myFile) { return 0.0; }
-
     return (float)myFile.position() / (float)myFile.size() * 100.0f;
 }
 
@@ -199,7 +197,7 @@ uint32_t SDCard::sd_get_current_line_number() {
 
 SDState SDCard::get_sd_state(bool refresh) {
 
-    /*确定是否由DET引脚，并且DET引脚是否为低电平*/
+    /* 确定是否由DET引脚，并且DET引脚是否为低电平 */
     if (SDCARD_DET_PIN != UNDEFINED_PIN) {
         if (digitalRead(SDCARD_DET_PIN) != SDCARD_DET_VAL) {
             sd_state = SDState::NotPresent;
@@ -243,7 +241,6 @@ void SDCard::sd_get_current_filename(char* name) {
 }
 
 uint64_t SDCard::get_sd_size(void) {
-
     return SD.cardSize() / (1024*1024);
 }
 

@@ -8,7 +8,8 @@ volatile bool disp_flush_enabled = true;
 
 LVGL_UI ui;
 
-lv_disp_drv_t *dispHandler;
+File lv_file;
+
 
 void LVGL_UI::disp_enable_update(void)
 {
@@ -22,7 +23,7 @@ void LVGL_UI::disp_disable_update(void)
 
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
 {   
-    dispHandler = disp_drv;
+    ui.dispHandler = disp_drv;
 
     if(disp_flush_enabled) {
 
@@ -71,17 +72,18 @@ void LVGL_UI::lvPortDispCallback(void) {
     lv_disp_flush_ready(dispHandler);
 }
 
-#define LV_BUFF_SIZE        LCD_SIZE_HOR_RES * 10
-
 void LVGL_UI::lvPortDispInit(void) {
-
-    // Use example 1
+    
     static lv_disp_draw_buf_t draw_buf_dsc_1;
-    static lv_color_t buf_1[LV_BUFF_SIZE];                                  /* A buffer for 10 rows */
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, LV_BUFF_SIZE);      /* Initialize the display buffer */
 
-    static lv_disp_drv_t disp_drv;                                          /* Descriptor of a display driver */
-    lv_disp_drv_init(&disp_drv);                                            /* Basic initialization */
+    DispBuff = static_cast<lv_color_t*>(malloc(LV_BUFF_SIZE * sizeof(lv_color_t)));
+    if (DispBuff == nullptr)
+        LV_LOG_WARN("lv_port_disp_init malloc failed!\n");
+    
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, DispBuff, NULL, LV_BUFF_SIZE);       /* Initialize the display buffer */
+
+    static lv_disp_drv_t disp_drv;                                              /* Descriptor of a display driver */
+    lv_disp_drv_init(&disp_drv);                                                /* Basic initialization */
 
     disp_drv.hor_res = LCD_SIZE_HOR_RES;
     disp_drv.ver_res = LCD_SIZE_VER_RES;
@@ -100,7 +102,7 @@ void LVGL_UI::lvPortTouchInit(void) {
 }
 
 
-File lv_file;
+
 
 static bool my_fs_ready(lv_fs_drv_t* drv)
 {

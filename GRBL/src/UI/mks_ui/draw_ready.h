@@ -20,6 +20,7 @@ typedef struct {
 	lv_obj_t* labelPower;						/* 显示主轴功率 */
 	lv_obj_t* labelWifiState;					/* 显示wifi状态 */
 	lv_obj_t* labelState;						/* 显示当前工作状态 */
+	lv_obj_t* labelRam;							/* 显示当前工作RAM */
 
 	lv_style_t imgbtn_style;
 	lv_timer_t* ready_page_upadte;

@@ -1,6 +1,8 @@
 #include "draw_ready.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "Esp.h"
+
 ready_ui_t ready_page;
 
 static void dispPosInfo(void);
@@ -58,9 +60,14 @@ static void dispPosInfo(void) {
 	ready_page.labelState = lv_label_create(lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelState, 30, 150);
 
+	ready_page.labelRam = lv_label_create(lv_ui.main_src);
+	lv_obj_set_pos(ready_page.labelRam, 30, 180);
+	
+
 	lv_label_set_text(ready_page.label_wpos, "Wpos:X:0.00 Y:0.00 Z:0.00");
 	lv_label_set_text(ready_page.label_mpos, "Mpos:X:0.00 Y:0.00 Z:0.00");
 	lv_label_set_text(ready_page.labelState, "State:");
+	lv_label_set_text(ready_page.labelRam, "RAM:");
 
 	ready_page.ready_page_upadte = lv_timer_create(readyPageUpdateInfo, 200, NULL);
 }
@@ -140,10 +147,22 @@ static void disp_btn(void) {
 	lv_label_set_text(ready_page.labelUnlock, "Unlock");
 }
 
+String formate(uint64_t bytes) {
+	if (bytes < 1024) {
+		return String((uint16_t)bytes) + " B";
+	} else if (bytes < (1024 * 1024)) {
+		return String((float)(bytes / 1024.0), 2) + " KB";
+	} else if (bytes < (1024 * 1024 * 1024)) {
+		return String((float)(bytes / 1024.0 / 1024.0), 2) + " MB";
+	} else {
+		return String((float)(bytes / 1024.0 / 1024.0 / 1024.0), 2) + " GB";
+	}
+}
+
 static void readyPageUpdateInfo(lv_timer_t*) {
 
 	char pos[128];
-	char s_value[5];
+	char s_value[10];
 	float* mks_print_position;
 
 	mks_print_position = system_get_mpos();
@@ -157,6 +176,8 @@ static void readyPageUpdateInfo(lv_timer_t*) {
 	sprintf(s_value, "Power:%d", sysGetSpindleSpeed());
 	lv_label_set_text(ready_page.labelPower, s_value);
 
+	lv_label_set_text(ready_page.labelRam, formate(ESP.getFreeHeap()).c_str());
+	
 	/* disp machine state */
 	disp_mc_state();
 }
