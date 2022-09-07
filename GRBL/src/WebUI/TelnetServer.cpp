@@ -30,8 +30,8 @@
 
 namespace WebUI {
     Telnet_Server telnet_server;
-    bool          Telnet_Server::_setupdone    = false;
-    uint16_t      Telnet_Server::_port         = 0;
+    bool          Telnet_Server::_setupdone    = false;                 /* 标志它是否已经初始化完成 */
+    uint16_t      Telnet_Server::_port         = 0;                     /*  */
     WiFiServer*   Telnet_Server::_telnetserver = NULL;
     WiFiClient    Telnet_Server::_telnetClients[MAX_TLNT_CLIENTS];
 
@@ -45,34 +45,45 @@ namespace WebUI {
     }
 
     bool Telnet_Server::begin() {
-        bool no_error = true;
+
         end();
+
+#if DEBUG_REMOVE
         _RXbufferSize = 0;
         _RXbufferpos  = 0;
+#endif
 
+        /* Get telnet enable flag */
         if (telnet_enable->get() == 0) {
             return false;
         }
+
+        /* Get telnet port */
         _port = telnet_port->get();
 
-        //create instance
+        /* create instance */
         _telnetserver = new WiFiServer(_port, MAX_TLNT_CLIENTS);
         _telnetserver->setNoDelay(true);
+        
+        /*send telnet port info*/
         String s = "[MSG:TELNET Started " + String(_port) + "]\r\n";
         grbl_send(CLIENT_ALL, (char*)s.c_str());
-        //start telnet server
+        
+        /* start telnet server, star wifi server */
         _telnetserver->begin();
         _setupdone = true;
-        return no_error;
+
+        return true;
     }
 
     void Telnet_Server::end() {
         _setupdone    = false;
         _RXbufferSize = 0;
         _RXbufferpos  = 0;
+        
         if (_telnetserver) {
             delete _telnetserver;
-            _telnetserver = NULL;
+            _telnetserver = nullptr;
         }
     }
 
@@ -84,13 +95,10 @@ namespace WebUI {
             for (i = 0; i < MAX_TLNT_CLIENTS; i++) {
                 // find free/disconnected spot
                 if (!_telnetClients[i] || !_telnetClients[i].connected()) {
-                    grbl_send(CLIENT_SERIAL, "Find free/disconnected spot\n");
-
-#    ifdef ENABLE_TELNET_WELCOME_MSG        /* 显示欢迎页面 */
+#    ifdef ENABLE_TELNET_WELCOME_MSG       
                     _telnetClientsIP[i] = IPAddress(0, 0, 0, 0);
 #    endif
                     if (_telnetClients[i]) {
-                        grbl_send(CLIENT_SERIAL, "Stop Client2\n");
                         _telnetClients[i].stop();
                     }
                     _telnetClients[i] = _telnetserver->available();
@@ -99,10 +107,10 @@ namespace WebUI {
             }
 
             if (i >= MAX_TLNT_CLIENTS) {
-                //no free/disconnected spot so reject
-                grbl_send(CLIENT_SERIAL, "no free/disconnected spot so reject\n");
+                /* no free/disconnected spot so reject(当前被占用) */
                 _telnetserver->available().stop();
                 _telnetClients->stop();
+                // _telnetClients[i].stop();
             }
         }
     }

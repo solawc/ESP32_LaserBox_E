@@ -10,9 +10,7 @@
 #endif
 #define N_AXIS 3
 
-#define HTTP_UPLOAD_BUFLEN  10*1024// 1436
-
 // Enable SDCard
-#ifdef ENABLE_SD_CARD
-    #undef ENABLE_SD_CARD
-#endif
+// #ifdef ENABLE_SD_CARD
+//     #undef ENABLE_SD_CARD
+// #endif

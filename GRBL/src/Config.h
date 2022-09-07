@@ -91,29 +91,27 @@ const int MAX_N_AXIS = 6;
 // serial monitor, sender, etc uses a different value than 115200
 // #define BAUD_RATE        115200
 
-//Connect to your local AP with these credentials
+/* Connect to your local AP with these credentials */
 #define CONNECT_TO_SSID  "MAKERBASE3D"
 #define SSID_PASSWORD  "makerbase3d"
-//CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE)
-//#define ENABLE_BLUETOOTH  // enable bluetooth
 
-#define ENABLE_SD_CARD  // enable use of SD Card to run jobs
-
-#define ENABLE_WIFI     //enable wifi
-
-#define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
+/* CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE) */
+//#define ENABLE_BLUETOOTH                  /* enable bluetooth  */ 
+#define ENABLE_SD_CARD                      /* enable use of SD Card to run jobs */
+#define ENABLE_WIFI                         /* enable wifi */
+#define ENABLE_TFT                          /* enable tft lcd for lvgl ui @ V8.3 */
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH
 #endif
 
-#define ENABLE_HTTP                //enable HTTP and all related services
-// #define ENABLE_OTA                 //enable OTA
-#define ENABLE_TELNET              //enable telnet
-// #define ENABLE_TELNET_WELCOME_MSG  //display welcome string when connect to telnet
-#define ENABLE_MDNS                //enable mDNS discovery
-#define ENABLE_SSDP                //enable UPNP discovery
-#define ENABLE_NOTIFICATIONS       //enable notifications
+#define ENABLE_HTTP                         /* enable HTTP and all related services */
+// #define ENABLE_OTA                       /* enable OTA */
+#define ENABLE_TELNET                       /* enable telnet */
+// #define ENABLE_TELNET_WELCOME_MSG        /* display welcome string when connect to telnet */
+#define ENABLE_MDNS                         /* enable mDNS discovery */
+#define ENABLE_SSDP                         /* enable UPNP discovery */
+#define ENABLE_NOTIFICATIONS                /* enable notifications */
 
 #define ENABLE_SERIAL2SOCKET_IN
 #define ENABLE_SERIAL2SOCKET_OUT
@@ -257,7 +255,7 @@ static const uint8_t NHomingLocateCycle = 1;  // Integer (1-128)
 // immediately forces a feed hold and then safely de-energizes the machine. Resuming is blocked until
 // the safety door is re-engaged. When it is, Grbl will re-energize the machine and then resume on the
 // previous tool path, as if nothing happened.
-#define ENABLE_SAFETY_DOOR_INPUT_PIN  // ESP32 Leave this enabled for now .. code for undefined not ready
+// #define ENABLE_SAFETY_DOOR_INPUT_PIN  // ESP32 Leave this enabled for now .. code for undefined not ready
 
 // Inverts select limit pin states based on the following mask. This effects all limit pin functions,
 // such as hard limits and homing. However, this is different from overall invert limits setting.

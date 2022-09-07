@@ -101,6 +101,7 @@ void LVGL_UI::lvPortTouchInit(void) {
 
 
 File lv_file;
+
 static bool my_fs_ready(lv_fs_drv_t* drv)
 {
     return true;
@@ -200,7 +201,7 @@ void lvglTask(void *parg)  {
         ui.lvglMutexLock();
         lv_task_handler();
         ui.lvglMutexUnlock();
-        vTaskDelay(5);                  /* 这里必须大于等于5ms */
+        vTaskDelay(1);                  /* 这里必须大于等于5ms */
     }
 }
 
