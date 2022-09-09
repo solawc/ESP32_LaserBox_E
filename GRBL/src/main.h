@@ -7,6 +7,7 @@
 
 	2018 -	Bart Dring This file was modifed for use on the ESP32
 					CPU. Do not use this with Grbl for atMega328P
+  2022 -  wangchong 
 
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 // Grbl versioning system
 const char* const GRBL_VERSION       = "1.1h";
-const char* const GRBL_VERSION_BUILD = "2020072101";
+const char* const GRBL_VERSION_BUILD = "2020903101";
 
 //#include <sdkconfig.h>
 #include <Arduino.h>
@@ -88,11 +89,11 @@ const char* const GRBL_VERSION_BUILD = "2020072101";
 
 #include "I2SOut.h"
 
+#define DEBUG_REMOVE      0
+
+
 void grbl_init();
 void run_once();
-void _mc_task_init(void);
-
-
 
 bool user_defined_homing(uint8_t cycle_mask);  // weak definition in Limits.cpp
 
@@ -107,5 +108,3 @@ void motors_to_cartesian(float* cartestian, float* motors, int n_axis);  // weak
 
 // Called if MACRO_BUTTON_0_PIN or MACRO_BUTTON_1_PIN or MACRO_BUTTON_2_PIN is defined
 void user_defined_macro(uint8_t index);
-
-void phy_init_reinit(void);

@@ -102,10 +102,10 @@ void system_ini() {  // Renamed from system_init() due to conflict with esp32 fi
 #endif
 
     //customize pin definition if needed
-#if (GRBL_SPI_SS != -1) || (GRBL_SPI_MISO != -1) || (GRBL_SPI_MOSI != -1) || (GRBL_SPI_SCK != -1)
-    SPI.begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
-#endif
-
+// #if (GRBL_SPI_SS != -1) || (GRBL_SPI_MISO != -1) || (GRBL_SPI_MOSI != -1) || (GRBL_SPI_SCK != -1)
+//     SPI.begin(GRBL_SPI_SCK, GRBL_SPI_MISO, GRBL_SPI_MOSI, GRBL_SPI_SS);
+// #endif
+    mysdcard.mount();
 
 }
 
@@ -129,6 +129,17 @@ void controlCheckTask(void* pvParameters) {
     }
 }
 #endif
+
+void disableDWT(void) {
+    disableCore0WDT();
+    disableCore1WDT();
+    disableLoopWDT();
+}
+
+void disableAllMessage(void) {
+    esp_log_level_set("gpio", ESP_LOG_NONE);
+    esp_log_level_set("uart", ESP_LOG_NONE);
+}
 
 void IRAM_ATTR isr_control_inputs() {
 #ifdef ENABLE_CONTROL_SW_DEBOUNCE
@@ -252,6 +263,12 @@ ControlPins system_control_get_state() {
 bool inMotionState(void) {
     return sys.state == State::Cycle || sys.state == State::Homing || sys.state == State::Jog;
 }
+
+
+uint32_t sysGetSpindleSpeed(void) {
+    return sys.spindle_speed;
+}
+
 
 // execute the function of the control pin
 void system_exec_control_pin(ControlPins pins) {

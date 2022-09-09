@@ -14,7 +14,6 @@
 Uart::Uart(int uart_num) : _uart_num(uart_port_t(uart_num)), _pushback(-1) {}
 
 void Uart::begin(unsigned long baudrate, Data dataBits, Stop stopBits, Parity parity) {
-    //    uart_driver_delete(_uart_num);
     uart_config_t conf;
     conf.baud_rate           = baudrate;
     conf.data_bits           = uart_word_length_t(dataBits);
@@ -22,11 +21,15 @@ void Uart::begin(unsigned long baudrate, Data dataBits, Stop stopBits, Parity pa
     conf.stop_bits           = uart_stop_bits_t(stopBits);
     conf.flow_ctrl           = UART_HW_FLOWCTRL_DISABLE;
     conf.rx_flow_ctrl_thresh = 0;
-    // conf.use_ref_tick        = false;
     if (uart_param_config(_uart_num, &conf) != ESP_OK) {
         return;
     };
-    uart_driver_install(_uart_num, 256, 0, 0, NULL, 0);
+    uart_driver_install(_uart_num, RX_BUFFER_SIZE, 0, 0, NULL, 0);
+}
+
+void Uart::changeBuad(unsigned long baudrate) {
+
+    begin((unsigned long)Baudrate::Bauderate_115200, Data::Bits8, Stop::Bits1, Parity::None);
 }
 
 int Uart::available() {

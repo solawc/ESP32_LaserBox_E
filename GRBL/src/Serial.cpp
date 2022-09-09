@@ -99,7 +99,7 @@ void client_init() {
 #endif
 
     Uart0.setPins(1, 3);  // Tx 1, Rx 3 - standard hardware pins
-    Uart0.begin(BAUD_RATE, Uart::Data::Bits8, Uart::Stop::Bits1, Uart::Parity::None);
+    Uart0.begin((unsigned long)Uart::Baudrate::Bauderate_115200, Uart::Data::Bits8, Uart::Stop::Bits1, Uart::Parity::None);
 
     client_reset_read_buffer(CLIENT_ALL);
     Uart0.write("\r\n");  // create some white space after ESP32 boot info
@@ -169,10 +169,10 @@ void clientCheckTask(void* pvParameters) {
             // not passed into the main buffer, but these set system state flag bits for realtime execution.
             if (is_realtime_command(data)) {
                 execute_realtime_command(static_cast<Cmd>(data), client);
-                vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+                // vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
             } else {
 #if defined(ENABLE_SD_CARD)
-                if (get_sd_state(false) < SDState::Busy) {
+                if (mysdcard.get_sd_state(false) < SDState::Busy) {
 #endif  //ENABLE_SD_CARD
                     taskENTER_CRITICAL(&myMutex);
                     client_buffer[client].write(data);
@@ -182,9 +182,6 @@ void clientCheckTask(void* pvParameters) {
                     if (data == '\r' || data == '\n') {
                         grbl_sendf(client, "error %d\r\n", Error::AnotherInterfaceBusy);
                         grbl_msg_sendf(client, MsgLevel::Info, "SD card job running");
-                        if(sys.state == State::Idle) {
-                            set_sd_state(SDState::Idle);
-                        }
                     }
                 }
 #endif  //ENABLE_SD_CARD
@@ -364,23 +361,13 @@ void client_write(uint8_t client, const char* text) {
         WebUI::telnet_server.write((const uint8_t*)text, strlen(text));
     }
 #endif
-    // if (client == CLIENT_SERIAL || client == CLIENT_ALL || client == CLIENT_LCD) {
     if (client == CLIENT_SERIAL || client == CLIENT_ALL) {
         Uart0.write(text);
     }
 }
 
-void serila_write_into_buffer(uint8_t *data) {
+void SerialWriteIntoBuffer(uint8_t *data) {
     WebUI::inputBuffer.push((const char *)data);
-}
-
-void serial_web_input_into_buffer(uint8_t *data) { 
-
-    uint16_t k=0;
-    do{
-        client_buffer[CLIENT_SERIAL].write(data[k]);
-        k++;
-    }while((data[k] != '\0') && k != 255);
 }
 
 void serial_web_input_into_hex(uint8_t c) { 

@@ -91,9 +91,14 @@ void lv_mem_init(void)
 #ifdef LV_MEM_POOL_ALLOC
     tlsf = lv_tlsf_create_with_pool((void *)LV_MEM_POOL_ALLOC(LV_MEM_SIZE), LV_MEM_SIZE);
 #else
-    /*Allocate a large array to store the dynamically allocated data*/
-    static LV_ATTRIBUTE_LARGE_RAM_ARRAY MEM_UNIT work_mem_int[LV_MEM_SIZE / sizeof(MEM_UNIT)];
-    tlsf = lv_tlsf_create_with_pool((void *)work_mem_int, LV_MEM_SIZE);
+    // /*Allocate a large array to store the dynamically allocated data*/
+    // static LV_ATTRIBUTE_LARGE_RAM_ARRAY MEM_UNIT work_mem_int[LV_MEM_SIZE / sizeof(MEM_UNIT)];
+    // tlsf = lv_tlsf_create_with_pool((void *)work_mem_int, LV_MEM_SIZE);
+    static LV_ATTRIBUTE_LARGE_RAM_ARRAY MEM_UNIT* work_mem_int;
+    work_mem_int = malloc(LV_MEM_SIZE);     //[LV_MEM_SIZE / sizeof(MEM_UNIT)];
+    if (work_mem_int == NULL)
+        LV_LOG_WARN("lv_mem_init malloc failed!\n");
+    tlsf = lv_tlsf_create_with_pool((void*) work_mem_int, LV_MEM_SIZE);
 #endif
 #else
     tlsf = lv_tlsf_create_with_pool((void *)LV_MEM_ADR, LV_MEM_SIZE);

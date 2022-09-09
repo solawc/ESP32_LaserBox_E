@@ -1,9 +1,9 @@
 #pragma once
 // clang-format off
 
-#define MACHINE_NAME                        "Custom Machine"
+// #define MACHINE_NAME                        "Custom Machine"
 #define BOARD_NAME                          "Board:LG_ESP_V1.0"
-#define BOARD_VERSION                       "LV_ESP_V1.0"
+#define BOARD_VERSION                       "LG_ESP_V1.0"
 #define FW_NAME                             "Firmware:V1A0120220822"
 #define FW_VERSION                          "V1A0120220822"
 
@@ -62,13 +62,13 @@
 #define DEFAULT_Y_MAX_TRAVEL                341.0       // mm NOTE: Must be a positive value.
 #define DEFAULT_Z_MAX_TRAVEL                121.0       // mm NOTE: Must be a positive value.
 
-#define DEFAULT_SPINDLE_FREQ                8000.0   // 1KHz
+#define DEFAULT_SPINDLE_FREQ                1000.0      // 1KHz
 #define DEFAULT_LASER_FULL_POWER            1000
 #define DEFAULT_SPINDLE_MAX_VALUE           1000    
 #define DEFAULT_SPINDLE_MIN_VALUE           0
 
 #define DEFAULT_HOMING_CYCLE_0              (bit(X_AXIS) | bit(Y_AXIS))
-#define DEFAULT_HOMING_CYCLE_1              bit(Z_AXIS)
+#define DEFAULT_HOMING_CYCLE_1              0 // bit(Z_AXIS)
 
 #define DEFAULT_BEEP_STATUS                 1
 #define DEFAULT_GYRO_STATUS                 0

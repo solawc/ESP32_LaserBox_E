@@ -26,15 +26,12 @@ class WiFiServer;
 class WiFiClient;
 
 namespace WebUI {
-    class Telnet_Server {
-        //how many clients should be able to telnet to this ESP32
-        static const int MAX_TLNT_CLIENTS = 1;
 
-        static const int TELNETRXBUFFERSIZE = 1200;
-        static const int FLUSHTIMEOUT       = 500;
+    class Telnet_Server {
 
     public:
         Telnet_Server();
+        ~Telnet_Server();
 
         bool   begin();
         void   end();
@@ -46,26 +43,31 @@ namespace WebUI {
         int    get_rx_buffer_available();
         bool   push(uint8_t data);
         bool   push(const uint8_t* data, int datasize);
+        bool   isConnected(void);
+        void   flushbuffer();
 
         static uint16_t port() { return _port; }
-
-        ~Telnet_Server();
-
+        
     private:
+        //how many clients should be able to telnet to this ESP32
+        static const int MAX_TLNT_CLIENTS   = 1;
+        static const int TELNETRXBUFFERSIZE = 1200;
+        static const int FLUSHTIMEOUT       = 500;
+
         static bool        _setupdone;
         static WiFiServer* _telnetserver;
         static WiFiClient  _telnetClients[MAX_TLNT_CLIENTS];
+
 #ifdef ENABLE_TELNET_WELCOME_MSG
         static IPAddress _telnetClientsIP[MAX_TLNT_CLIENTS];
 #endif
         static uint16_t _port;
-
-        void clearClients();
-
         uint32_t _lastflush;
         uint8_t  _RXbuffer[TELNETRXBUFFERSIZE];
         uint16_t _RXbufferSize;
         uint16_t _RXbufferpos;
+
+        void clearClients();
     };
 
     extern Telnet_Server telnet_server;

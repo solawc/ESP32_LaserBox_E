@@ -30,8 +30,8 @@
 
 namespace WebUI {
     Telnet_Server telnet_server;
-    bool          Telnet_Server::_setupdone    = false;
-    uint16_t      Telnet_Server::_port         = 0;
+    bool          Telnet_Server::_setupdone    = false;                 /* 标志它是否已经初始化完成 */
+    uint16_t      Telnet_Server::_port         = 0;                     /*  */
     WiFiServer*   Telnet_Server::_telnetserver = NULL;
     WiFiClient    Telnet_Server::_telnetClients[MAX_TLNT_CLIENTS];
 
@@ -45,45 +45,57 @@ namespace WebUI {
     }
 
     bool Telnet_Server::begin() {
-        bool no_error = true;
+
         end();
+
+#if DEBUG_REMOVE
         _RXbufferSize = 0;
         _RXbufferpos  = 0;
+#endif
 
+        /* Get telnet enable flag */
         if (telnet_enable->get() == 0) {
             return false;
         }
+
+        /* Get telnet port */
         _port = telnet_port->get();
 
-        //create instance
+        /* create instance */
         _telnetserver = new WiFiServer(_port, MAX_TLNT_CLIENTS);
         _telnetserver->setNoDelay(true);
+        
+        /*send telnet port info*/
         String s = "[MSG:TELNET Started " + String(_port) + "]\r\n";
         grbl_send(CLIENT_ALL, (char*)s.c_str());
-        //start telnet server
+        
+        /* start telnet server, star wifi server */
         _telnetserver->begin();
         _setupdone = true;
-        return no_error;
+
+        return true;
     }
 
     void Telnet_Server::end() {
         _setupdone    = false;
         _RXbufferSize = 0;
         _RXbufferpos  = 0;
+        
         if (_telnetserver) {
             delete _telnetserver;
-            _telnetserver = NULL;
+            _telnetserver = nullptr;
         }
     }
 
     void Telnet_Server::clearClients() {
-        //check if there are any new clients
+        /* check if there are any new clients(检查是否有新的客户端进来) */ 
         if (_telnetserver->hasClient()) {
-            uint8_t i;
+            grbl_send(CLIENT_SERIAL, "HAS CLIENT\n");
+            uint8_t i = 0;
             for (i = 0; i < MAX_TLNT_CLIENTS; i++) {
-                //find free/disconnected spot
+                // find free/disconnected spot
                 if (!_telnetClients[i] || !_telnetClients[i].connected()) {
-#    ifdef ENABLE_TELNET_WELCOME_MSG
+#    ifdef ENABLE_TELNET_WELCOME_MSG       
                     _telnetClientsIP[i] = IPAddress(0, 0, 0, 0);
 #    endif
                     if (_telnetClients[i]) {
@@ -93,9 +105,12 @@ namespace WebUI {
                     break;
                 }
             }
+
             if (i >= MAX_TLNT_CLIENTS) {
-                //no free/disconnected spot so reject
+                /* no free/disconnected spot so reject(当前被占用) */
                 _telnetserver->available().stop();
+                _telnetClients->stop();
+                // _telnetClients[i].stop();
             }
         }
     }
@@ -123,7 +138,7 @@ namespace WebUI {
 
     void Telnet_Server::handle() {
         COMMANDS::wait(0);
-        //check if can read
+        // check if can read
         if (!_setupdone || _telnetserver == NULL) {
             return;
         }

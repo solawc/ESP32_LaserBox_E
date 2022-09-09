@@ -204,8 +204,8 @@ void report_status_message(Error status_code, uint8_t client) {
     switch (status_code) {
         case Error::Ok:  // Error::Ok
 #ifdef ENABLE_SD_CARD
-            if (get_sd_state(false) == SDState::BusyPrinting) {
-                SD_ready_next = true;  // flag so system_execute_line() will send the next line
+            if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
+                mysdcard.setSdNext(true); /* flag so system_execute_line() will send the next line */
             } else {
                 grbl_send(client, "ok\r\n");
             }
@@ -215,17 +215,17 @@ void report_status_message(Error status_code, uint8_t client) {
             break;
         default:
 #ifdef ENABLE_SD_CARD
-            // do we need to stop a running SD job?
-            if (get_sd_state(false) == SDState::BusyPrinting) {
+            /* do we need to stop a running SD job? */
+            if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
                 if (status_code == Error::GcodeUnsupportedCommand) {
                     grbl_sendf(client, "error:%d\r\n", status_code);  // most senders seem to tolerate this error and keep on going
-                    grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, sd_get_current_line_number());
-                    // don't close file
-                    SD_ready_next = true;  // flag so system_execute_line() will send the next line
+                    grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, mysdcard.sd_get_current_line_number());
+                    /* don't close file */
+                    mysdcard.setSdNext(true); /* flag so system_execute_line() will send the next line */
                 } else {
-                    grbl_notifyf("SD print error", "Error:%d during SD file at line: %d", status_code, sd_get_current_line_number());
-                    grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, sd_get_current_line_number());
-                    closeFile();
+                    grbl_notifyf("SD print error", "Error:%d during SD file at line: %d", status_code, mysdcard.sd_get_current_line_number());
+                    grbl_sendf(CLIENT_ALL, "error:%d in SD file at line %d\r\n", status_code, mysdcard.sd_get_current_line_number());
+                    mysdcard.closeFile();
                 }
                 return;
             }
@@ -271,8 +271,8 @@ std::map<Message, const char*> MessageText = {
 void report_feedback_message(Message message) {  // ok to send to all clients
 #if defined(ENABLE_SD_CARD)
     if (message == Message::SdFileQuit) {
-        grbl_notifyf("SD print canceled", "Reset during SD file at line: %d", sd_get_current_line_number());
-        grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Reset during SD file at line: %d", sd_get_current_line_number());
+        grbl_notifyf("SD print canceled", "Reset during SD file at line: %d", mysdcard.sd_get_current_line_number());
+        grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Reset during SD file at line: %d", mysdcard.sd_get_current_line_number());
 
     } else
 #endif  //ENABLE_SD_CARD
@@ -509,9 +509,20 @@ void report_execute_startup_message(const char* line, Error status_code, uint8_t
 
 // Prints build info line
 void report_build_info(const char* line, uint8_t client) {
+    grbl_send(client, "[ORIGIN:China]\r\n");
+    grbl_send(client, "[PRODUCER:LaserBox_E]\r\n");
+    grbl_send(client, "[DATE:20220905]\r\n");
     grbl_sendf(client, "[VER:%s.%s:%s]\r\n[OPT:", GRBL_VERSION, GRBL_VERSION_BUILD, line);
-#ifdef COOLANT_MIST_PIN
-    grbl_send(client, "M");  // TODO Need to deal with M8...it could be disabled
+
+    grbl_send(client, "V");
+#ifdef USE_LINE_NUMBERS
+    grbl_send(client, "N");
+#endif
+#ifdef COOLANT_MIST_PIN         /* Enable M7 */
+    grbl_send(client, "M");
+#endif
+#ifdef COREXY
+    grbl_send(client, "C");
 #endif
 #ifdef PARKING_ENABLE
     grbl_send(client, "P");
@@ -534,28 +545,32 @@ void report_build_info(const char* line, uint8_t client) {
 #ifdef ENABLE_PARKING_OVERRIDE_CONTROL
     grbl_send(client, "R");
 #endif
-#if defined(ENABLE_WIFI)
-    grbl_send(client, "W");
-#endif
-#ifndef ENABLE_RESTORE_WIPE_ALL  // NOTE: Shown when disabled.
+
+#ifndef ENABLE_RESTORE_WIPE_ALL                     // NOTE: Shown when disabled.
     grbl_send(client, "*");
 #endif
-#ifndef ENABLE_RESTORE_DEFAULT_SETTINGS  // NOTE: Shown when disabled.
+#ifndef ENABLE_RESTORE_DEFAULT_SETTINGS             // NOTE: Shown when disabled.
     grbl_send(client, "$");
 #endif
-#ifndef ENABLE_RESTORE_CLEAR_PARAMETERS  // NOTE: Shown when disabled.
+#ifndef ENABLE_RESTORE_CLEAR_PARAMETERS             // NOTE: Shown when disabled.
     grbl_send(client, "#");
 #endif
-#ifndef FORCE_BUFFER_SYNC_DURING_NVS_WRITE  // NOTE: Shown when disabled.
+#ifndef FORCE_BUFFER_SYNC_DURING_NVS_WRITE          // NOTE: Shown when disabled.
     grbl_send(client, "E");
 #endif
-#ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE  // NOTE: Shown when disabled.
+#ifndef FORCE_BUFFER_SYNC_DURING_WCO_CHANGE         // NOTE: Shown when disabled.
     grbl_send(client, "W");
 #endif
+    grbl_send(client, ",");
+    grbl_sendf(client, "%d", BLOCK_BUFFER_SIZE - 1);
+    grbl_send(client, ",");
+    grbl_sendf(client, "%d", RX_BUFFER_SIZE);
+
     // NOTE: Compiled values, like override increments/max/min values, may be added at some point later.
     // These will likely have a comma delimiter to separate them.
     grbl_send(client, "]\r\n");
     report_machine_type(client);
+
 #if defined(ENABLE_WIFI)
     grbl_send(client, (char*)WebUI::wifi_config.info());
 #endif
@@ -768,10 +783,10 @@ void report_realtime_status(uint8_t client) {
     }
 #endif
 #ifdef ENABLE_SD_CARD
-    if (get_sd_state(false) == SDState::BusyPrinting) {
-        sprintf(temp, "|SD:%4.2f,", sd_report_perc_complete());
+    if (mysdcard.get_sd_state(false) == SDState::BusyPrinting) {
+        sprintf(temp, "|SD:%4.2f,", mysdcard.sd_report_perc_complete());
         strcat(status, temp);
-        sd_get_current_filename(temp);
+        mysdcard.sd_get_current_filename(temp);
         strcat(status, temp);
     }
 #endif
@@ -806,7 +821,9 @@ void report_gcode_comment(char* comment) {
 }
 
 void report_machine_type(uint8_t client) {
+#ifdef MACHINE_NAME
     grbl_msg_sendf(client, MsgLevel::Info, "Using machine:%s", MACHINE_NAME);
+#endif
 }
 
 /*

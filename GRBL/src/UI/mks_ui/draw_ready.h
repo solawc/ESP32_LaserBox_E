@@ -5,31 +5,28 @@
 
 typedef struct {
 
-	lv_obj_t* imgbtn_adj;
-	lv_obj_t* imgbtn_ctrl;
-	lv_obj_t* imgbtn_sculpture;
-	lv_obj_t* imgbtn_tool;
+	lv_obj_t* btnCtrl;					    	/* 进入控制界面 */
+	lv_obj_t* btnPrinter;						/* 进入获取SD卡 */
+	lv_obj_t* btnSettings;						/* 进入设置界面 */
+	lv_obj_t* btnUnlock;						/* 硬限位开启后的移动解锁 */
 
-	lv_obj_t* label_adj;
-	lv_obj_t* label_ctrl;
-	lv_obj_t* label_sculpture;
-	lv_obj_t* label_tool;
+	lv_obj_t* labelCtrl;						/* 显示控制界面label */					
+	lv_obj_t* labelPrinter;						/* 显示获取SD卡label */
+	lv_obj_t* labelSettings;					/* 显示设置界面label */	
+	lv_obj_t* labelUnlock;						/* 显示解锁状态 */
 
-	lv_obj_t* label_wXpos;
-	lv_obj_t* label_wYpos;
-	lv_obj_t* label_wZpos;
-	lv_obj_t* label_mXpos;
-	lv_obj_t* label_mYpos;
-	lv_obj_t* label_mZpos;
-	lv_obj_t* label_power;
+	lv_obj_t* label_wpos;						/* 显示工作坐标 */
+	lv_obj_t* label_mpos;						/* 显示机械坐标 */
+	lv_obj_t* labelPower;						/* 显示主轴功率 */
+	lv_obj_t* labelWifiState;					/* 显示wifi状态 */
+	lv_obj_t* labelState;						/* 显示当前工作状态 */
+	lv_obj_t* labelRam;							/* 显示当前工作RAM */
 
 	lv_style_t imgbtn_style;
-
 	lv_timer_t* ready_page_upadte;
 
 }ready_ui_t;
 extern ready_ui_t ready_page;
-
 
 
 void draw_ready(void);

@@ -2,7 +2,6 @@
 #include "../lv_port/lv_port_init.h"
 
 void IRAM_ATTR disp_flush_callback(spi_transaction_t *spi_tx) {
-    
     ui.lvPortDispCallback();
 }
 
@@ -16,6 +15,7 @@ void HAL_TFT_LCD::tftBglightInit(void) {
 #ifdef LCD_EN
     pinMode(LCD_EN, OUTPUT);
 #endif
+    tft.fillScreen(TFT_BLACK);
 }
 
 void HAL_TFT_LCD::tftBglightSetOn(void) {
@@ -31,8 +31,7 @@ void HAL_TFT_LCD::tftBglightSetOff(void) {
 }
 
 void HAL_TFT_LCD::tftBglightBeginOn(void) {
-
-    
+    // TODO...(让屏幕渐变启动)
 }
 
 HAL_TFT_LCD tft_lcd;

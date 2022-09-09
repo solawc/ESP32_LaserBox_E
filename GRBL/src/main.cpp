@@ -5,7 +5,8 @@
 
 	2018 -	Bart Dring This file was modifed for use on the ESP32
 					CPU. Do not use this with Grbl for atMega328P
-
+    2022 -  wangchong 
+    
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -27,77 +28,59 @@
 #endif
 
 void setup() {
-
-    // 删除所有消息反馈
-    esp_log_level_set("gpio", ESP_LOG_NONE);
-
-    // 进入GRBL的初始化
-    grbl_init();
+    disableAllMessage();                        /* Delet all message */ 
+    disableDWT();                               /* disable all dwt */ 
+    grbl_init();                                /* enter grbl init */ 
 }
 
 void loop() {
-    
-    _mc_task_init();
-    
-    while(1) {
-      run_once();
-    }
+    while(1) { run_once(); }                    /* enter grbl task */
 }
 
 void grbl_init() {
+#ifdef USE_I2S_OUT
+    i2s_out_init();                             /* The I2S out must be initialized before it can access the expanded GPIO port */
+#endif
 
 #ifdef ENABLE_TFT
     tft_lcd.tftBglightInit();
     tft_lcd.tftBglightSetOff();
 #endif
-    
-#ifdef USE_I2S_OUT
-    i2s_out_init();  // The I2S out must be initialized before it can access the expanded GPIO port
+
+#ifdef ENABLE_WIFI
+    WebUI::wifi_config.init();                  /* init wifi state */
 #endif
 
-    WiFi.persistent(false);
-    WiFi.disconnect(true);
-    WiFi.enableSTA(false);
-    WiFi.enableAP(false);
-    WiFi.mode(WIFI_OFF);
-
-    client_init();  // Setup serial baud rate and interrupts
-
-// show the map name at startup
-#ifdef MACHINE_NAME
-    report_machine_type(CLIENT_SERIAL);
-#endif
-
-    settings_init();  // Load Grbl settings from non-volatile storage
-    stepper_init();   // Configure stepper pins and interrupt timers
-    system_ini();     // Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files)
+    client_init();                              /* Setup serial baud rate and interrupts */
+    report_machine_type(CLIENT_SERIAL);         /* show the map name at startup */
+    settings_init();                            /* Load Grbl settings from non-volatile storage */
+    stepper_init();                             /* Configure stepper pins and interrupt timers */
+    system_ini();                               /* Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files) */
     init_motors();
-    memset(sys_position, 0, sizeof(sys_position));  // Clear machine position.
+    memset(sys_position, 0, sizeof(sys_position));  /* Clear machine position. */
 
-    // Initialize system state.
-#ifdef FORCE_INITIALIZATION_ALARM
-    // Force Grbl into an ALARM state upon a power-cycle or hard reset.
-    sys.state = State::Alarm;
+#ifdef FORCE_INITIALIZATION_ALARM               /* Initialize system state. */
+    sys.state = State::Alarm;                   /* Force Grbl into an ALARM state upon a power-cycle or hard reset. */
 #else
-    sys.state = State::Idle;
+    sys.state = State::Idle;                    /* Initialize system state. */
 #endif
-    // Check for power-up and set system alarm if homing is enabled to force homing cycle
-    // by setting Grbl's alarm state. Alarm locks out all g-code commands, including the
-    // startup scripts, but allows access to settings and internal commands. Only a homing
-    // cycle '$H' or kill alarm locks '$X' will disable the alarm.
-    // NOTE: The startup script will run after successful completion of the homing cycle, but
-    // not after disabling the alarm locks. Prevents motion startup blocks from crashing into
-    // things uncontrollably. Very bad.
+
+   
+/*  Check for power-up and set system alarm if homing is enabled to force homing cycle
+    by setting Grbl's alarm state. Alarm locks out all g-code commands, including the
+    startup scripts, but allows access to settings and internal commands. Only a homing
+    cycle '$H' or kill alarm locks '$X' will disable the alarm.
+    NOTE: The startup script will run after successful completion of the homing cycle, but
+    not after disabling the alarm locks. Prevents motion startup blocks from crashing into
+    things uncontrollably. Very bad. */
 #ifdef HOMING_INIT_LOCK
     if (homing_enable->get()) {
         sys.state = State::Alarm;
     }
 #endif
 
-
-// Init LCD LVGL
 #ifdef ENABLE_TFT
-    ui.lvglTaskInit();
+    ui.lvglTaskInit();                                                  /* Init LCD LVGL */
 #endif
 
     // init spindle
@@ -110,23 +93,18 @@ void grbl_init() {
 #ifdef ENABLE_BLUETOOTH
     WebUI::bt_config.begin();
 #endif
-    WebUI::inputBuffer.begin();
-}
-
-void phy_init_reinit(void) {
-    coolant_init();
-    limits_init();
+    WebUI::inputBuffer.begin();                                         /* init ringbuffer */ 
 }
 
 void reset_mc_config(void) {
 
     State prior_state = sys.state;
-    memset(&sys, 0, sizeof(system_t));  // Clear system struct variable.
-    sys.state             = prior_state;
-    sys.f_override        = FeedOverride::Default;              // Set to 100%
-    sys.r_override        = RapidOverride::Default;             // Set to 100%
-    sys.spindle_speed_ovr = SpindleSpeedOverride::Default;      // Set to 100%
-    memset(sys_probe_position, 0, sizeof(sys_probe_position));  // Clear probe position.
+    memset(&sys, 0, sizeof(system_t));                                  /* Clear system struct variable. */ 
+    sys.state             = prior_state;                                /* defaule sys state */
+    sys.f_override        = FeedOverride::Default;                      /* Set to 100% */ 
+    sys.r_override        = RapidOverride::Default;                     /* Set to 100% */ 
+    sys.spindle_speed_ovr = SpindleSpeedOverride::Default;              /* Set to 100% */ 
+    memset(sys_probe_position, 0, sizeof(sys_probe_position));          /* Clear probe position. */ 
 
     sys_probe_state                      = Probe::Off;
     sys_rt_exec_state.value              = 0;
@@ -140,38 +118,17 @@ void reset_mc_config(void) {
     client_reset_read_buffer(CLIENT_ALL);
 }
 
-
-void _mc_task_init(void) {
-
-
-
-}
-
 static void reset_variables() {
-    // Reset system variables.
-
-    // Reset Grbl primary systems.
-    reset_mc_config();
-    
-    gc_init();  // Set g-code parser to default state
-
-    spindle->stop();
-    
-    coolant_init();
-
-    limits_init();
-
-    probe_init();
-
-    plan_reset();  // Clear block buffer and planner variables
-
-    st_reset();    // Clear stepper subsystem variables
-
-    // Sync cleared gcode and planner positions to current system position.
-    plan_sync_position();
-
+    reset_mc_config();                                                  /* Reset Grbl primary systems. */
+    gc_init();                                                          /* Set g-code parser to default state */
+    spindle->stop();                                                    /* Stop spindle */
+    coolant_init();                                                     /* Init coolant */
+    limits_init();                                                      /* Init limit */
+    probe_init();                                                       /* Init probe */
+    plan_reset();                                                       /* Clear block buffer and planner variables */ 
+    st_reset();                                                         /* Clear stepper subsystem variables */ 
+    plan_sync_position();                                               /* Sync cleared gcode and planner positions to current system position. */
     gc_sync_position();
-
     report_init_message(CLIENT_ALL);
 
     // used to keep track of a jog command sent to mc_line() so we can cancel it.

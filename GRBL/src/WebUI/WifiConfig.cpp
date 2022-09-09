@@ -26,9 +26,7 @@
 #    include <esp_wifi.h>
 #    include <ESPmDNS.h>
 #    include <FS.h>
-#    include <SPIFFS.h>
-    // #include "LittleFS.h"
-    #include "fs_api.h"
+#    include "fs_api.h"
 #    include <cstring>
 #    include "WifiServices.h"
 
@@ -39,6 +37,14 @@ namespace WebUI {
     bool   WiFiConfig::_events_registered = false;
 
     WiFiConfig::WiFiConfig() {}
+
+    void WiFiConfig::init() {
+        WiFi.persistent(false);
+        WiFi.disconnect(true);
+        WiFi.enableSTA(false);
+        WiFi.enableAP(false);
+        WiFi.mode(WIFI_OFF);
+    }
 
     //just simple helper to convert mac address to string
     char* WiFiConfig::mac2str(uint8_t mac[8]) {
@@ -52,8 +58,7 @@ namespace WebUI {
     const char* WiFiConfig::info() {
         static String result;
         String        tmp;
-        result = "[MSG:";
-
+        result = "[WIFI:";
         if ((WiFi.getMode() == WIFI_MODE_STA) || (WiFi.getMode() == WIFI_MODE_APSTA)) {
             result += "Mode=STA:SSID=";
             result += WiFi.SSID();
@@ -69,7 +74,7 @@ namespace WebUI {
 
         if ((WiFi.getMode() == WIFI_MODE_AP) || (WiFi.getMode() == WIFI_MODE_APSTA)) {
             if (WiFi.getMode() == WIFI_MODE_APSTA) {
-                result += "]\r\n[MSG:";
+                result += "]\r\n[WIFI:";
             }
             result += "Mode=AP:SSDI=";
             wifi_config_t conf;
@@ -210,13 +215,11 @@ namespace WebUI {
     void WiFiConfig::WiFiEvent(WiFiEvent_t event) {
         switch (event) {
             case SYSTEM_EVENT_STA_GOT_IP:
-
-                break;
+            break;
             case SYSTEM_EVENT_STA_DISCONNECTED:
-
-                break;
+            break;
             default:
-                break;
+            break;
         }
     }
 
@@ -268,7 +271,6 @@ namespace WebUI {
             count++;
             status = WiFi.status();
         }
-        printf("[MSG:Wifi state:%d]\r\n", status);
         return status == WL_CONNECTED;
     }
 

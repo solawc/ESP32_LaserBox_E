@@ -324,6 +324,7 @@
 // #define SPI_FREQUENCY  27000000
 #define SPI_FREQUENCY  40000000
 // #define SPI_FREQUENCY  55000000 // STM32 SPI1 only (SPI2 maximum is 27MHz)
+// #define SPI_FREQUENCY  70000000
 // #define SPI_FREQUENCY  80000000
 
 // Optional reduced SPI frequency for reading TFT

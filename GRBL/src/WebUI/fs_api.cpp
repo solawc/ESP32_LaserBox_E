@@ -90,4 +90,14 @@ size_t COM_FS::usedBytes() {
 #endif
 }
 
+bool COM_FS::format() {
+#ifdef USE_FS_SPIFFS
+    return SPIFFS.usedBytes();
+#endif
+
+#ifdef USE_FS_LITTLEFS
+    return LittleFS.format();
+#endif
+}
+
 

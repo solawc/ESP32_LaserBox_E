@@ -843,8 +843,8 @@ void st_prep_buffer() {
            supported by Grbl (i.e. exceeding 10 meters axis travel at 200 step/mm).
         */
         float step_dist_remaining    = prep.step_per_mm * mm_remaining;             // Convert mm_remaining to steps
-        float n_steps_remaining      = ceil(step_dist_remaining);                   // Round-up current steps remaining
-        float last_n_steps_remaining = ceil(prep.steps_remaining);                  // Round-up last steps remaining
+        float n_steps_remaining      = ceilf(step_dist_remaining);                   // Round-up current steps remaining
+        float last_n_steps_remaining = ceilf(prep.steps_remaining);                  // Round-up last steps remaining
         prep_segment->n_step         = last_n_steps_remaining - n_steps_remaining;  // Compute number of steps to execute.
 
         // Bail if we are at the end of a feed hold and don't have a step to execute.

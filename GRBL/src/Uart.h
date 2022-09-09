@@ -8,6 +8,18 @@ private:
     int         _pushback;
 
 public:
+
+    // for lcd change baudrate
+    enum class Baudrate : unsigned long {
+        Bauderate_4800   = 4800,
+        Bauderate_19200  = 19200,
+        Bauderate_38400  = 38400,
+        Bauderate_57600  = 57600,
+        Bauderate_115200 = 115200,
+        Bauderate_460800 = 460800,
+        Bauderate_921600 = 921600,
+    };
+
     enum class Data : int {
         Bits5 = UART_DATA_5_BITS,
         Bits6 = UART_DATA_6_BITS,
@@ -44,6 +56,7 @@ public:
     size_t        write(const char* text);
     void          flush() { uart_flush(_uart_num); }
     bool          flushTxTimed(TickType_t ticks);
+    void          changeBuad(unsigned long baudrate);
 };
 
 extern Uart Uart0;

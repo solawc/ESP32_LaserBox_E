@@ -6,6 +6,7 @@
     Part of Grbl_ESP32
 
     2020 -  Bart Dring
+    2022 -  WangChong
 
     Grbl is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,7 +64,6 @@ namespace Spindles {
         }else {
             return false;
         }
-        // return false;  // default for basic spindle is false
     }
 
     void Spindle::sync(SpindleState state, uint32_t rpm) {

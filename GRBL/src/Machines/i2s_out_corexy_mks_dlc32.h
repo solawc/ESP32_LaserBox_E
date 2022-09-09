@@ -20,13 +20,13 @@
     along with Grbl_ESP32.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define MACHINE_NAME                "Custom Machine"
+// #define MACHINE_NAME                "Custom Machine"
 
 #define BOARD_NAME                  "Board:LG_ESP_V1.0"
 #define BOARD_VERSION               "LV_ESP_V1.0"
 #define FW_NAME                     "Firmware:V1A0120220822"
 #define FW_VERSION                  "V1A0120220822"
-
+#define COREXY
 #define CUSTOM_CODE_FILENAME        "../Custom/CoreXY.cpp"
 
 #ifdef N_AXIS

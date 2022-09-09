@@ -9,6 +9,7 @@
 
 	2018 -	Bart Dring This file was modifed for use on the ESP32
 		CPU. Do not use this with Grbl for atMega328P
+    2022 -  wangchong 
 
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -89,33 +90,29 @@ const int MAX_N_AXIS = 6;
 // Serial baud rate
 // OK to change, but the ESP32 boot text is 115200, so you will not see that is your
 // serial monitor, sender, etc uses a different value than 115200
-#define BAUD_RATE 115200
+// #define BAUD_RATE        115200
 
+/* Connect to your local AP with these credentials */
+#define CONNECT_TO_SSID  "MAKERBASE3D"
+#define SSID_PASSWORD  "makerbase3d"
 
-
-//Connect to your local AP with these credentials
-//#define CONNECT_TO_SSID  "your SSID"
-//#define SSID_PASSWORD  "your SSID password"
-//CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE)
-//#define ENABLE_BLUETOOTH  // enable bluetooth
-
-#define ENABLE_SD_CARD  // enable use of SD Card to run jobs
-
-#define ENABLE_WIFI     //enable wifi
-
-// #define ENABLE_TFT      //enable tft lcd for lvgl ui @ V8.3
+/* CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE) */
+//#define ENABLE_BLUETOOTH                  /* enable bluetooth  */ 
+#define ENABLE_SD_CARD                      /* enable use of SD Card to run jobs */
+#define ENABLE_WIFI                         /* enable wifi */
+#define ENABLE_TFT                          /* enable tft lcd for lvgl ui @ V8.3 */
 
 #if defined(ENABLE_WIFI) || defined(ENABLE_BLUETOOTH)
 #    define WIFI_OR_BLUETOOTH
 #endif
 
-#define ENABLE_HTTP                //enable HTTP and all related services
-// #define ENABLE_OTA                 //enable OTA
-#define ENABLE_TELNET              //enable telnet
-#define ENABLE_TELNET_WELCOME_MSG  //display welcome string when connect to telnet
-#define ENABLE_MDNS                //enable mDNS discovery
-#define ENABLE_SSDP                //enable UPNP discovery
-#define ENABLE_NOTIFICATIONS       //enable notifications
+#define ENABLE_HTTP                         /* enable HTTP and all related services */
+// #define ENABLE_OTA                       /* enable OTA */
+#define ENABLE_TELNET                       /* enable telnet */
+// #define ENABLE_TELNET_WELCOME_MSG        /* display welcome string when connect to telnet */
+#define ENABLE_MDNS                         /* enable mDNS discovery */
+#define ENABLE_SSDP                         /* enable UPNP discovery */
+#define ENABLE_NOTIFICATIONS                /* enable notifications */
 
 #define ENABLE_SERIAL2SOCKET_IN
 #define ENABLE_SERIAL2SOCKET_OUT
@@ -216,7 +213,7 @@ static const uint8_t NHomingLocateCycle = 1;  // Integer (1-128)
 // cycle is still invoked by the $H command. This is disabled by default. It's here only to address
 // users that need to switch between a two-axis and three-axis machine. This is actually very rare.
 // If you have a two-axis machine, DON'T USE THIS. Instead, just alter the homing cycle for two-axes.
-#define HOMING_SINGLE_AXIS_COMMANDS  // Default disabled. Uncomment to enable.
+// #define HOMING_SINGLE_AXIS_COMMANDS  // Default disabled. Uncomment to enable.
 
 // Number of blocks Grbl executes upon startup. These blocks are stored in non-volatile storage.
 // and addresses are defined in settings.h. With the current settings, up to 2 startup blocks may
@@ -259,7 +256,7 @@ static const uint8_t NHomingLocateCycle = 1;  // Integer (1-128)
 // immediately forces a feed hold and then safely de-energizes the machine. Resuming is blocked until
 // the safety door is re-engaged. When it is, Grbl will re-energize the machine and then resume on the
 // previous tool path, as if nothing happened.
-#define ENABLE_SAFETY_DOOR_INPUT_PIN  // ESP32 Leave this enabled for now .. code for undefined not ready
+// #define ENABLE_SAFETY_DOOR_INPUT_PIN  // ESP32 Leave this enabled for now .. code for undefined not ready
 
 // Inverts select limit pin states based on the following mask. This effects all limit pin functions,
 // such as hard limits and homing. However, this is different from overall invert limits setting.
@@ -456,7 +453,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // available RAM, like when re-compiling for a Mega2560. Or decrease if the Arduino begins to
 // crash due to the lack of available RAM or if the CPU is having trouble keeping up with planning
 // new incoming motions as they are executed.
-#define BLOCK_BUFFER_SIZE 128 // Uncomment to override default in planner.h.
+#define BLOCK_BUFFER_SIZE 256 // Uncomment to override default in planner.h.
 
 // Governs the size of the intermediary step segment buffer between the step execution algorithm
 // and the planner blocks. Each segment is set of steps executed at a constant velocity over a
@@ -483,7 +480,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // 115200 baud will take 5 msec to transmit a typical 55 character report. Worst case reports are
 // around 90-100 characters. As long as the serial TX buffer doesn't get continually maxed, Grbl
 // will continue operating efficiently. Size the TX buffer around the size of a worst-case report.
-// #define RX_BUFFER_SIZE 128 // (1-254) Uncomment to override defaults in serial.h
+#define RX_BUFFER_SIZE 256 // (1-254) Uncomment to override defaults in serial.h
 // #define TX_BUFFER_SIZE 100 // (1-254)
 
 // A simple software debouncing feature for hard limit switches. When enabled, the limit

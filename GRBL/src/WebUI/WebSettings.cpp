@@ -24,8 +24,6 @@
 
 #include <WiFi.h>
 #include <FS.h>
-#include <SPIFFS.h>
-// #include "LittleFS.h"
 #include "fs_api.h"
 #include <esp_wifi.h>
 #include <esp_ota_ops.h>
@@ -279,8 +277,8 @@ namespace WebUI {
 
     static Error SPIFFSSize(char* parameter, AuthenticationLevel auth_level) {  // ESP720
         webPrint(parameter);
-        webPrint("SPIFFS  Total:", ESPResponseStream::formatBytes(SPIFFS.totalBytes()));
-        webPrintln(" Used:", ESPResponseStream::formatBytes(SPIFFS.usedBytes()));
+        webPrint("LocalFS  Total:", ESPResponseStream::formatBytes(my_fs.totalBytes()));
+        webPrintln(" Used:", ESPResponseStream::formatBytes(my_fs.usedBytes()));
         return Error::Ok;
     }
 
@@ -290,7 +288,7 @@ namespace WebUI {
             return Error::InvalidValue;
         }
         webPrint("Formatting");
-        SPIFFS.format();
+        my_fs.format();
         webPrintln("...Done");
         return Error::Ok;
     }
@@ -304,11 +302,11 @@ namespace WebUI {
         if ((path.length() > 0) && (path[0] != '/')) {
             path = "/" + path;
         }
-        if (!SPIFFS.exists(path)) {
+        if (!my_fs.exists(path)) {
             webPrintln("Error: No such file!");
             return Error::FsFileNotFound;
         }
-        File currentfile = SPIFFS.open(path, FILE_READ);
+        File currentfile = my_fs.open(path, FILE_READ);
         if (!currentfile) {  //if file open success
             return Error::FsFailedOpenFile;
         }
@@ -340,11 +338,11 @@ namespace WebUI {
         if ((path.length() > 0) && (path[0] != '/')) {
             path = "/" + path;
         }
-        if (!SPIFFS.exists(path)) {
+        if (!my_fs.exists(path)) {
             webPrintln("Error: No such file!");
             return Error::FsFileNotFound;
         }
-        File currentfile = SPIFFS.open(path, FILE_READ);
+        File currentfile = my_fs.open(path, FILE_READ);
         if (!currentfile) {
             return Error::FsFailedOpenFile;
         }
@@ -450,7 +448,7 @@ namespace WebUI {
                 }
             }
             webPrintln("Available Size for update: ", ESPResponseStream::formatBytes(flashsize));
-            webPrintln("Available Size for SPIFFS: ", ESPResponseStream::formatBytes(SPIFFS.totalBytes()));
+            webPrintln("Available Size for SPIFFS: ", ESPResponseStream::formatBytes(my_fs.totalBytes()));
 
 #    if defined(ENABLE_HTTP)
             webPrintln("Web port: ", String(web_server.port()));
@@ -689,7 +687,7 @@ namespace WebUI {
         if (path[0] != '/') {
             path = "/" + path;
         }
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
         if (state != SDState::Idle) {
             if (state == SDState::NotPresent) {
                 webPrintln("No SD Card");
@@ -699,7 +697,7 @@ namespace WebUI {
                 return Error::FsFailedBusy;
             }
         }
-        if (!openFile(SD, path.c_str())) {
+        if (!mysdcard.openFile(SD, path.c_str())) {
             report_status_message(Error::FsFailedRead, (espresponse) ? espresponse->client() : CLIENT_ALL);
             webPrintln("");
             return Error::FsFailedOpenFile;
@@ -716,11 +714,11 @@ namespace WebUI {
         }
         SD_client = (espresponse) ? espresponse->client() : CLIENT_ALL;
         char fileLine[255];
-        while (readFileLine(fileLine, 255)) {
+        while (mysdcard.readFileLine(fileLine, 255)) {
             webPrintln(fileLine);
         }
         webPrintln("");
-        closeFile();
+        mysdcard.closeFile();
         return Error::Ok;
     }
 
@@ -738,9 +736,9 @@ namespace WebUI {
             return err;
         }
         char fileLine[255];
-        if (!readFileLine(fileLine, 255)) {
+        if (!mysdcard.readFileLine(fileLine, 255)) {
             //No need notification here it is just a macro
-            closeFile();
+            mysdcard.closeFile();
             webPrintln("");
             return Error::Ok;
         }
@@ -753,43 +751,13 @@ namespace WebUI {
         return Error::Ok;
     }
 
-    // static Error mks_frame_run(char* parameter, AuthenticationLevel auth_level) {    // ESP801
-
-    //     Error err;
-
-    //     if (sys.state == State::Alarm) {
-    //         webPrintln("Alarm");
-    //         return Error::IdleError;
-    //     }
-    //     if (sys.state != State::Idle) {
-    //         webPrintln("Busy");
-    //         return Error::IdleError;
-    //     }
-
-    //     memset(frame_ctrl.file_name, 0, sizeof(frame_ctrl.file_name));
-
-    //     strcpy(frame_ctrl.file_name, parameter);
-
-    //     mks_file_list.file_choose = 0;
-
-    //     memset( mks_file_list.filename_str[mks_file_list.file_choose], 0, sizeof( mks_file_list.filename_str[mks_file_list.file_choose]));
-        
-    //     memcpy( mks_file_list.filename_str[mks_file_list.file_choose], parameter, sizeof(mks_file_list.filename_str[mks_file_list.file_choose]));
-        
-    //     mks_clean_current_page(mks_global.mks_src);
-
-    //     mks_grbl.is_web_enter_frame = true;
-
-    //     return Error::Ok;
-    // }
-
     static Error deleteSDObject(char* parameter, AuthenticationLevel auth_level) {  // ESP215
         parameter = trim(parameter);
         if (*parameter == '\0') {
             webPrintln("Missing file name!");
             return Error::InvalidValue;
         }
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
         if (state != SDState::Idle) {
             webPrintln((state == SDState::NotPresent) ? "No SD card" : "Busy");
             return Error::Ok;
@@ -822,7 +790,7 @@ namespace WebUI {
 
     static Error listSDFiles(char* parameter, AuthenticationLevel auth_level) {  // ESP210
 
-        SDState state = get_sd_state(true);
+        SDState state = mysdcard.get_sd_state(true);
 
         if (state != SDState::Idle) {
             if (state == SDState::NotPresent) {
@@ -833,15 +801,15 @@ namespace WebUI {
                 return Error::FsFailedBusy;
             }
         }
-        
+
         webPrintln("");
-        listDir(SD, "/", 10, espresponse->client());
+        mysdcard.listDir(SD, "/", 10, espresponse->client());
         String ssd = "[SD Free:" + ESPResponseStream::formatBytes(SD.totalBytes() - SD.usedBytes());
         ssd += " Used:" + ESPResponseStream::formatBytes(SD.usedBytes());
         ssd += " Total:" + ESPResponseStream::formatBytes(SD.totalBytes());
-        ssd += "]";
+        ssd += "]\r\n";
         webPrintln(ssd);
-        SD.end();
+        // SD.end();
         return Error::Ok;
     }
 #endif
@@ -874,10 +842,10 @@ namespace WebUI {
 
     static Error listLocalFiles(char* parameter, AuthenticationLevel auth_level) {  // No ESP command
         webPrintln("");
-        listDirLocalFS(SPIFFS, "/", 10, espresponse->client());
-        String ssd = "[Local FS Free:" + ESPResponseStream::formatBytes(SPIFFS.totalBytes() - SPIFFS.usedBytes());
-        ssd += " Used:" + ESPResponseStream::formatBytes(SPIFFS.usedBytes());
-        ssd += " Total:" + ESPResponseStream::formatBytes(SPIFFS.totalBytes());
+        listDirLocalFS(COM_USE_FS, "/", 10, espresponse->client());
+        String ssd = "[Local FS Free:" + ESPResponseStream::formatBytes(my_fs.totalBytes() - my_fs.usedBytes());
+        ssd += " Used:" + ESPResponseStream::formatBytes(my_fs.usedBytes());
+        ssd += " Total:" + ESPResponseStream::formatBytes(my_fs.totalBytes());
         ssd += "]";
         webPrintln(ssd);
         return Error::Ok;
@@ -907,11 +875,11 @@ namespace WebUI {
         JSONencoder j(espresponse->client() != CLIENT_WEBUI);
         j.begin();
         j.begin_array("files");
-        listDirJSON(SPIFFS, "/", 4, &j);
+        listDirJSON(COM_USE_FS, "/", 4, &j);
         j.end_array();
-        j.member("total", SPIFFS.totalBytes());
-        j.member("used", SPIFFS.usedBytes());
-        j.member("occupation", String(100 * SPIFFS.usedBytes() / SPIFFS.totalBytes()));
+        j.member("total", my_fs.totalBytes());
+        j.member("used", my_fs.usedBytes());
+        j.member("occupation", String(100 * my_fs.usedBytes() / my_fs.totalBytes()));
         webPrint(j.end());
         if (espresponse->client() != CLIENT_WEBUI) {
             webPrintln("");
@@ -922,7 +890,7 @@ namespace WebUI {
     static Error showSDStatus(char* parameter, AuthenticationLevel auth_level) {  // ESP200
         const char* resp = "No SD card";
 #ifdef ENABLE_SD_CARD
-        switch (get_sd_state(true)) {
+        switch (mysdcard.get_sd_state(true)) {
             case SDState::Idle:
                 resp = "SD card detected";
                 break;

@@ -35,29 +35,45 @@ enum class SDState : uint8_t {
 extern bool                       SD_ready_next;  // Grbl has processed a line and is waiting for another
 extern uint8_t                    SD_client;
 extern WebUI::AuthenticationLevel SD_auth_level;
-
-// mks fix
 extern uint32_t                   sd_current_line_number;
 
-
-//bool sd_mount();
-SDState  get_sd_state(bool refresh);
-SDState  set_sd_state(SDState state);
-void     listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client);
-boolean  openFile(fs::FS& fs, const char* path);
-boolean  closeFile();
-boolean  readFileLine(char* line, int len);
-void     readFile(fs::FS& fs, const char* path);
-float    sd_report_perc_complete();
-uint32_t sd_get_current_line_number();
-void     sd_get_current_filename(char* name);
+#define SD_ROOT_PATH              "/sd"
+#define SD_MAX_OPEN_FILE          2
 
 
-// mks fix
-void sd_set_current_line_number(uint32_t num);
-// void mks_listDir(fs::FS& fs, const char* dirname, uint8_t levels); 
-bool sd_serch_x_y(char *str);
-bool sd_file_check(const char* path);
-boolean readFileBuff(uint8_t *buf, uint32_t size);
-boolean setFilePos(uint32_t pos);
+class SDCard{
+
+private:
+    File    myFile;
+    bool    SD_ready_next = false;
+public:
+
+    boolean  mount(void);
+    void     unmount(void);
+    SDState  get_sd_state(bool refresh);
+    SDState  set_sd_state(SDState state);
+
+    boolean  openFile(fs::FS& fs, const char* path);                                        /* 打开文件 */
+    boolean  closeFile();                                                                   /* 关闭文件 */
+    boolean  readFileLine(char* line, int maxlen);                                          /* 读取一行文件 */
+    
+    void     listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client);      /* 列出SD卡文件列表 */
+
+    float    sd_report_perc_complete();                                                     /* 报告打印进度 */     
+     
+    uint32_t sd_get_current_line_number();                                                  /* 获取当前文件行数 */  
+
+    void     sd_get_current_filename(char* name);
+
+    uint64_t get_sd_size(void);
+
+    void     setSdNext(bool state);
+    bool     getSdNext(void);
+};
+extern SDCard mysdcard;
+
+
+
+
+
 
