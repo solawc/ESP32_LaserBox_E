@@ -391,7 +391,7 @@ float limitsMaxPosition(uint8_t axis) {
 }
 
 float limitsMinPosition(uint8_t axis) {
-    float mpos = axis_settings[axis]->home_mpos->get();
+    float mpos = axis_settings[axis]->home_mpos->get() - homing_pulloff->get();     // fix-wang-20220908;
 
     return bitnum_istrue(homing_dir_mask->get(), axis) ? mpos : mpos - axis_settings[axis]->max_travel->get();
 }

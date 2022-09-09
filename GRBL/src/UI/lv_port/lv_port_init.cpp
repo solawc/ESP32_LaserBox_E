@@ -73,7 +73,7 @@ void LVGL_UI::lvPortDispCallback(void) {
 }
 
 void LVGL_UI::lvPortDispInit(void) {
-    
+
     static lv_disp_draw_buf_t draw_buf_dsc_1;
 
     DispBuff = static_cast<lv_color_t*>(malloc(LV_BUFF_SIZE * sizeof(lv_color_t)));
@@ -89,8 +89,8 @@ void LVGL_UI::lvPortDispInit(void) {
     disp_drv.ver_res = LCD_SIZE_VER_RES;
     disp_drv.flush_cb = disp_flush;
     disp_drv.draw_buf = &draw_buf_dsc_1;
-    // disp_drv.full_refresh = 1;                                           /* 如果屏幕区域不是整屏，不能打开这个 */ 
-    lv_disp_drv_register(&disp_drv);                                        /* 回调注册 */ 
+    // disp_drv.full_refresh = 1;                                               /* 如果屏幕区域不是整屏，不能打开这个 */ 
+    lv_disp_drv_register(&disp_drv);                                            /* 回调注册 */ 
 }
 
 void LVGL_UI::lvPortTouchInit(void) {
