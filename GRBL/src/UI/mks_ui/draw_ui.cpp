@@ -33,7 +33,8 @@ void lvDrawLogo(void) {
 
 	/* Creat logo */
 	lv_ui.mks_logo = lv_img_create(lv_ui.main_src);
-	lv_img_set_src(lv_ui.mks_logo, &mks_logo);
+	// lv_img_set_src(lv_ui.mks_logo, &mks_logo);
+	lv_img_set_src(lv_ui.mks_logo, "M:/mks_logo.bin");
 
 	/* Init all style */
 	allStyleInit();

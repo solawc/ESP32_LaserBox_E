@@ -8,9 +8,6 @@ volatile bool disp_flush_enabled = true;
 
 LVGL_UI ui;
 
-File lv_file;
-
-
 void LVGL_UI::disp_enable_update(void)
 {
     disp_flush_enabled = true;
@@ -99,71 +96,6 @@ void LVGL_UI::lvPortTouchInit(void) {
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = touchpad_read;
     indev_touchpad = lv_indev_drv_register(&indev_drv);
-}
-
-
-
-
-static bool my_fs_ready(lv_fs_drv_t* drv)
-{
-    return true;
-}
-
-static void * my_fs_open(struct _lv_fs_drv_t * drv, const char * path, lv_fs_mode_t mode) {
-
-    File* tmp_file = &lv_file;
-
-    if(mode == LV_FS_MODE_WR)           lv_file = my_fs.open(path, FILE_WRITE);
-    else if(mode == LV_FS_MODE_RD)      lv_file = my_fs.open(path, FILE_READ);
-
-    if (!lv_file) {
-        return nullptr;
-    }else {
-        lv_file.seek(0);
-        return tmp_file;
-    }
-}
-
-static lv_fs_res_t my_fs_close(lv_fs_drv_t* drv, void* file_p)
-{   
-    lv_file.close();
-    return LV_FS_RES_OK;
-}
-
-static lv_fs_res_t my_fs_read(lv_fs_drv_t* drv, void* file_p, void* buf, uint32_t btr, uint32_t* br)
-{
-    
-    return LV_FS_RES_OK;
-    // else return LV_FS_RES_UNKNOWN;
-}
-
-static lv_fs_res_t my_fs_seek(lv_fs_drv_t* drv, void* file_p, uint32_t pos, lv_fs_whence_t whence)
-{
-    // f_lseek((file_t*) file_p, pos);
-    lv_file.seek(pos);
-    return LV_FS_RES_OK;
-}
-
-static lv_fs_res_t my_fs_tell(lv_fs_drv_t* drv, void* file_p, uint32_t* pos_p)
-{
-    *pos_p = lv_file.position();
-    return LV_FS_RES_OK;
-}
-
-
-void LVGL_UI::lvPortFsInit(void) {
-
-    static lv_fs_drv_t drv;       
-       
-    lv_fs_drv_init(&drv);
-
-    drv.letter = 'M';                                       /* 意味着是my_fs */       
-    drv.ready_cb = my_fs_ready; 
-    drv.open_cb = my_fs_open;
-    drv.close_cb = my_fs_close;
-    drv.read_cb = my_fs_read;
-    drv.seek_cb = my_fs_seek;
-    drv.tell_cb = my_fs_tell;
 }
 
 void LVGL_UI::lvglMutexInit(void) {

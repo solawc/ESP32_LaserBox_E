@@ -27,6 +27,8 @@
 #include "UI/tft_driver/tft_lcd.h"
 #endif
 
+File testlv_file;
+
 void setup() {
     disableAllMessage();                        /* Delet all message */ 
     disableDWT();                               /* disable all dwt */ 
@@ -50,7 +52,6 @@ void grbl_init() {
 #ifdef ENABLE_WIFI
     WebUI::wifi_config.init();                  /* init wifi state */
 #endif
-
     client_init();                              /* Setup serial baud rate and interrupts */
     report_machine_type(CLIENT_SERIAL);         /* show the map name at startup */
     settings_init();                            /* Load Grbl settings from non-volatile storage */
@@ -78,6 +79,8 @@ void grbl_init() {
         sys.state = State::Alarm;
     }
 #endif
+
+    my_fs.begin();                                                      /* 开启内部文件系统, 挂载后无需取消挂载*/ 
 
 #ifdef ENABLE_TFT
     ui.lvglTaskInit();                                                  /* Init LCD LVGL */

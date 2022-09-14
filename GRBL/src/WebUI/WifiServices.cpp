@@ -57,7 +57,7 @@ namespace WebUI {
         }
         String h = wifi_hostname->get();
 
-        my_fs.begin();      // 开启内部文件系统        
+        // my_fs.begin();      // 开启内部文件系统        
 #    ifdef ENABLE_OTA
         ArduinoOTA
             .onStart([]() {
@@ -67,7 +67,7 @@ namespace WebUI {
                 } else {  // U_SPIFFS
                     // NOTE: if updating SPIFFS this would be the place to unmount FS using my_fs.end()
                     type = "filesystem";
-                    my_fs.end();
+                    // my_fs.end();
                 }
                 grbl_sendf(CLIENT_ALL, "[MSG:Start OTA updating %s]\r\n", type.c_str());
             })
@@ -136,7 +136,7 @@ namespace WebUI {
 #    ifdef ENABLE_OTA
         ArduinoOTA.end();
 #    endif
-        my_fs.end(); 
+        // my_fs.end(); 
 #    ifdef ENABLE_MDNS
         //Stop mDNS
         MDNS.end();
