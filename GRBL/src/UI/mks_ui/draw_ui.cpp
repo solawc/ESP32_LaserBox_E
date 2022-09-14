@@ -1,5 +1,5 @@
 #include "draw_ui.h"
-
+#include "../tft_driver/tft_lcd.h"
 lv_ui_t lv_ui;
 
 void allStyleInit(void) {
@@ -17,7 +17,9 @@ void allStyleInit(void) {
 	lv_style_set_radius(&lv_ui.src1_style, 17);
 }
 
-void test_timer(lv_timer_t*) {
+void drawLogoTaskCb(lv_timer_t*) {
+	tft_lcd.tftBglightSetOn();
+	delay(1000);
 	lv_obj_del(lv_ui.mks_logo);
 	draw_ready();
 	lv_timer_del(lv_ui.timer_logo);
@@ -33,14 +35,13 @@ void lvDrawLogo(void) {
 
 	/* Creat logo */
 	lv_ui.mks_logo = lv_img_create(lv_ui.main_src);
-	// lv_img_set_src(lv_ui.mks_logo, &mks_logo);
 	lv_img_set_src(lv_ui.mks_logo, "M:/mks_logo.bin");
 
 	/* Init all style */
 	allStyleInit();
 
 	/* Tick 2000ms */
-	lv_ui.timer_logo = lv_timer_create(test_timer, 2000, NULL);
+	lv_ui.timer_logo = lv_timer_create(drawLogoTaskCb, 2000, NULL);
 }
 
 #ifdef USE_WINDOS_LIST
