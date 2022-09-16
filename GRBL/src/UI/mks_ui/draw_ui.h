@@ -19,10 +19,6 @@
 #include "draw_adjust.h"
 #include "draw_sdcard.h"
 
-extern "C" {
-	LV_IMG_DECLARE(mks_logo);
-}
-
 typedef struct {
 	lv_obj_t* 	mks_logo;
 	lv_obj_t* 	main_src;

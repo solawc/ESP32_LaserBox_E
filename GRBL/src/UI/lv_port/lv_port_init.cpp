@@ -112,13 +112,9 @@ void LVGL_UI::lvglMutexUnlock(void) {
 }
 
 void lvglTask(void *parg)  {
-
     ui.lvglMutexInit();
-
     lv_init();
-
     tft_lcd.tft_init();                               
-
     ui.lvPortDispInit();
     ui.lvPortTouchInit();
     ui.lvPortFsInit();

@@ -453,7 +453,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // available RAM, like when re-compiling for a Mega2560. Or decrease if the Arduino begins to
 // crash due to the lack of available RAM or if the CPU is having trouble keeping up with planning
 // new incoming motions as they are executed.
-#define BLOCK_BUFFER_SIZE 256 // Uncomment to override default in planner.h.
+#define BLOCK_BUFFER_SIZE 128 // Uncomment to override default in planner.h.
 
 // Governs the size of the intermediary step segment buffer between the step execution algorithm
 // and the planner blocks. Each segment is set of steps executed at a constant velocity over a
@@ -468,7 +468,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // NOTE: 80 characters is not a problem except for extreme cases, but the line buffer size
 // can be too small and GCode blocks can get truncated. Officially, the GCode standards
 // support up to 256 characters.
-#define LINE_BUFFER_SIZE 256  // Uncomment to override default in protocol.h
+#define LINE_BUFFER_SIZE 96  // Uncomment to override default in protocol.h
 
 // Serial send and receive buffer size. The receive buffer is often used as another streaming
 // buffer to store incoming blocks to be processed by Grbl when its ready. Most streaming
@@ -480,7 +480,7 @@ const int DWELL_TIME_STEP = 50;  // Integer (1-255) (milliseconds)
 // 115200 baud will take 5 msec to transmit a typical 55 character report. Worst case reports are
 // around 90-100 characters. As long as the serial TX buffer doesn't get continually maxed, Grbl
 // will continue operating efficiently. Size the TX buffer around the size of a worst-case report.
-#define RX_BUFFER_SIZE 256 // (1-254) Uncomment to override defaults in serial.h
+#define RX_BUFFER_SIZE 128 // (1-254) Uncomment to override defaults in serial.h
 // #define TX_BUFFER_SIZE 100 // (1-254)
 
 // A simple software debouncing feature for hard limit switches. When enabled, the limit
