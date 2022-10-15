@@ -57,8 +57,6 @@
 
 #include "main.h"
 
-
-
 // Define this to use the Arduino serial (UART) driver instead
 // of the one in Uart.cpp, which uses the ESP-IDF UART driver.
 // This is for regression testing, and can be removed after
@@ -103,7 +101,6 @@ void client_init() {
 
     client_reset_read_buffer(CLIENT_ALL);
     Uart0.write("\r\n");  // create some white space after ESP32 boot info
-
     clientCheckTaskHandle = 0;
     // create a task to check for incoming data
     // For a 4096-word stack, uxTaskGetStackHighWaterMark reports 244 words available

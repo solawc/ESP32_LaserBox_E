@@ -1,5 +1,5 @@
 /*
-  Grbl.cpp - Initialization and main loop for Grbl
+  main.cpp - Initialization and main loop for Grbl
   Part of Grbl
   Copyright (c) 2014-2016 Sungeun K. Jeon for Gnea Research LLC
 
@@ -30,13 +30,13 @@
 File testlv_file;
 
 void setup() {
-    disableAllMessage();                        /* Delet all message */ 
-    disableDWT();                               /* disable all dwt */ 
-    grbl_init();                                /* enter grbl init */ 
+    disableAllMessage();                        /* Delet all message    */ 
+    disableDWT();                               /* disable all dwt      */ 
+    grbl_init();                                /* enter grbl init      */ 
 }
 
 void loop() {
-    while(1) { run_once(); }                    /* enter grbl task */
+    while(1) { run_once(); }                    /* enter grbl task      */
 }
 
 void grbl_init() {

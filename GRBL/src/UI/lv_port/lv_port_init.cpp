@@ -69,6 +69,7 @@ void LVGL_UI::lvPortDispCallback(void) {
     lv_disp_flush_ready(dispHandler);
 }
 
+
 void LVGL_UI::lvPortDispInit(void) {
 
     static lv_disp_draw_buf_t draw_buf_dsc_1;
@@ -87,7 +88,7 @@ void LVGL_UI::lvPortDispInit(void) {
     disp_drv.flush_cb = disp_flush;
     disp_drv.draw_buf = &draw_buf_dsc_1;
     // disp_drv.full_refresh = 1;                                               /* 如果屏幕区域不是整屏，不能打开这个 */ 
-    lv_disp_drv_register(&disp_drv);                                            /* 回调注册 */ 
+    lv_disp_drv_register(&disp_drv);                                            /* register API */ 
 }
 
 void LVGL_UI::lvPortTouchInit(void) {
@@ -112,6 +113,7 @@ void LVGL_UI::lvglMutexUnlock(void) {
 }
 
 void lvglTask(void *parg)  {
+
     ui.lvglMutexInit();
     lv_init();
     tft_lcd.tft_init();                               
@@ -126,7 +128,6 @@ void lvglTask(void *parg)  {
 #endif
 
     // tft_lcd.tftBglightSetOn();
-
     while(1) {
         ui.lvglMutexLock();
         lv_task_handler();
