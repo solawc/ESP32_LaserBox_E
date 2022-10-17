@@ -32,6 +32,7 @@
 #include <atomic>
 
 static timer_hal_context_t hal;
+static volatile bool runAtISR = false;              /* 将会使用FreeRTOS的互斥锁进行替代 */
 
 // Stores the planner block Bresenham algorithm execution data for the segments in the segment
 // buffer. Normally, this buffer is partially in-use, but, for the worst case scenario, it will
@@ -228,34 +229,40 @@ void IRAM_ATTR onStepperDriverTimer(void* para) {
  * is to keep pulse timing as regular as possible.
  */
 static void stepper_pulse_func() {
+
+    if(!runAtISR) return;
+
     auto n_axis = number_axis->get();
-    if (motors_direction(st.dir_outbits)) {
-        auto wait_direction = direction_delay_microseconds->get();
-        if (wait_direction > 0) {
-            // Stepper drivers need some time between changing direction and doing a pulse.
-            switch (current_stepper) {
-                case ST_I2S_STREAM:
-                    i2s_out_push_sample(wait_direction);
-                    break;
-                case ST_I2S_STATIC:
+
+    // if (motors_direction(st.dir_outbits)) {
+    //     auto wait_direction = direction_delay_microseconds->get();
+    //     if (wait_direction > 0) {
+    //         // Stepper drivers need some time between changing direction and doing a pulse.
+    //         switch (current_stepper) {
+    //             case ST_I2S_STREAM:
+    //                 i2s_out_push_sample(wait_direction);
+    //                 break;
+    //             case ST_I2S_STATIC:
             
-                case ST_TIMED: {
-                    // wait for step pulse time to complete...some time expired during code above
-                    //
-                    // If we are using GPIO stepping as opposed to RMT, record the
-                    // time that we turned on the direction pins so we can delay a bit.
-                    // If we are using RMT, we can't delay here.
-                    auto direction_pulse_start_time = esp_timer_get_time() + wait_direction;
-                    while ((esp_timer_get_time() - direction_pulse_start_time) < 0) {
-                        NOP();  // spin here until time to turn off step
-                    }
-                    break;
-                }
-                case ST_RMT:
-                    break;
-            }
-        }
-    }
+    //             case ST_TIMED: {
+    //                 // wait for step pulse time to complete...some time expired during code above
+    //                 //
+    //                 // If we are using GPIO stepping as opposed to RMT, record the
+    //                 // time that we turned on the direction pins so we can delay a bit.
+    //                 // If we are using RMT, we can't delay here.
+    //                 auto direction_pulse_start_time = esp_timer_get_time() + wait_direction;
+    //                 while ((esp_timer_get_time() - direction_pulse_start_time) < 0) {
+    //                     NOP();  // spin here until time to turn off step
+    //                 }
+    //                 break;
+    //             }
+    //             case ST_RMT:
+    //                 break;
+    //         }
+    //     }
+    // }
+
+    motors_direction(st.dir_outbits); /* Set axis dir */
 
     // If we are using GPIO stepping as opposed to RMT, record the
     // time that we turned on the step pins so we can turn them off
@@ -264,7 +271,7 @@ static void stepper_pulse_func() {
     // those methods time the turn off automatically.
     //
     // NOTE: We could use direction_pulse_start_time + wait_direction, but let's play it safe
-    uint64_t step_pulse_start_time = esp_timer_get_time();
+    uint64_t step_pulse_start_time = esp_timer_get_time();      /* Get first ADC */
     motors_step(st.step_outbits);
 
     // If there is no step segment, attempt to pop one from the stepper buffer
@@ -276,8 +283,6 @@ static void stepper_pulse_func() {
 
             // Initialize step segment timing per step and load number of steps to execute.
             Stepper_Timer_WritePeriod(st.exec_segment->isrPeriod);
-
-
             st.step_count = st.exec_segment->n_step;  // NOTE: Can sometimes be zero when moving slow.
             // If the new segment starts a new planner block, initialize stepper variables and counters.
             // NOTE: When the segment data index changes, this indicates a new planner block.
@@ -306,6 +311,7 @@ static void stepper_pulse_func() {
                 }
             }
             cycle_stop = true;
+            runAtISR = false;
             return;  // Nothing to do but exit.
         }
     }
@@ -401,7 +407,11 @@ void stepper_switch(stepper_id_t new_stepper) {
 
 // enabled. Startup init and limits call this function but shouldn't start the cycle.
 void st_wake_up() {
-    //grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "st_wake_up");
+    
+    if(runAtISR) return;
+
+    runAtISR = true;
+    
     // Enable stepper drivers.
     motors_set_disable(false);
     stepper_idle = false;
@@ -450,6 +460,9 @@ void st_reset() {
 
 // Stepper shutdown
 void st_go_idle() {
+
+    runAtISR = false;
+
     // Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
     Stepper_Timer_Stop();
 

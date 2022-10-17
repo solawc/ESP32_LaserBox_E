@@ -13,7 +13,7 @@
 #define DISP_TASK_PRO                                   2
 #define DISP_TASK_CORE                                  1
 
-#define LV_BUFF_SIZE                                    LCD_SIZE_HOR_RES * 10
+#define LV_BUFF_SIZE                                    (LCD_SIZE_HOR_RES * LCD_SIZE_VER_RES) / 10
 
 class LVGL_UI {
 
