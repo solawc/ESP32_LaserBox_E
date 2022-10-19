@@ -40,6 +40,7 @@ void loop() {
 }
 
 void grbl_init() {
+
 #ifdef USE_I2S_OUT
     i2s_out_init();                             /* The I2S out must be initialized before it can access the expanded GPIO port */
 #endif
@@ -52,6 +53,7 @@ void grbl_init() {
 #ifdef ENABLE_WIFI
     WebUI::wifi_config.init();                  /* init wifi state */
 #endif
+
     client_init();                              /* Setup serial baud rate and interrupts */
     report_machine_type(CLIENT_SERIAL);         /* show the map name at startup */
     settings_init();                            /* Load Grbl settings from non-volatile storage */
@@ -65,7 +67,6 @@ void grbl_init() {
 #else
     sys.state = State::Idle;                    /* Initialize system state. */
 #endif
-
    
 /*  Check for power-up and set system alarm if homing is enabled to force homing cycle
     by setting Grbl's alarm state. Alarm locks out all g-code commands, including the
