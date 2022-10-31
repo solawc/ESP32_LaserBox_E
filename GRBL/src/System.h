@@ -142,7 +142,7 @@ extern volatile void* sys_pl_data_inflight;  // holds a plan_line_data_t while c
 #ifdef DEBUG
 extern volatile bool sys_rt_exec_debug;
 #endif
-
+extern volatile bool          sysInitFinish;
 void system_ini();  // Renamed from system_init() due to conflict with esp32 files
 
 // Returns bitfield of control pin states, organized by CONTROL_PIN_INDEX. (1=triggered, 0=not triggered).
