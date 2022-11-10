@@ -40,6 +40,7 @@ volatile Percent sys_rt_s_override;  // Global realtime executor spindle overrid
 
 xQueueHandle control_sw_queue;    // used by control switch debouncing
 bool         debouncing = false;  // debouncing in process
+volatile bool  sysInitFinish;      // Check sys is init finish, and can bengin serial bit trans.
 
 void system_ini() {  // Renamed from system_init() due to conflict with esp32 files
     // setup control inputs

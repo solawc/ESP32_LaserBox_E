@@ -31,6 +31,8 @@
 #include "main.h"
 #include "Config.h"
 
+#define ON_TIMER_DEBUG               1
+
 // Some useful constants.
 const double DT_SEGMENT              = (1.0 / (ACCELERATION_TICKS_PER_SECOND * 60.0));  // min/segment
 const double REQ_MM_INCREMENT_SCALAR = 1.25;

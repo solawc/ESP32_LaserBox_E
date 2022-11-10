@@ -1,5 +1,5 @@
 /*
-  Grbl.cpp - Initialization and main loop for Grbl
+  main.cpp - Initialization and main loop for Grbl
   Part of Grbl
   Copyright (c) 2014-2016 Sungeun K. Jeon for Gnea Research LLC
 
@@ -27,17 +27,20 @@
 #include "UI/tft_driver/tft_lcd.h"
 #endif
 
+File testlv_file;
+
 void setup() {
-    disableAllMessage();                        /* Delet all message */ 
-    disableDWT();                               /* disable all dwt */ 
-    grbl_init();                                /* enter grbl init */ 
+    disableAllMessage();                        /* Delet all message    */ 
+    disableDWT();                               /* disable all dwt      */ 
+    grbl_init();                                /* enter grbl init      */ 
 }
 
 void loop() {
-    while(1) { run_once(); }                    /* enter grbl task */
+    while(1) { run_once(); }                    /* enter grbl task      */
 }
 
 void grbl_init() {
+
 #ifdef USE_I2S_OUT
     i2s_out_init();                             /* The I2S out must be initialized before it can access the expanded GPIO port */
 #endif
@@ -48,14 +51,15 @@ void grbl_init() {
 #endif
 
 #ifdef ENABLE_WIFI
-    WebUI::wifi_config.init();                  /* init wifi state */
+    WebUI::wifi_config.init();                      /* init wifi state */
 #endif
+    sysInitFinish = false;
 
-    client_init();                              /* Setup serial baud rate and interrupts */
-    report_machine_type(CLIENT_SERIAL);         /* show the map name at startup */
-    settings_init();                            /* Load Grbl settings from non-volatile storage */
-    stepper_init();                             /* Configure stepper pins and interrupt timers */
-    system_ini();                               /* Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files) */
+    client_init();                                  /* Setup serial baud rate and interrupts */
+    report_machine_type(CLIENT_SERIAL);             /* show the map name at startup */
+    settings_init();                                /* Load Grbl settings from non-volatile storage */
+    stepper_init();                                 /* Configure stepper pins and interrupt timers */
+    system_ini();                                   /* Configure pinout pins and pin-change interrupt (Renamed due to conflict with esp32 files) */
     init_motors();
     memset(sys_position, 0, sizeof(sys_position));  /* Clear machine position. */
 
@@ -64,7 +68,6 @@ void grbl_init() {
 #else
     sys.state = State::Idle;                    /* Initialize system state. */
 #endif
-
    
 /*  Check for power-up and set system alarm if homing is enabled to force homing cycle
     by setting Grbl's alarm state. Alarm locks out all g-code commands, including the
@@ -74,10 +77,10 @@ void grbl_init() {
     not after disabling the alarm locks. Prevents motion startup blocks from crashing into
     things uncontrollably. Very bad. */
 #ifdef HOMING_INIT_LOCK
-    if (homing_enable->get()) {
-        sys.state = State::Alarm;
-    }
+    if (homing_enable->get()) { sys.state = State::Alarm; }
 #endif
+
+    my_fs.begin();                                                      /* 开启内部文件系统, 挂载后无需取消挂载*/ 
 
 #ifdef ENABLE_TFT
     ui.lvglTaskInit();                                                  /* Init LCD LVGL */
@@ -94,17 +97,19 @@ void grbl_init() {
     WebUI::bt_config.begin();
 #endif
     WebUI::inputBuffer.begin();                                         /* init ringbuffer */ 
+
+    sysInitFinish = true;
 }
 
 void reset_mc_config(void) {
 
     State prior_state = sys.state;
-    memset(&sys, 0, sizeof(system_t));                                  /* Clear system struct variable. */ 
-    sys.state             = prior_state;                                /* defaule sys state */
-    sys.f_override        = FeedOverride::Default;                      /* Set to 100% */ 
-    sys.r_override        = RapidOverride::Default;                     /* Set to 100% */ 
-    sys.spindle_speed_ovr = SpindleSpeedOverride::Default;              /* Set to 100% */ 
-    memset(sys_probe_position, 0, sizeof(sys_probe_position));          /* Clear probe position. */ 
+    memset(&sys, 0, sizeof(system_t));                                                  /* Clear system struct variable. */ 
+    sys.state                            = prior_state;                                 /* defaule sys state */
+    sys.f_override                       = FeedOverride::Default;                       /* Set to 100% */ 
+    sys.r_override                       = RapidOverride::Default;                      /* Set to 100% */ 
+    sys.spindle_speed_ovr                = SpindleSpeedOverride::Default;               /* Set to 100% */ 
+    memset(sys_probe_position, 0, sizeof(sys_probe_position));                          /* Clear probe position. */ 
 
     sys_probe_state                      = Probe::Off;
     sys_rt_exec_state.value              = 0;
@@ -119,15 +124,15 @@ void reset_mc_config(void) {
 }
 
 static void reset_variables() {
-    reset_mc_config();                                                  /* Reset Grbl primary systems. */
-    gc_init();                                                          /* Set g-code parser to default state */
-    spindle->stop();                                                    /* Stop spindle */
-    coolant_init();                                                     /* Init coolant */
-    limits_init();                                                      /* Init limit */
-    probe_init();                                                       /* Init probe */
-    plan_reset();                                                       /* Clear block buffer and planner variables */ 
-    st_reset();                                                         /* Clear stepper subsystem variables */ 
-    plan_sync_position();                                               /* Sync cleared gcode and planner positions to current system position. */
+    reset_mc_config();                                                                  /* Reset Grbl primary systems. */
+    gc_init();                                                                          /* Set g-code parser to default state */
+    spindle->stop();                                                                    /* Stop spindle */
+    coolant_init();                                                                     /* Init coolant */
+    limits_init();                                                                      /* Init limit */
+    probe_init();                                                                       /* Init probe */
+    plan_reset();                                                                       /* Clear block buffer and planner variables */ 
+    st_reset();                                                                         /* Clear stepper subsystem variables */ 
+    plan_sync_position();                                                               /* Sync cleared gcode and planner positions to current system position. */
     gc_sync_position();
     report_init_message(CLIENT_ALL);
 

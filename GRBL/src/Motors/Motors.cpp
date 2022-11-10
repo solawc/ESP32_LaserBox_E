@@ -476,9 +476,8 @@ uint8_t motors_set_homing_mode(uint8_t homing_mask, bool isHoming) {
 }
 
 bool motors_direction(uint8_t dir_mask) {
-    auto n_axis = number_axis->get();    //mks-wang
-    //grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "motors_set_direction_pins:0x%02X", onMask);
-
+    auto n_axis = number_axis->get();    
+    
     // Set the direction pins, but optimize for the common
     // situation where the direction bits haven't changed.
     static uint8_t previous_dir = 255;  // should never be this value

@@ -23,7 +23,7 @@
 
 // Grbl versioning system
 const char* const GRBL_VERSION       = "1.1h";
-const char* const GRBL_VERSION_BUILD = "2020903101";
+const char* const GRBL_VERSION_BUILD = "2020101901";
 
 //#include <sdkconfig.h>
 #include <Arduino.h>
@@ -69,6 +69,7 @@ const char* const GRBL_VERSION_BUILD = "2020903101";
 
 // Do not guard this because it is needed for local files too
 #include "SDCard.h"
+#include "WebUI/fs_api.h"
 
 #ifdef ENABLE_BLUETOOTH
 #    include "WebUI/BTConfig.h"

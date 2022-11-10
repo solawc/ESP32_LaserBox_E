@@ -606,7 +606,7 @@ void TFT_eSPI::init(uint8_t tc)
   begin_tft_write();
 
   tc = tc; // Supress warning
-
+  
   // This loads the driver specific initialisation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
 #if   defined (ILI9341_DRIVER) || defined(ILI9341_2_DRIVER)
     #include "TFT_Drivers/ILI9341_Init.h"

@@ -1128,7 +1128,7 @@ Error gc_execute_line(char* line, uint8_t client) {
                             FAIL(Error::GcodeArcRadiusError);  // [Arc radius error]
                         }
                         // Finish computing h_x2_div_d.
-                        h_x2_div_d = -sqrt(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
+                        h_x2_div_d = -sqrtf(h_x2_div_d) / hypot_f(x, y);  // == -(h * 2 / d)
                         // Invert the sign of h_x2_div_d if the circle is counter clockwise (see sketch below)
                         if (gc_block.modal.motion == Motion::CcwArc) {
                             h_x2_div_d = -h_x2_div_d;
@@ -1152,13 +1152,13 @@ Error gc_execute_line(char* line, uint8_t client) {
                         // even though it is advised against ever generating such circles in a single line of g-code. By
                         // inverting the sign of h_x2_div_d the center of the circles is placed on the opposite side of the line of
                         // travel and thus we get the unadvisably long arcs as prescribed.
-                        if (gc_block.values.r < 0) {
+                        if (gc_block.values.r < 0.0f) {
                             h_x2_div_d        = -h_x2_div_d;
                             gc_block.values.r = -gc_block.values.r;  // Finished with r. Set to positive for mc_arc
                         }
                         // Complete the operation by calculating the actual center of the arc
-                        gc_block.values.ijk[axis_0] = 0.5 * (x - (y * h_x2_div_d));
-                        gc_block.values.ijk[axis_1] = 0.5 * (y + (x * h_x2_div_d));
+                        gc_block.values.ijk[axis_0] = 0.5f * (x - (y * h_x2_div_d));
+                        gc_block.values.ijk[axis_1] = 0.5f * (y + (x * h_x2_div_d));
                     } else {  // Arc Center Format Offset Mode
                         if (!(ijk_words & (bit(axis_0) | bit(axis_1)))) {
                             FAIL(Error::GcodeNoOffsetsInPlane);  // [No offsets in plane]
@@ -1180,11 +1180,11 @@ Error gc_execute_line(char* line, uint8_t client) {
                         gc_block.values.r = hypot_f(gc_block.values.ijk[axis_0], gc_block.values.ijk[axis_1]);
                         // Compute difference between current location and target radii for final error-checks.
                         float delta_r = fabs(target_r - gc_block.values.r);
-                        if (delta_r > 0.005) {
-                            if (delta_r > 0.5) {
+                        if (delta_r > 0.005f) {
+                            if (delta_r > 0.5f) {
                                 FAIL(Error::GcodeInvalidTarget);  // [Arc definition error] > 0.5mm
                             }
-                            if (delta_r > (0.001 * gc_block.values.r)) {
+                            if (delta_r > (0.001f * gc_block.values.r)) {
                                 FAIL(Error::GcodeInvalidTarget);  // [Arc definition error] > 0.005mm AND 0.1% radius
                             }
                         }

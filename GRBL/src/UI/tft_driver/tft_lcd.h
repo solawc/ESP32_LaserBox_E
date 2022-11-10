@@ -9,7 +9,6 @@ class HAL_TFT_LCD {
 
 private:
 
-
 public:
     TFT_eSPI tft = TFT_eSPI();
     void tft_init(void);

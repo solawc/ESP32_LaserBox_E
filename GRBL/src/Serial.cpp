@@ -57,8 +57,6 @@
 
 #include "main.h"
 
-
-
 // Define this to use the Arduino serial (UART) driver instead
 // of the one in Uart.cpp, which uses the ESP-IDF UART driver.
 // This is for regression testing, and can be removed after
@@ -75,35 +73,14 @@ uint8_t client_get_rx_buffer_available(uint8_t client) {
     return 128 - Uart0.available();
 }
 
-void heapCheckTask(void* pvParameters) {
-    static uint32_t heapSize = 0;
-    while (true) {
-        uint32_t newHeapSize = xPortGetFreeHeapSize();
-        if (newHeapSize != heapSize) {
-            heapSize = newHeapSize;
-            grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "heap %d", heapSize);
-        }
-        vTaskDelay(3000 / portTICK_RATE_MS);  // Yield to other tasks
-
-        static UBaseType_t uxHighWaterMark = 0;
-#ifdef DEBUG_TASK_STACK
-        reportTaskStackSize(uxHighWaterMark);
-#endif
-    }
-}
 
 void client_init() {
-#ifdef DEBUG_REPORT_HEAP_SIZE
-    // For a 2000-word stack, uxTaskGetStackHighWaterMark reports 288 words available
-    xTaskCreatePinnedToCore(heapCheckTask, "ADC_WIDTH_10BiteapTask", 2000, NULL, 1, NULL, 1);
-#endif
 
     Uart0.setPins(1, 3);  // Tx 1, Rx 3 - standard hardware pins
     Uart0.begin((unsigned long)Uart::Baudrate::Bauderate_115200, Uart::Data::Bits8, Uart::Stop::Bits1, Uart::Parity::None);
 
     client_reset_read_buffer(CLIENT_ALL);
     Uart0.write("\r\n");  // create some white space after ESP32 boot info
-
     clientCheckTaskHandle = 0;
     // create a task to check for incoming data
     // For a 4096-word stack, uxTaskGetStackHighWaterMark reports 244 words available
@@ -162,14 +139,14 @@ void clientCheckTask(void* pvParameters) {
     uint8_t            data = 0;
     uint8_t            client;  // who sent the data
     static UBaseType_t uxHighWaterMark = 0;
+
     while (true) {  // run continuously
-    
-        while ((client = getClientChar(&data)) != CLIENT_ALL) {
+        while (((client = getClientChar(&data)) != CLIENT_ALL) && sysInitFinish == true) {
             // Pick off realtime command characters directly from the serial stream. These characters are
             // not passed into the main buffer, but these set system state flag bits for realtime execution.
             if (is_realtime_command(data)) {
                 execute_realtime_command(static_cast<Cmd>(data), client);
-                // vTaskDelay(1 / portTICK_RATE_MS);  // Yield to other tasks
+                vTaskDelay(1 / portTICK_RATE_MS);  /* Yield to other tasks */ 
             } else {
 #if defined(ENABLE_SD_CARD)
                 if (mysdcard.get_sd_state(false) < SDState::Busy) {

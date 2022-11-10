@@ -11,20 +11,13 @@
 /* Write cmd to ringbuffer */
 #define GRBL_CMD_SEND(A)            	SerialWriteIntoBuffer((uint8_t *)A)  
 
-
-
 /* Theme Color */
 #define MAIN_BG_COLOR           		0x13121A
 #define SRC1_BG_COLOR          		 	0x1F2333
 
-
 #include "draw_ready.h"
 #include "draw_adjust.h"
 #include "draw_sdcard.h"
-
-extern "C" {
-	LV_IMG_DECLARE(mks_logo);
-}
 
 typedef struct {
 	lv_obj_t* 	mks_logo;

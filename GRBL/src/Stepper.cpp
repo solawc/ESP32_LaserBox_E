@@ -32,6 +32,7 @@
 #include <atomic>
 
 static timer_hal_context_t hal;
+static volatile bool runAtISR = false;              /* 将会使用FreeRTOS的互斥锁进行替代 */
 
 // Stores the planner block Bresenham algorithm execution data for the segments in the segment
 // buffer. Normally, this buffer is partially in-use, but, for the worst case scenario, it will
@@ -209,6 +210,7 @@ void IRAM_ATTR onStepperDriverTimer(void* para) {
     TIMERG0.int_clr_timers.t0 = 1;
 
     bool expected = false;
+
     if (busy.compare_exchange_strong(expected, true)) {
         
         stepper_pulse_func();
@@ -227,34 +229,40 @@ void IRAM_ATTR onStepperDriverTimer(void* para) {
  * is to keep pulse timing as regular as possible.
  */
 static void stepper_pulse_func() {
+
+    if(!runAtISR) return;
+
     auto n_axis = number_axis->get();
-    if (motors_direction(st.dir_outbits)) {
-        auto wait_direction = direction_delay_microseconds->get();
-        if (wait_direction > 0) {
-            // Stepper drivers need some time between changing direction and doing a pulse.
-            switch (current_stepper) {
-                case ST_I2S_STREAM:
-                    i2s_out_push_sample(wait_direction);
-                    break;
-                case ST_I2S_STATIC:
+
+    // if (motors_direction(st.dir_outbits)) {
+    //     auto wait_direction = direction_delay_microseconds->get();
+    //     if (wait_direction > 0) {
+    //         // Stepper drivers need some time between changing direction and doing a pulse.
+    //         switch (current_stepper) {
+    //             case ST_I2S_STREAM:
+    //                 i2s_out_push_sample(wait_direction);
+    //                 break;
+    //             case ST_I2S_STATIC:
             
-                case ST_TIMED: {
-                    // wait for step pulse time to complete...some time expired during code above
-                    //
-                    // If we are using GPIO stepping as opposed to RMT, record the
-                    // time that we turned on the direction pins so we can delay a bit.
-                    // If we are using RMT, we can't delay here.
-                    auto direction_pulse_start_time = esp_timer_get_time() + wait_direction;
-                    while ((esp_timer_get_time() - direction_pulse_start_time) < 0) {
-                        NOP();  // spin here until time to turn off step
-                    }
-                    break;
-                }
-                case ST_RMT:
-                    break;
-            }
-        }
-    }
+    //             case ST_TIMED: {
+    //                 // wait for step pulse time to complete...some time expired during code above
+    //                 //
+    //                 // If we are using GPIO stepping as opposed to RMT, record the
+    //                 // time that we turned on the direction pins so we can delay a bit.
+    //                 // If we are using RMT, we can't delay here.
+    //                 auto direction_pulse_start_time = esp_timer_get_time() + wait_direction;
+    //                 while ((esp_timer_get_time() - direction_pulse_start_time) < 0) {
+    //                     NOP();  // spin here until time to turn off step
+    //                 }
+    //                 break;
+    //             }
+    //             case ST_RMT:
+    //                 break;
+    //         }
+    //     }
+    // }
+
+    motors_direction(st.dir_outbits); /* Set axis dir */
 
     // If we are using GPIO stepping as opposed to RMT, record the
     // time that we turned on the step pins so we can turn them off
@@ -263,7 +271,7 @@ static void stepper_pulse_func() {
     // those methods time the turn off automatically.
     //
     // NOTE: We could use direction_pulse_start_time + wait_direction, but let's play it safe
-    uint64_t step_pulse_start_time = esp_timer_get_time();
+    uint64_t step_pulse_start_time = esp_timer_get_time();      /* Get first ADC */
     motors_step(st.step_outbits);
 
     // If there is no step segment, attempt to pop one from the stepper buffer
@@ -272,6 +280,7 @@ static void stepper_pulse_func() {
         if (segment_buffer_head != segment_buffer_tail) {
             // Initialize new step segment and load number of steps to execute
             st.exec_segment = &segment_buffer[segment_buffer_tail];
+
             // Initialize step segment timing per step and load number of steps to execute.
             Stepper_Timer_WritePeriod(st.exec_segment->isrPeriod);
             st.step_count = st.exec_segment->n_step;  // NOTE: Can sometimes be zero when moving slow.
@@ -302,13 +311,14 @@ static void stepper_pulse_func() {
                 }
             }
             cycle_stop = true;
+            runAtISR = false;
             return;  // Nothing to do but exit.
         }
     }
+
     // Check probing state.
-    if (sys_probe_state == Probe::Active) {
-        probe_state_monitor();
-    }
+    if (sys_probe_state == Probe::Active) { probe_state_monitor(); }
+
     // Reset step out bits.
     st.step_outbits = 0;
 
@@ -327,10 +337,10 @@ static void stepper_pulse_func() {
     }
 
     // During a homing cycle, lock out and prevent desired axes from moving.
-    if (sys.state == State::Homing) {
-        st.step_outbits &= sys.homing_axis_lock;
-    }
+    if (sys.state == State::Homing) { st.step_outbits &= sys.homing_axis_lock; }
+
     st.step_count--;  // Decrement step events count
+    
     if (st.step_count == 0) {
         // Segment is complete. Discard current segment and advance segment indexing.
         st.exec_segment = NULL;
@@ -358,11 +368,12 @@ static void stepper_pulse_func() {
     }
 }
 
-
-// bool step_isr_callback(void) {
-//     stepper_pulse_func();
-//     return true;
-// }
+#if ON_TIMER_DEBUG
+bool step_isr_callback(void) {
+    stepper_pulse_func();
+    return true;
+}
+#endif
 
 void stepper_init() {
     busy.store(false); 
@@ -396,7 +407,11 @@ void stepper_switch(stepper_id_t new_stepper) {
 
 // enabled. Startup init and limits call this function but shouldn't start the cycle.
 void st_wake_up() {
-    //grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "st_wake_up");
+    
+    if(runAtISR) return;
+
+    runAtISR = true;
+    
     // Enable stepper drivers.
     motors_set_disable(false);
     stepper_idle = false;
@@ -445,6 +460,9 @@ void st_reset() {
 
 // Stepper shutdown
 void st_go_idle() {
+
+    runAtISR = false;
+
     // Disable Stepper Driver Interrupt. Allow Stepper Port Reset Interrupt to finish, if active.
     Stepper_Timer_Stop();
 
@@ -957,27 +975,35 @@ void IRAM_ATTR Stepper_Timer_WritePeriod(uint16_t timerTicks) {
         i2s_out_set_pulse_period(((uint32_t)timerTicks) / ticksPerMicrosecond);
 #endif
     } else {
-        timer_set_alarm_value(STEP_TIMER_GROUP, STEP_TIMER_INDEX, (uint64_t)timerTicks);
+        #if !ON_TIMER_DEBUG
+            timer_set_alarm_value(STEP_TIMER_GROUP, STEP_TIMER_INDEX, (uint64_t)timerTicks);        // TODO fix
+        #else 
+            timer_hal_set_alarm_value(&hal, (uint64_t)timerTicks);
+        #endif
     }
 }
 
-// static bool (*timer_isr_callback)(void);
+#if ON_TIMER_DEBUG
+static bool (*timer_isr_callback)(void);
 
-// static void IRAM_ATTR timer_isr(void* arg) {
-//     // esp_intr_alloc_intrstatus() takes care of filtering based on the interrupt status register
-//     timer_hal_clear_intr_status(&hal);
-//     if (timer_isr_callback()) {
-//         // We could just pass the result of timer_isr_callback() as
-//         // the argument to timer_hal_set_alarm_enable(), but the
-//         // enable is automatically cleared when the alarm occurs,
-//         // so setting it to false is redundant.  Writing the
-//         // device register is much slower than a branch, so
-//         // this way of doing it is the most efficient.
-//         timer_hal_set_alarm_enable(&hal, true);
-//     }
-// }
+static void IRAM_ATTR timer_isr(void* arg) {
+    // esp_intr_alloc_intrstatus() takes care of filtering based on the interrupt status register
+    timer_hal_clear_intr_status(&hal);
+    if (timer_isr_callback()) {
+        // We could just pass the result of timer_isr_callback() as
+        // the argument to timer_hal_set_alarm_enable(), but the
+        // enable is automatically cleared when the alarm occurs,
+        // so setting it to false is redundant.  Writing the
+        // device register is much slower than a branch, so
+        // this way of doing it is the most efficient.
+        timer_hal_set_alarm_enable(&hal, true);
+    }
+}
+#endif
 
-void IRAM_ATTR Stepper_Timer_Init() {
+void IRAM_ATTR Stepper_Timer_Init() {           /* In pass - 2022-10-15 */
+
+#if !ON_TIMER_DEBUG
     timer_config_t config;
     config.divider     = fTimers / fStepperTimer;
     config.counter_dir = TIMER_COUNT_UP;
@@ -989,36 +1015,38 @@ void IRAM_ATTR Stepper_Timer_Init() {
     timer_set_counter_value(STEP_TIMER_GROUP, STEP_TIMER_INDEX, 0x00000000ULL);
     timer_enable_intr(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
     timer_isr_register(STEP_TIMER_GROUP, STEP_TIMER_INDEX, onStepperDriverTimer, NULL, 0, NULL);
+#else
 
-    // // 初始化外设
-    // timer_hal_init(&hal, STEP_TIMER_GROUP, STEP_TIMER_INDEX);
-    // // 复位外设设置
-    // timer_hal_reset_periph(&hal);
+    // 初始化外设
+    timer_hal_init(&hal, STEP_TIMER_GROUP, STEP_TIMER_INDEX);
+    // 复位外设设置
+    timer_hal_reset_periph(&hal);
 
-    // // 配置定时器参数
-    // timer_hal_set_divider(&hal, fTimers / fStepperTimer);
-    // timer_hal_set_counter_increase(&hal, true);
-    // timer_hal_intr_disable(&hal);
-    // timer_hal_clear_intr_status(&hal);
-    // timer_hal_set_alarm_enable(&hal, false);
-    // timer_hal_set_auto_reload(&hal, true);
-    // timer_hal_set_counter_enable(&hal, false);
-    // timer_hal_set_counter_value(&hal, 0);
+    // 配置定时器参数
+    timer_hal_set_divider(&hal, fTimers / fStepperTimer);
+    timer_hal_set_counter_increase(&hal, true);
+    timer_hal_intr_disable(&hal);
+    timer_hal_clear_intr_status(&hal);
+    timer_hal_set_alarm_enable(&hal, false);
+    timer_hal_set_auto_reload(&hal, true);
+    timer_hal_set_counter_enable(&hal, false);
+    timer_hal_set_counter_value(&hal, 0);
 
-    // // 设置中断回调函数
-    // timer_isr_callback = step_isr_callback;
+    // 设置中断回调函数
+    timer_isr_callback = step_isr_callback;
 
-    // // 配置定时器中断
-    // esp_intr_alloc_intrstatus(timer_group_periph_signals.groups[TIMER_GROUP_0].t0_irq_id,
-    //                           ESP_INTR_FLAG_IRAM,
-    //                           (uint32_t)timer_hal_get_intr_status_reg(&hal),
-    //                           1 << TIMER_0,
-    //                           timer_isr,
-    //                           NULL,
-    //                           NULL);
+    // 配置定时器中断
+    esp_intr_alloc_intrstatus(timer_group_periph_signals.groups[TIMER_GROUP_0].t0_irq_id,
+                              ESP_INTR_FLAG_IRAM,
+                              (uint32_t)timer_hal_get_intr_status_reg(&hal),
+                              1 << TIMER_0,
+                              timer_isr,
+                              NULL,
+                              NULL);
 
-    // timer_hal_intr_enable(&hal);
+    timer_hal_intr_enable(&hal);
 
+#endif
 }
 
 void IRAM_ATTR Stepper_Timer_Start() {
@@ -1030,27 +1058,31 @@ void IRAM_ATTR Stepper_Timer_Start() {
         i2s_out_set_stepping();
 #endif
     } else {
-        timer_set_counter_value(STEP_TIMER_GROUP, STEP_TIMER_INDEX, 0x00000000ULL);
-        timer_start(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
-        TIMERG0.hw_timer[STEP_TIMER_INDEX].config.alarm_en = TIMER_ALARM_EN;
-        // timer_hal_set_alarm_value(&hal, 10ULL);  // Interrupt very soon to start the stepping
-        // timer_hal_set_alarm_enable(&hal, true);
-        // timer_hal_set_counter_enable(&hal, true);
+        #if !ON_TIMER_DEBUG
+            timer_set_counter_value(STEP_TIMER_GROUP, STEP_TIMER_INDEX, 0x00000000ULL);
+            timer_start(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
+            TIMERG0.hw_timer[STEP_TIMER_INDEX].config.alarm_en = TIMER_ALARM_EN;
+        #else
+            timer_hal_set_alarm_value(&hal, 10ULL); 
+            timer_hal_set_alarm_enable(&hal, true);
+            timer_hal_set_counter_enable(&hal, true);
+        #endif
     }
 }
 
 void IRAM_ATTR Stepper_Timer_Stop() {
-#ifdef ESP_DEBUG
-    //Serial.println("ST Stop");
-#endif
+
     if (current_stepper == ST_I2S_STREAM) {
 #ifdef USE_I2S_STEPS
         i2s_out_set_passthrough();
 #endif
     } else {
-        timer_pause(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
-        // timer_hal_set_counter_enable(&hal, false);
-        // timer_hal_set_alarm_enable(&hal, false);
+        #if !ON_TIMER_DEBUG
+            timer_pause(STEP_TIMER_GROUP, STEP_TIMER_INDEX);
+        #else
+            timer_hal_set_counter_enable(&hal, false);
+            timer_hal_set_alarm_enable(&hal, false);
+        #endif
     }
 }
 
