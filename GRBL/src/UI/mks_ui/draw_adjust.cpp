@@ -73,43 +73,43 @@ void setStepMove(char axis, float stepLen, uint32_t stepSpeed) {
 }
 
 static void dispMoveBtn(void) {
-    ctrl_page.btnReturn = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnReturn = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnReturn, 100, 50);
 	lv_obj_set_pos(ctrl_page.btnReturn, 1, 1);
     lv_obj_add_event_cb(ctrl_page.btnReturn, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnUp = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnUp = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnUp, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnUp, 60, 100);
     lv_obj_add_event_cb(ctrl_page.btnUp, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnDown = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnDown = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnDown, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnDown, 60, 200);
     lv_obj_add_event_cb(ctrl_page.btnDown, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnLeft = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnLeft = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnLeft, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnLeft, 10, 150);
     lv_obj_add_event_cb(ctrl_page.btnLeft, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnRight = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnRight = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnRight, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnRight, 110, 150);
     lv_obj_add_event_cb(ctrl_page.btnRight, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnZup = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnZup = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnZup, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnZup, 10, 260);
     lv_obj_add_event_cb(ctrl_page.btnZup, event_handler, LV_EVENT_ALL, nullptr);
 
-    ctrl_page.btnZdown = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnZdown = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ctrl_page.btnZdown, 50, 50);
 	lv_obj_set_pos(ctrl_page.btnZdown, 110, 260);
     lv_obj_add_event_cb(ctrl_page.btnZdown, event_handler, LV_EVENT_ALL, nullptr);
 
     /* toggle btn */
-    ctrl_page.btnSpindle = lv_btn_create(lv_ui.main_src);
+    ctrl_page.btnSpindle = lv_btn_create(mks_lv_ui.main_src);
     lv_obj_add_event_cb(ctrl_page.btnSpindle, event_handler, LV_EVENT_ALL, nullptr);
     lv_obj_add_flag(ctrl_page.btnSpindle, LV_OBJ_FLAG_CHECKABLE);
 	lv_obj_set_size(ctrl_page.btnSpindle, 100, 50);
@@ -155,6 +155,6 @@ static void dispLabel(void) {
 
 
 void clear_ctrl_page(void) {
-	lv_obj_clean(lv_ui.main_src);				
+	lv_obj_clean(mks_lv_ui.main_src);				
 }
 

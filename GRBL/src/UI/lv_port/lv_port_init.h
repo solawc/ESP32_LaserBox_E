@@ -9,7 +9,7 @@
 #define LCD_SIZE_HOR_RES                                480
 #define LCD_SIZE_VER_RES                                320
 
-#define DISP_TASK_STACK                                 4096
+#define DISP_TASK_STACK                                 4096*2
 #define DISP_TASK_PRO                                   2
 #define DISP_TASK_CORE                                  1
 

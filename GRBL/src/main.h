@@ -90,6 +90,10 @@ const char* const GRBL_VERSION_BUILD = "2020101901";
 
 #include "I2SOut.h"
 
+#include "./lvgl_generated/gui_guider.h"
+#include "./lvgl_generated/events_init.h"
+#include "./lvgl_generated/custom/custom.h"
+
 #define DEBUG_REMOVE      0
 
 

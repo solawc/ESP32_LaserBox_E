@@ -124,10 +124,15 @@ void lvglTask(void *parg)  {
 #if LV_USE_DEMO_STRESS
     lv_demo_stress();
 #else 
-    lvDrawLogo();
-#endif
+    // lvDrawLogo();
 
-    // tft_lcd.tftBglightSetOn();
+    /*Create a GUI-Guider app */
+	setup_ui(&guider_ui);
+    events_init(&guider_ui);
+    custom_init(&guider_ui);  
+    tft_lcd.tftBglightSetOn();       
+#endif
+  
     while(1) {
         ui.lvglMutexLock();
         lv_task_handler();

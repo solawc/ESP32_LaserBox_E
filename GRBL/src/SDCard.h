@@ -19,6 +19,7 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
+#include <vector>
 
 //#define SDCARD_DET_PIN -1
 const int SDCARD_DET_VAL = 0;  // for now, CD is close to ground
@@ -42,10 +43,21 @@ extern uint32_t                   sd_current_line_number;
 
 
 class SDCard{
+    typedef struct file_info_t
+    {
+        std::vector<std::string>   list;
+        /**
+         * file:1
+         * directory:2
+         */
+        std::vector<uint8_t>       type;
+    }FILE_INFO_T;
 
 private:
     File    myFile;
     bool    SD_ready_next = false;
+    FILE_INFO_T                fileList;
+    std::string                currentDir;    
 public:
 
     boolean  mount(void);
@@ -58,7 +70,8 @@ public:
     boolean  readFileLine(char* line, int maxlen);                                          /* 读取一行文件 */
     
     void     listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t client);      /* 列出SD卡文件列表 */
-
+    void     listDir(fs::FS& fs, const char* dirname);
+    
     float    sd_report_perc_complete();                                                     /* 报告打印进度 */     
      
     uint32_t sd_get_current_line_number();                                                  /* 获取当前文件行数 */  
@@ -69,6 +82,11 @@ public:
 
     void     setSdNext(bool state);
     bool     getSdNext(void);
+
+    std::vector<std::string>     getFileList();
+    std::vector<uint8_t>         getFileType();
+    std::string                  getCurrentDir();
+    bool    isDirectory(fs::FS& fs, const char* dirname);    
 };
 extern SDCard mysdcard;
 
