@@ -99,12 +99,57 @@ void SDCard::listDir(fs::FS& fs, const char* dirname, uint8_t levels, uint8_t cl
     }
 }
 
+void SDCard::listDir(fs::FS& fs, const char* dirname){
+    File root = fs.open(dirname);
+
+    /* 检测文件夹 */
+    if (!root.isDirectory()) {
+        return;
+    }
+    currentDir = dirname;
+    File file = root.openNextFile();
+    fileList.list.clear();
+    fileList.type.clear();
+
+    while (file) {
+        if (file.isDirectory()) {
+            fileList.type.push_back(2);
+        }
+        else{
+            fileList.type.push_back(1);
+        }
+                
+        memset(filename_check_str, 0, sizeof(filename_check_str));
+        strcpy(filename_check_str, file.name());
+        fileList.list.push_back(file.name());
+        file = root.openNextFile();
+    }    
+}
+
 void SDCard::setSdNext(bool state) {
     SD_ready_next = state;
 }
 
 bool SDCard::getSdNext(void) {
     return SD_ready_next;
+}
+
+std::vector<std::string> SDCard::getFileList(){
+    return fileList.list;
+}
+
+std::vector<uint8_t>     SDCard::getFileType(){
+    return fileList.type;
+}
+
+std::string   SDCard::getCurrentDir(){
+    return currentDir;
+}
+
+bool    SDCard::isDirectory(fs::FS& fs, const char* dirname){
+    File root = fs.open(dirname);
+    bool ret = root.isDirectory();
+    return ret;
 }
 
 /* SD卡挂载 */

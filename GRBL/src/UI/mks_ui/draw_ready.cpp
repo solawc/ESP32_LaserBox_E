@@ -51,16 +51,16 @@ void draw_ready(void) {
 
 static void dispPosInfo(void) {
 
-	ready_page.label_wpos = lv_label_create(lv_ui.main_src);
+	ready_page.label_wpos = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.label_wpos, 30, 30);
 
-	ready_page.label_mpos = lv_label_create(lv_ui.main_src);
+	ready_page.label_mpos = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.label_mpos, 30, 60);
 
-	ready_page.labelState = lv_label_create(lv_ui.main_src);
+	ready_page.labelState = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelState, 30, 150);
 
-	ready_page.labelRam = lv_label_create(lv_ui.main_src);
+	ready_page.labelRam = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelRam, 30, 180);
 	
 
@@ -73,7 +73,7 @@ static void dispPosInfo(void) {
 }
 
 static void disp_power(void) {
-	ready_page.labelPower = lv_label_create(lv_ui.main_src);
+	ready_page.labelPower = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelPower, 30, 90);
 	lv_label_set_text(ready_page.labelPower, "Power:0");
 }
@@ -102,7 +102,7 @@ static void disp_mc_state(void) {
 }
 
 static void disp_wifi(void) {
-	ready_page.labelWifiState = lv_label_create(lv_ui.main_src);
+	ready_page.labelWifiState = lv_label_create(mks_lv_ui.main_src);
 	lv_obj_set_pos(ready_page.labelWifiState, 30, 120);
 	lv_label_set_text(ready_page.labelWifiState, "Wifi:Mode:STA State:Unconnect");
 }
@@ -110,22 +110,22 @@ static void disp_wifi(void) {
 static void disp_btn(void) {
 
 	
-	ready_page.btnCtrl = lv_btn_create(lv_ui.main_src);
+	ready_page.btnCtrl = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ready_page.btnCtrl, 80, 80);
 	lv_obj_set_pos(ready_page.btnCtrl, 20, 210);
 	lv_obj_add_event_cb(ready_page.btnCtrl, event_handler, LV_EVENT_ALL, nullptr);
 
-	ready_page.btnPrinter = lv_btn_create(lv_ui.main_src);
+	ready_page.btnPrinter = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ready_page.btnPrinter, 80, 80);
 	lv_obj_set_pos(ready_page.btnPrinter, 120, 210);
 	lv_obj_add_event_cb(ready_page.btnPrinter, event_handler, LV_EVENT_ALL, nullptr);
 
-	ready_page.btnSettings = lv_btn_create(lv_ui.main_src);
+	ready_page.btnSettings = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ready_page.btnSettings, 80, 80);
 	lv_obj_set_pos(ready_page.btnSettings, 220, 210);
 	lv_obj_add_event_cb(ready_page.btnSettings, event_handler, LV_EVENT_ALL, nullptr);
 
-	ready_page.btnUnlock = lv_btn_create(lv_ui.main_src);
+	ready_page.btnUnlock = lv_btn_create(mks_lv_ui.main_src);
 	lv_obj_set_size(ready_page.btnUnlock, 80, 80);
 	lv_obj_set_pos(ready_page.btnUnlock, 320, 210);
 	lv_obj_add_event_cb(ready_page.btnUnlock, event_handler, LV_EVENT_ALL, nullptr);
@@ -184,5 +184,5 @@ static void readyPageUpdateInfo(lv_timer_t*) {
 
 void clear_ready_page(void) {
 	lv_timer_del(ready_page.ready_page_upadte);	
-	lv_obj_clean(lv_ui.main_src);				
+	lv_obj_clean(mks_lv_ui.main_src);				
 }

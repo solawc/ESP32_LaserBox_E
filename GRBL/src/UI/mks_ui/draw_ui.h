@@ -17,7 +17,7 @@
 
 #include "draw_ready.h"
 #include "draw_adjust.h"
-#include "draw_sdcard.h"
+#include "mks_draw_sdcard.h"
 
 typedef struct {
 	lv_obj_t* 	mks_logo;
@@ -32,7 +32,7 @@ typedef struct {
 	lv_timer_t* timer_logo;             // a timer to jump to draw_read()
 
 }lv_ui_t;
-extern lv_ui_t lv_ui;
+extern lv_ui_t mks_lv_ui;
 
 void lvDrawLogo(void);
 
