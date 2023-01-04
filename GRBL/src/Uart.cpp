@@ -40,7 +40,7 @@ int Uart::available() {
 
 int Uart::peek() {
     _pushback = read();
-    return _pushback;
+    return _pushback;1
 }
 
 int Uart::read(TickType_t timeout) {
