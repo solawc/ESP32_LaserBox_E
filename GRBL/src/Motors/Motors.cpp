@@ -46,7 +46,8 @@
 Motors::Motor* myMotor[MAX_AXES][MAX_GANGED];  // number of axes (normal and ganged)
 
 void           init_motors() {
-    auto n_axis = number_axis->get();
+//     auto n_axis = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     if (n_axis >= 1) {
 #ifdef X_TRINAMIC_DRIVER
 #    if (X_TRINAMIC_DRIVER == 2130 || X_TRINAMIC_DRIVER == 5160)
@@ -425,7 +426,8 @@ void motors_set_disable(bool disable, uint8_t mask) {
     }
 
     // now loop through all the motors to see if they can individually disable
-    auto n_axis = number_axis->get();
+//     auto n_axis = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     for (uint8_t gang_index = 0; gang_index < MAX_GANGED; gang_index++) {
         for (uint8_t axis = X_AXIS; axis < n_axis; axis++) {
             if (bitnum_istrue(mask, axis)) {
@@ -451,7 +453,8 @@ void motors_set_disable(bool disable, uint8_t mask) {
 
 void motors_read_settings() {
     //grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Read Settings");
-    auto n_axis = number_axis->get();
+//     auto n_axis = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     for (uint8_t gang_index = 0; gang_index < 2; gang_index++) {
         for (uint8_t axis = X_AXIS; axis < n_axis; axis++) {
             myMotor[axis][gang_index]->read_settings();
@@ -463,7 +466,8 @@ void motors_read_settings() {
 // They can use this to setup things like Stall
 uint8_t motors_set_homing_mode(uint8_t homing_mask, bool isHoming) {
     uint8_t can_home = 0;
-    auto    n_axis   = number_axis->get();
+//     auto    n_axis   = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     for (uint8_t axis = X_AXIS; axis < n_axis; axis++) {
         if (bitnum_istrue(homing_mask, axis)) {
             if (myMotor[axis][0]->set_homing_mode(isHoming)) {
@@ -476,8 +480,8 @@ uint8_t motors_set_homing_mode(uint8_t homing_mask, bool isHoming) {
 }
 
 bool motors_direction(uint8_t dir_mask) {
-    auto n_axis = number_axis->get();    
-    
+//     auto n_axis = number_axis->get();    
+        uint_fast8_t n_axis = N_AXIS;
     // Set the direction pins, but optimize for the common
     // situation where the direction bits haven't changed.
     static uint8_t previous_dir = 255;  // should never be this value
@@ -497,7 +501,8 @@ bool motors_direction(uint8_t dir_mask) {
 }
 
 void motors_step(uint8_t step_mask) {
-    auto n_axis = number_axis->get();
+//     auto n_axis = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     //grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "motors_set_direction_pins:0x%02X", onMask);
 
     // Turn on step pulses for motors that are supposed to step now
@@ -515,7 +520,8 @@ void motors_step(uint8_t step_mask) {
 
 // Turn all stepper pins off
 void motors_unstep() {
-    auto n_axis = number_axis->get();
+//     auto n_axis = number_axis->get();
+        uint_fast8_t n_axis = N_AXIS;
     for (uint8_t axis = X_AXIS; axis < n_axis; axis++) {
         myMotor[axis][0]->unstep();
         myMotor[axis][1]->unstep();

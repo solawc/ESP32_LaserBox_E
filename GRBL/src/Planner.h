@@ -47,7 +47,7 @@ struct PlMotion {
 
 // This struct stores a linear movement of a g-code block motion with its critical "nominal" values
 // are as specified in the source g-code.
-typedef struct {
+typedef struct plan_block{
     // Fields used by the bresenham algorithm for tracing the line
     // NOTE: Used by stepper algorithm to execute the block correctly. Do not alter these values.
     uint32_t steps[MAX_N_AXIS];     // Step count along each axis
@@ -78,8 +78,19 @@ typedef struct {
 
     // Stored spindle speed data used by spindle overrides and resuming methods.
     float spindle_speed;  // Block spindle speed. Copied from pl_line_data.
-    //#endif
+
+    struct plan_block *prev, *next;   // Linked list pointers, DO NOT MOVE - these MUST be the last elements in the struct!
+
 } plan_block_t;
+
+// Define planner variables
+typedef struct {
+    int32_t position[MAX_N_AXIS];  // The planner position of the tool in absolute steps. Kept separate
+    // from g-code position for movements requiring multiple line motions,
+    // i.e. arcs, canned cycles, and backlash compensation.
+    float previous_unit_vec[MAX_N_AXIS];  // Unit vector of previous path line segment
+    float previous_nominal_speed;         // Nominal speed of previous path line segment
+} planner_t;
 
 // Planner data prototype. Must be used when passing new motions to the planner.
 typedef struct {
@@ -92,6 +103,7 @@ typedef struct {
     int32_t line_number;  // Desired line number to report when executing.
 #endif
     bool         is_jog;         // true if this was generated due to a jog command
+
 } plan_line_data_t;
 
 // Initialize and reset the motion plan subsystem

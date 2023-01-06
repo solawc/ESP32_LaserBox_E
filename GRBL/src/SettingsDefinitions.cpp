@@ -251,7 +251,6 @@ void make_settings() {
 
     verbose_errors = new FlagSetting(EXTENDED, WG, NULL, "Errors/Verbose", DEFAULT_VERBOSE_ERRORS);
 
-    // number_axis = new IntSetting(EXTENDED, WG, NULL, "NumberAxis", N_AXIS, 0, 6, NULL, true);
     number_axis = new FakeSetting<int>(N_AXIS);
 
     // Create the axis settings in the order that people are

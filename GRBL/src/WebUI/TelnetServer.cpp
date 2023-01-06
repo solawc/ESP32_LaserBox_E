@@ -90,7 +90,7 @@ namespace WebUI {
     void Telnet_Server::clearClients() {
         /* check if there are any new clients(检查是否有新的客户端进来) */ 
         if (_telnetserver->hasClient()) {
-            grbl_send(CLIENT_SERIAL, "HAS CLIENT\n");
+            // grbl_send(CLIENT_SERIAL, "HAS CLIENT\n");
             uint8_t i = 0;
             for (i = 0; i < MAX_TLNT_CLIENTS; i++) {
                 // find free/disconnected spot

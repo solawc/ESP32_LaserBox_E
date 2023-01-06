@@ -146,7 +146,8 @@ Error gc_execute_line(char* line, uint8_t client) {
     uint32_t command_words   = 0;  // Tracks G and M command words. Also used for modal group violations.
     uint32_t value_words     = 0;  // Tracks value words.
     uint8_t  gc_parser_flags = GCParserNone;
-    auto     n_axis          = number_axis->get();
+    // auto     n_axis          = number_axis->get();
+    uint_fast8_t n_axis      = N_AXIS;
     float    coord_data[MAX_N_AXIS];  // Used by WCO-related commands
     uint8_t  pValue;                  // Integer value of P word
 

@@ -1,5 +1,4 @@
 #pragma once
-// clang-format off
 
 // #define MACHINE_NAME                        "Custom Machine"
 #define BOARD_NAME                          "Board:LG_ESP_V1.0"

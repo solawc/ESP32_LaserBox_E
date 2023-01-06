@@ -163,11 +163,13 @@ static void report_util_axis_values(float* axis_value, char* rpt) {
         unit_conv = 1.0 / MM_PER_INCH;
         format    = "%4.4f";  // Report inches to 4 decimal places
     }
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (idx = 0; idx < n_axis; idx++) {
         snprintf(axisVal, coordStringLen - 1, format, axis_value[idx] * unit_conv);
         strcat(rpt, axisVal);
-        if (idx < (number_axis->get() - 1)) {
+        // if (idx < (number_axis->get() - 1)) {
+        if (idx < (n_axis - 1)) {
             strcat(rpt, ",");
         }
     }
@@ -184,10 +186,12 @@ static String report_util_axis_values(const float* axis_value) {
         unit_conv = 1.0 / MM_PER_INCH;
         decimals  = 4;  // Report inches to 4 decimal places
     }
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (idx = 0; idx < n_axis; idx++) {
         rpt += String(axis_value[idx] * unit_conv, decimals);
-        if (idx < (number_axis->get() - 1)) {
+        // if (idx < (number_axis->get() - 1)) {
+        if (idx < (n_axis - 1)) {
             rpt += ",";
         }
     }
@@ -666,7 +670,8 @@ void report_realtime_status(uint8_t client) {
             strcat(status, "P");
         }
         if (lim_pin_state) {
-            auto n_axis = number_axis->get();
+            // auto n_axis = number_axis->get();
+            uint_fast8_t n_axis = N_AXIS;
             if (n_axis >= 1 && bit_istrue(lim_pin_state, bit(X_AXIS))) {
                 strcat(status, "X");
             }
@@ -800,7 +805,8 @@ void report_realtime_status(uint8_t client) {
 
 void report_realtime_steps() {
     uint8_t idx;
-    auto    n_axis = number_axis->get();
+    // auto    n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (idx = 0; idx < n_axis; idx++) {
         grbl_sendf(CLIENT_ALL, "%ld\n", sys_position[idx]);  // OK to send to all ... debug stuff
     }
@@ -952,7 +958,8 @@ void reportTaskStackSize(UBaseType_t& saved) {
 
 void mpos_to_wpos(float* position) {
     float* wco    = get_wco();
-    auto   n_axis = number_axis->get();
+    // auto   n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (int idx = 0; idx < n_axis; idx++) {
         position[idx] -= wco[idx];
     }
@@ -960,7 +967,8 @@ void mpos_to_wpos(float* position) {
 
 float* get_wco() {
     static float wco[MAX_N_AXIS];
-    auto         n_axis = number_axis->get();
+    // auto         n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (int idx = 0; idx < n_axis; idx++) {
         // Apply work coordinate offsets and tool length offset to current position.
         wco[idx] = gc_state.coord_system[idx] + gc_state.coord_offset[idx];

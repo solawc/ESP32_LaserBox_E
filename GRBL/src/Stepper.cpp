@@ -232,7 +232,8 @@ static void stepper_pulse_func() {
 
     if(!runAtISR) return;
 
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
 
     // if (motors_direction(st.dir_outbits)) {
     //     auto wait_direction = direction_delay_microseconds->get();
@@ -591,7 +592,8 @@ void st_prep_buffer() {
                 st_prep_block                 = &st_block_buffer[prep.st_block_index];
                 st_prep_block->direction_bits = pl_block->direction_bits;
                 uint8_t idx;
-                auto    n_axis = number_axis->get();
+                // auto    n_axis = number_axis->get();
+                uint_fast8_t n_axis = N_AXIS;
 
                 // Bit-shift multiply all Bresenham data by the max AMASS level so that
                 // we never divide beyond the original data anywhere in the algorithm.

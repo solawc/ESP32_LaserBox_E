@@ -141,7 +141,8 @@ void mc_arc(float*            target,
     float previous_position[MAX_N_AXIS] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
     uint16_t n;
-    auto     n_axis = number_axis->get();
+    // auto     n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (n = 0; n < n_axis; n++) {
         previous_position[n] = position[n];
     }

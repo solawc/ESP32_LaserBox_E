@@ -107,7 +107,8 @@ void limits_go_home(uint8_t cycle_mask) {
     uint8_t step_pin[MAX_N_AXIS];
     float   max_travel = 0.0;
 
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (uint8_t idx = 0; idx < n_axis; idx++) {
         // Initialize step pin masks
         step_pin[idx] = bit(idx);
@@ -268,7 +269,8 @@ void limits_init() {
 #ifdef DISABLE_LIMIT_PIN_PULL_UP
     mode = INPUT;
 #endif
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (int axis = 0; axis < n_axis; axis++) {
         for (int gang_index = 0; gang_index < 2; gang_index++) {
             uint8_t pin;
@@ -303,7 +305,8 @@ void limits_init() {
 
 // Disables hard limits.
 void limits_disable() {
-    auto n_axis = number_axis->get();
+    // auto n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (int axis = 0; axis < n_axis; axis++) {
         for (int gang_index = 0; gang_index < 2; gang_index++) {
             uint8_t pin = limit_pins[axis][gang_index];
@@ -319,7 +322,8 @@ void limits_disable() {
 // number in bit position, i.e. Z_AXIS is bit(2), and Y_AXIS is bit(1).
 AxisMask limits_get_state() {
     AxisMask pinMask = 0;
-    auto     n_axis  = number_axis->get();
+    // auto     n_axis  = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (int axis = 0; axis < n_axis; axis++) {
         for (int gang_index = 0; gang_index < 2; gang_index++) {
             uint8_t pin = limit_pins[axis][gang_index];
@@ -401,7 +405,8 @@ float limitsMinPosition(uint8_t axis) {
 // Set $<axis>/MaxTravel=0 to selectively remove an axis from soft limit checks
 bool __attribute__((weak)) limitsCheckTravel(float* target) {
     uint8_t idx;
-    auto    n_axis = number_axis->get();
+    // auto    n_axis = number_axis->get();
+    uint_fast8_t n_axis = N_AXIS;
     for (idx = 0; idx < n_axis; idx++) {
         float max_mpos, min_mpos;
 
