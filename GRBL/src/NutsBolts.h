@@ -21,6 +21,7 @@
 */
 
 #include "Config.h"
+#include <xtensa/core-macros.h>
 
 // #define false 0
 // #define true 1
@@ -115,4 +116,32 @@ void swap(T& a, T& b) {
     T c(a);
     a = b;
     b = c;
+}
+
+
+extern uint32_t g_ticks_per_us_pro;  // For CPU 0 - typically 240 MHz
+extern uint32_t g_ticks_per_us_app;  // For CPU 1 - typically 240 MHz
+
+inline int32_t IRAM_ATTR getCpuTicks() {
+    return XTHAL_GET_CCOUNT();
+}
+
+inline int32_t IRAM_ATTR usToCpuTicks(int32_t us) {
+    return us * g_ticks_per_us_pro;
+}
+
+inline int32_t IRAM_ATTR usToEndTicks(int32_t us) {
+    return getCpuTicks() + usToCpuTicks(us);
+}
+
+// At the usual ESP32 clock rate of 240MHz, the range of this is
+// just under 18 seconds, but it really should be used only for
+// short delays up to a few tens of microseconds.
+
+inline void IRAM_ATTR spinUntil(int32_t endTicks) {
+    while ((getCpuTicks() - endTicks) < 0) {
+#ifdef ESP32
+        asm volatile("nop");
+#endif
+    }
 }

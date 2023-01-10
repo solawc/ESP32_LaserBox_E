@@ -81,9 +81,10 @@ void grbl_init() {
 #endif
 
     my_fs.begin();                                                      /* 开启内部文件系统, 挂载后无需取消挂载*/ 
+    disableDWT();                                                       /* Be sure DWT is unable. */
 
 #ifdef ENABLE_TFT
-    ui.lvglTaskInit();                                                  /* Init LCD LVGL */
+    ui.lvglTaskInit();                                                  /* Init LCD LVGL. */
 #endif
 
     // init spindle

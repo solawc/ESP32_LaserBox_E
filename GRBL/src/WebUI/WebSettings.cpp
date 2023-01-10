@@ -925,6 +925,7 @@ namespace WebUI {
             webPrintln(on ? "ON" : "OFF");
             return Error::Ok;
         }
+        
         int8_t on = -1;
         if (strcasecmp(parameter, "ON") == 0) {
             on = 1;

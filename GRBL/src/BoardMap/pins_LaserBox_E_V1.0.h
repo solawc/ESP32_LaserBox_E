@@ -50,7 +50,7 @@
 #define GRBL_SPI_MOSI 			            GPIO_NUM_13
 #define GRBL_SPI_SS 			            GPIO_NUM_15
 #define SDCARD_DET_PIN 			            GPIO_NUM_39
-#define GRBL_SPI_FREQ 			            40000000            // 40Mb/s = 40 / 8 = 5MB/s
+#define GRBL_SPI_FREQ 			            4000000            // 40Mb/s = 40 / 8 = 5MB/s
 
 /*************************************************************************
  *                              LCD

@@ -125,7 +125,7 @@ namespace Spindles {
         _spindown_delay = spindle_delay_spindown->get() * 1000.0;
     }
 
-    uint32_t PWM::set_rpm(uint32_t rpm) {
+    uint32_t IRAM_ATTR PWM::set_rpm(uint32_t rpm) {
         uint32_t pwm_value;
 
         if (_output_pin == UNDEFINED_PIN) {

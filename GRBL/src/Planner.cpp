@@ -26,12 +26,6 @@
 #include "main.h"
 #include <stdlib.h>  // PSoc Required for labs
 
-// static plan_block_t block_buffer[BLOCK_BUFFER_SIZE];  // A ring buffer for motion instructions
-// static uint8_t      block_buffer_tail;                // Index of the block to process now
-// static uint8_t      block_buffer_head;                // Index of the next block to be pushed
-// static uint8_t      next_buffer_head;                 // Index of the next buffer head
-// static uint8_t      block_buffer_planned;             // Index of the optimally planned block
-
 static uint_fast16_t block_buffer_size;                 // Number of blocks in the planner buffer minus 1
 static plan_block_t *block_buffer = NULL;               // A ring buffer for motion instructions
 static plan_block_t *block_buffer_tail = NULL;          // Pointer to the block to process now

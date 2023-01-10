@@ -3,7 +3,7 @@
 #define USE_I2S_OUT
 #define USE_I2S_STEPS
 #define DEFAULT_STEPPER             ST_I2S_STATIC
-#define I2S_OUT_NUM_BITS            32
+#define I2S_OUT_NUM_BITS            16
 
 #ifdef N_AXIS
     #undef N_AXIS
